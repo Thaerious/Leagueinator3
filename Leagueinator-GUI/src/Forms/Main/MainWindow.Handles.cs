@@ -1,11 +1,27 @@
-﻿using System.Windows;
+﻿using Leagueinator.GUI.Controls;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using MatchCardV1 = Leagueinator.GUI.Controls.MatchCardV1;
 
 namespace Leagueinator.GUI.Forms.Main {
     public partial class MainWindow : Window {
-        private Button? CurrentRoundButton;
+        private DataButton<RoundData>? CurrentRoundButton;
+
+        /// <summary>
+        /// Event args for round data creation.
+        /// </summary>
+        public class RoundDataEventArgs : EventArgs {
+            public RoundData? RoundData { get; }
+            public RoundDataEventArgs(RoundData? roundData) {
+                this.RoundData = roundData;
+            }
+        }
+
+        /// <summary>
+        /// Event triggered when new round data is created.
+        /// </summary>
+        public event EventHandler<RoundDataEventArgs>? OnRoundDataCreated;
 
         /// <summary>
         /// Triggered when a match card changes type.
@@ -21,14 +37,19 @@ namespace Leagueinator.GUI.Forms.Main {
         /// </summary>
         /// <param name="roundRow">The associated roundRow</param>
         /// <returns></returns>
-        private Button AddRoundButton() {
-            Button button = new() {
+        private DataButton<RoundData> AddRoundButton() {
+            DataButton<RoundData> button = new() {
                 Content = $"Round {this.RoundButtonContainer.Children.Count + 1}",
                 Margin = new Thickness(3),
+                Data = new RoundData(this.EventData.MatchFormat, this.EventData.LaneCount)
             };
 
             this.RoundButtonContainer.Children.Add(button);
             button.Click += this.HndClickSelectRound;
+
+            // Trigger custom event for round data creation
+            this.OnRoundDataCreated?.Invoke(this, new RoundDataEventArgs(button.Data));
+
             return button;
         }
 
@@ -39,7 +60,7 @@ namespace Leagueinator.GUI.Forms.Main {
         /// <param name="_"></param>
         /// <exception cref="NotSupportedException"></exception>
         private void HndClickSelectRound(object? sender, EventArgs? _) {
-            if (sender is not Button button) throw new NotSupportedException();
+            if (sender is not DataButton<RoundData> button) throw new NotSupportedException();
             this.ClearFocus();
 
             if (this.CurrentRoundButton is not null) {
@@ -52,9 +73,9 @@ namespace Leagueinator.GUI.Forms.Main {
             // TODO: Implement round selection event.
         }
 
-        private void InvokeRoundButton(Button? button = null) {
-            button ??= (Button)this.RoundButtonContainer.Children[^1];
-            button.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+        private void InvokeRoundButton(DataButton<RoundData>? button = null) {
+            button ??= (DataButton<RoundData>)this.RoundButtonContainer.Children[^1];
+            this.PopulateMatchCards(button.Data!);
         }
     }
 }

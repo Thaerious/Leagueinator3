@@ -68,7 +68,7 @@
             </local:TeamCard>
 
             <!-- Match Info Box -->
-            <local:InfoCard Grid.Column="1" Style="{StaticResource HoverUserStyle}"/>
+            <local:InfoCard x:Name="InfoCard" Grid.Column="1" Style="{StaticResource HoverUserStyle}"/>
 
             <!-- Team 2 Card -->
             <local:TeamCard 

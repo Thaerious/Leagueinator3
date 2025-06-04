@@ -29,6 +29,9 @@ namespace Leagueinator.GUI.Controls {
             get {
                 return int.Parse(this.LblLane.Text);
             }
+            set {
+                this.LblLane.Text = value.ToString();
+            }
         }
 
         private void HndLoaded(object sender, RoutedEventArgs e) {

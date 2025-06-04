@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using Leagueinator.GUI.Controls;
+using System.Reflection;
 using System.Windows;
 
 
@@ -33,19 +34,22 @@ namespace Leagueinator.GUI.Forms.Main {
         private void HndDeleteRnd(object sender, RoutedEventArgs e) {
             this.ClearFocus();
 
-            //// Remove the UI button and the model round.
-            //this.RoundButtonContainer.Children.Remove(this.CurrentRoundButton);
-            //this.CurrentRoundRow.Remove();
+            // Remove the UI button and the model round.
+            this.RoundButtonContainer.Children.Remove(this.CurrentRoundButton);
 
-            //// Make sure there is at least one button and select the last one.
-            //if (this.EventRow.RoundRows.Count == 0) this.HndGenEmptyRound(null, null);
-            //this.InvokeRoundButton();
+            // Make sure there is at least one button and select the last one.
+            if (this.RoundButtonContainer.Children.Count == 0) {
+                this.AddRoundButton();
+            }
 
-            //// Rename buttons
-            //int i = 1;
-            //foreach (DataButton<RoundRow> button in this.RoundButtonContainer.Children) {
-            //    button.Content = $"Round {i++}";
-            //}
+            // If there are buttons left, select the last one.
+            this.InvokeRoundButton();
+
+            // Rename buttons
+            int i = 1;
+            foreach (DataButton<RoundData> button in this.RoundButtonContainer.Children) {
+                button.Content = $"Round {i++}";
+            }
         }
 
         private void HndNewClick(object sender, RoutedEventArgs e) {
@@ -141,10 +145,8 @@ namespace Leagueinator.GUI.Forms.Main {
 
         private void HndGenEmptyRound(object sender, RoutedEventArgs e) {
             this.ClearFocus();
-
-            //RoundRow roundRow = this.EventRow.RoundRows.Add();
-            //this.AddRoundButton(roundRow);
-            //this.InvokeRoundButton();
+            this.AddRoundButton();
+            this.InvokeRoundButton();
         }
 
         private void HndCopyRnd(object sender, RoutedEventArgs e) {

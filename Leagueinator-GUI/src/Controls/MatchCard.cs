@@ -4,6 +4,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using static Leagueinator.GUI.Controls.MemoryTextBox;
+using System.Diagnostics;
 
 namespace Leagueinator.GUI.Controls {
     public class MatchCardFormatArgs(RoutedEvent routedEvent, MatchCard matchCard, MatchFormat matchFormat) : RoutedEventArgs(routedEvent) {
@@ -12,11 +13,43 @@ namespace Leagueinator.GUI.Controls {
     }
 
     public abstract class MatchCard : UserControl {
+        private int? _pendingLane = null;
+
+        public static readonly RoutedEvent MyCustomEvent = EventManager.RegisterRoutedEvent(
+            "MyCustom",                  // Event name
+            RoutingStrategy.Bubble,      // Bubble, Tunnel, or Direct
+            typeof(RoutedEventHandler),  // Delegate type
+            typeof(MatchCard)            // Owner type
+        );
+
         public MatchCard() {
-            // Add a routed handler which bubbles events from child components.
             this.AddHandler(RegisteredUpdateEvent, new MemoryEventHandler(this.HndUpdatePlayerText));
-            //this.LayoutUpdated += this.MatchCard_LayoutUpdated;
             this.MouseDown += this.MatchCard_MouseDown;
+            this.Loaded += MatchCard_Loaded;
+        }
+
+        private void MatchCard_Loaded(object sender, RoutedEventArgs e) {
+            var infoCard = this.Descendants<InfoCard>().FirstOrDefault();
+            if (infoCard != null && _pendingLane.HasValue) {
+                infoCard.LblLane.Text = _pendingLane.Value.ToString();
+                _pendingLane = null;
+            }
+        }
+
+        public int Lane {
+            get {
+                var infoCard = this.Descendants<InfoCard>().FirstOrDefault();
+                return infoCard?.Lane ?? this._pendingLane ?? 0;
+            }
+            set {
+                var infoCard = this.Descendants<InfoCard>().FirstOrDefault();
+                if (infoCard != null) {
+                    infoCard.LblLane.Text = value.ToString();
+                }
+                else {
+                    this._pendingLane = value;
+                }
+            }
         }
 
         private void MatchCard_MouseDown(object sender, MouseButtonEventArgs e) {
@@ -120,7 +153,18 @@ namespace Leagueinator.GUI.Controls {
                 e.TextBox.SelectAll();
             }
 
-            // TODO: Implement event logic to update the MatchRow with the new player name.
+            Debug.WriteLine($"HndUpdatePlayerText: {teamIndex}, {this.Lane}, {prev} → {after}");
+
+            var args = new MatchCardNameChangedArgs(
+                MyCustomEvent,
+                this,
+                teamIndex,
+                this.Lane,
+                prev,
+                after
+            );
+
+            this.RaiseEvent(args);
         }
 
         /// <summary>

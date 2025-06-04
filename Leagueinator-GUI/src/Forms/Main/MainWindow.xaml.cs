@@ -1,4 +1,6 @@
-﻿using System.Windows;
+﻿using Leagueinator.GUI.Controls;
+using System.Diagnostics;
+using System.Windows;
 using System.Windows.Input;
 
 namespace Leagueinator.GUI.Forms.Main {
@@ -6,14 +8,31 @@ namespace Leagueinator.GUI.Forms.Main {
     /// Interaction logic for MainWindow.xaml
     /// </summary>
     public partial class MainWindow : Window {
+        private EventData EventData { get; set; } = new();
+
         public MainWindow() {
             this.InitializeComponent();
             this.Title = "Leagueinator []";
             //this.InstantiateDragDropHnd();
+            DataButton<RoundData> button = this.AddRoundButton();
+            button.Focus();
+            this.PopulateMatchCards(button.Data!);
+
+            this.AddHandler(MatchCard.MyCustomEvent, new RoutedEventHandler(OnPlayerNameChanged));
+        }
+
+        private void OnPlayerNameChanged(object sender, RoutedEventArgs e) {
+            if (e is MatchCardNameChangedArgs args) {
+                Debug.WriteLine($"In MainWindow Lane {args.LaneIndex}, Team {args.TeamIndex}: {args.OldName} → {args.NewName}");
+            }
         }
 
         public void ClearFocus() {
             FocusManager.SetFocusedElement(this, null);
+        }
+
+        public void NewEvent() {
+
         }
 
         /// <summary>
@@ -21,22 +40,21 @@ namespace Leagueinator.GUI.Forms.Main {
         /// Clears all matchRow cards that does not have a value in "roundRow".
         /// </summary>
         /// <param name="roundRow"></param>
-        //private void PopulateMatchCards(RoundRow roundRow) {
-        //    if (this.EventRow is null) throw new NullReferenceException();
+        private void PopulateMatchCards(RoundData roundData) {
+            Debug.WriteLine($"PopulateMatchCards: {roundData.Count} matches.");
 
-        //    // Remove all match cards from panel.
-        //    while (this.MatchCardStackPanel.Children.Count > 0) {
-        //        var child = this.MatchCardStackPanel.Children[0];
-        //        this.MatchCardStackPanel.Children.Remove(child);
-        //    }
+            // Remove all match cards from panel.
+            while (this.MatchCardStackPanel.Children.Count > 0) {
+                var child = this.MatchCardStackPanel.Children[0];
+                this.MatchCardStackPanel.Children.Remove(child);
+            }
 
-        //    List<MatchRow> matchRows = [.. roundRow.Matches];
-        //    matchRows.Sort((m1, m2) => m1.Lane.CompareTo(m2.Lane));
-
-        //    foreach (MatchRow matchRow in matchRows) {
-        //        MatchCard matchCard = MatchCardFactory.GenerateMatchCard(matchRow);
-        //        this.MatchCardStackPanel.Children.Add(matchCard);
-        //    }
-        //}
+            // Add match cards for each match in roundRow.
+            foreach (MatchData matchData in roundData) {                
+                MatchCard matchCard = MatchCardFactory.GenerateMatchCard(matchData.MatchFormat);
+                matchCard.Lane = this.MatchCardStackPanel.Children.Count + 1;
+                this.MatchCardStackPanel.Children.Add(matchCard);
+            }
+        }
     }
 }

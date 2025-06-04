@@ -45,7 +45,7 @@
 
             <!-- Edit Menu -->
             <MenuItem Header="Edit">
-                <MenuItem Header="Add Empty Round" Click="HndGenEmptyRound"/>
+                <MenuItem Header="Add Round" Click="HndGenEmptyRound"/>
                 <MenuItem Header="Copy Round" Click="HndCopyRnd"/>
                 <MenuItem Header="Delete Round" Click="HndDeleteRnd"/>
                 <MenuItem Header="Add Lane" Click="HndAddMatch"/>
