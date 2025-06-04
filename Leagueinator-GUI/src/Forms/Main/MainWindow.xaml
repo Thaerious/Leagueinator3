@@ -1,0 +1,112 @@
+﻿<Window
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Leagueinator.GUI.Controls"
+        xmlns:Source="clr-namespace:Leagueinator.GUI.Forms.Main" 
+        x:Class="Leagueinator.GUI.Forms.Main.MainWindow"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="800" Width="1000" MinWidth="800"
+        KeyDown="HndKeyDownRenamePlayer"
+    >
+    
+    <Window.CommandBindings>
+        <CommandBinding Command="Save" Executed="HndSaveClick"/>
+        <CommandBinding Command="SaveAs" Executed="HndSaveAsClick"/>
+    </Window.CommandBindings>
+
+    <Window.InputBindings>
+        <KeyBinding Key="S" Modifiers="Control" Command="Save"/>
+        <KeyBinding Key="S" Modifiers="Control+Shift" Command="SaveAs"/>
+    </Window.InputBindings>
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="150"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="25"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Main Menu -->
+        <Menu Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3">
+            <!-- File Menu -->
+            <MenuItem Header="File">
+                <MenuItem Header="New" Click="HndNewClick"/>
+                <MenuItem Header="Load" Click="HndLoadClick"/>
+                <MenuItem Header="Save" Command="Save" InputGestureText="Ctrl+S"/>
+                <MenuItem Header="Save As" Command="SaveAs" InputGestureText="Ctrl+Shift+S"/>
+                <MenuItem Header="Exit" Click="HndExitClick"/>
+            </MenuItem>
+
+            <!-- Edit Menu -->
+            <MenuItem Header="Edit">
+                <MenuItem Header="Add Empty Round" Click="HndGenEmptyRound"/>
+                <MenuItem Header="Copy Round" Click="HndCopyRnd"/>
+                <MenuItem Header="Delete Round" Click="HndDeleteRnd"/>
+                <MenuItem Header="Add Lane" Click="HndAddMatch"/>
+                <MenuItem Header="Match Type">
+                    <MenuItem Header="1 vs 1" Click="HndChangeFormat" Tag="VS1"/>
+                    <MenuItem Header="2 vs 2" Click="HndChangeFormat" Tag="VS2"/>
+                    <MenuItem Header="3 vs 3" Click="HndChangeFormat" Tag="VS3"/>
+                    <MenuItem Header="4 vs 4" Click="HndChangeFormat" Tag="VS4"/>
+                    <MenuItem Header="4321" Click="HndChangeFormat" Tag="A4321"/>
+                </MenuItem>                
+            </MenuItem>
+
+            <!-- Action Menu -->
+            <MenuItem Header="Action">
+                <MenuItem Header="Generate Next Round" Click="HndGenNextRound"/>
+                <MenuItem Header="Assign Players" Click="HndAssignPlayers"/>
+                <MenuItem Header="Assign Lanes" Click="HndAssignLanes"/>
+                <MenuItem Header="Assign Matches">
+                    <MenuItem Header="Ranked Ladder" Click="HndRankedLadder"/>
+                    <MenuItem Header="Round Robin" Click="HndRoundRobin"/>
+                </MenuItem>
+            </MenuItem>
+
+            <!-- Result (Report) Menu -->
+            <MenuItem Header="View">
+                <MenuItem Header="Results By Team" Click="HndViewTeamResults"/>
+                <MenuItem Header="Results By Player" Click="HndViewPlayerResults"/>
+            </MenuItem>
+
+            <!-- Debug (Tables) Menu -->
+            <MenuItem Header="Tables" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" Click="HndMenuClick">
+                <MenuItem Header="Events" Click="HndEventsClick"/>
+                <MenuItem Header="Rounds" Click="HndRoundsClick"/>
+                <MenuItem Header="Matches" Click="HndMatchesClick"/>
+                <MenuItem Header="Teams" Click="HndTeamsClick"/>
+                <MenuItem Header="Members" Click="HndMembersClick"/>
+            </MenuItem>
+
+            <!-- Help Menu -->
+            <MenuItem Header="Help">
+                <MenuItem Header="About" Click="HndHelpAbout"/>
+            </MenuItem>
+        </Menu>
+
+        <!-- Round Buttons -->
+        <Border BorderBrush="Black" BorderThickness="2 2 1 2" Grid.Column="0" Grid.Row="1">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="40"/>
+                </Grid.RowDefinitions>
+                <StackPanel x:Name="RoundButtonContainer"/>
+            </Grid>
+        </Border>
+
+        <!-- Match Cards (Get put into CardStackPanel) -->
+        <Border BorderBrush="Black" BorderThickness="1 2 2 2" Grid.Column="2"  Grid.Row="1">
+            <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                <StackPanel x:Name="MatchCardStackPanel"/>
+            </ScrollViewer>
+        </Border>
+    </Grid>
+
+</Window>
