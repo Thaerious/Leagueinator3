@@ -45,17 +45,10 @@
 
             <!-- Edit Menu -->
             <MenuItem Header="Edit">
+                <MenuItem Header="Settings" Click="HndSettings"/>
                 <MenuItem Header="Add Round" Click="HndGenEmptyRound"/>
                 <MenuItem Header="Copy Round" Click="HndCopyRnd"/>
                 <MenuItem Header="Delete Round" Click="HndDeleteRnd"/>
-                <MenuItem Header="Add Lane" Click="HndAddMatch"/>
-                <MenuItem Header="Match Type">
-                    <MenuItem Header="1 vs 1" Click="HndChangeFormat" Tag="VS1"/>
-                    <MenuItem Header="2 vs 2" Click="HndChangeFormat" Tag="VS2"/>
-                    <MenuItem Header="3 vs 3" Click="HndChangeFormat" Tag="VS3"/>
-                    <MenuItem Header="4 vs 4" Click="HndChangeFormat" Tag="VS4"/>
-                    <MenuItem Header="4321" Click="HndChangeFormat" Tag="A4321"/>
-                </MenuItem>                
             </MenuItem>
 
             <!-- Action Menu -->
@@ -77,11 +70,7 @@
 
             <!-- Debug (Tables) Menu -->
             <MenuItem Header="Tables" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" Click="HndMenuClick">
-                <MenuItem Header="Events" Click="HndEventsClick"/>
-                <MenuItem Header="Rounds" Click="HndRoundsClick"/>
-                <MenuItem Header="Matches" Click="HndMatchesClick"/>
-                <MenuItem Header="Teams" Click="HndTeamsClick"/>
-                <MenuItem Header="Members" Click="HndMembersClick"/>
+                <MenuItem Header="Show Data" Click="HndShowDataClick"/>
             </MenuItem>
 
             <!-- Help Menu -->

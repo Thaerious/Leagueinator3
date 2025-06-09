@@ -1,7 +1,7 @@
 ﻿using Leagueinator.GUI.Controls;
 using System.Reflection;
 using System.Windows;
-
+using Leagueinator.GUI.Dialogs;
 
 namespace Leagueinator.GUI.Forms.Main {
 
@@ -9,6 +9,17 @@ namespace Leagueinator.GUI.Forms.Main {
     public partial class MainWindow : Window {
         public void HndMenuClick(object sender, RoutedEventArgs e) {
             this.ClearFocus();
+        }
+
+        public void HndSettings(object sender, RoutedEventArgs e) {
+            this.ClearFocus();
+            SettingsDialog settingsDialog = new (this.EventData);
+            settingsDialog.Owner = this;
+            settingsDialog.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+
+            if (settingsDialog.ShowDialog() == true) {
+                this.EventData = settingsDialog.EventData;
+            }
         }
 
         private void HndChangeFormat(object sender, EventArgs e) {
@@ -151,10 +162,9 @@ namespace Leagueinator.GUI.Forms.Main {
 
         private void HndCopyRnd(object sender, RoutedEventArgs e) {
             this.ClearFocus();
-
-            //RoundRow nextRound = new CopyRound().GenerateRound(this.CurrentRoundRow);
-            //this.AddRoundButton(nextRound);
-            //this.InvokeRoundButton();
+            RoundData currentData = this.RoundData;
+            RoundData newData = this.AddRoundButton(currentData.Copy()).Data!;
+            this.InvokeRoundButton();
         }
 
         private void HndAssignLanes(object sender, RoutedEventArgs args) {
@@ -206,11 +216,9 @@ namespace Leagueinator.GUI.Forms.Main {
             //new TableViewer().Show(this.League.EventTable);
         }
 
-        private void HndRoundsClick(object sender, RoutedEventArgs e) {
+        private void HndShowDataClick(object sender, RoutedEventArgs e) {
             this.ClearFocus();
-            //if (this.League is null) return;
-
-            //new TableViewer().Show(this.League.RoundTable);
+            new TableViewer().Show(this.RoundData);
         }
 
         private void HndMatchesClick(object sender, RoutedEventArgs e) {

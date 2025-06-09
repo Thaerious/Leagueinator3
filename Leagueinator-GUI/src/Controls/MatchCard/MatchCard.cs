@@ -7,47 +7,90 @@ using static Leagueinator.GUI.Controls.MemoryTextBox;
 using System.Diagnostics;
 
 namespace Leagueinator.GUI.Controls {
-    public class MatchCardFormatArgs(RoutedEvent routedEvent, MatchCard matchCard, MatchFormat matchFormat) : RoutedEventArgs(routedEvent) {
-        public readonly MatchCard MatchCard = matchCard;
-        public readonly MatchFormat MatchFormat = matchFormat;
-    }
 
-    public abstract class MatchCard : UserControl {
+    public abstract partial class MatchCard : UserControl {
         private int? _pendingLane = null;
-
-        public static readonly RoutedEvent MyCustomEvent = EventManager.RegisterRoutedEvent(
-            "MyCustom",                  // Event name
-            RoutingStrategy.Bubble,      // Bubble, Tunnel, or Direct
-            typeof(RoutedEventHandler),  // Delegate type
-            typeof(MatchCard)            // Owner type
-        );
+        private int? _pendingEnds = null;
+        private int _lastCheckedTeamIndex = -1;
 
         public MatchCard() {
             this.AddHandler(RegisteredUpdateEvent, new MemoryEventHandler(this.HndUpdatePlayerText));
             this.MouseDown += this.MatchCard_MouseDown;
-            this.Loaded += MatchCard_Loaded;
+            this.Loaded += MatchCard_Loaded;               
+        }
+
+        internal void SetTieBreaker(int teamIndex) {
+            Debug.WriteLine($"Setting TieBreaker for MatchCard {this.Lane} to team index {teamIndex}.");
+            foreach (CheckBox cb in this.FindByTag("CheckTie").Cast<CheckBox>()) {
+                var teamIndexForCB = cb.Ancestors<TeamCard>().FirstOrDefault()?.TeamIndex;
+                if (teamIndexForCB == teamIndex) {
+                    cb.IsChecked = true;
+                }
+                else {
+                    cb.IsChecked = false;
+                }
+            }
         }
 
         private void MatchCard_Loaded(object sender, RoutedEventArgs e) {
-            var infoCard = this.Descendants<InfoCard>().FirstOrDefault();
-            if (infoCard != null && _pendingLane.HasValue) {
+            InfoCard infoCard = this.Descendants<InfoCard>().FirstOrDefault() ?? throw new NullReferenceException("InfoCard not found in MatchCard.");
+
+            if (_pendingLane.HasValue) {
                 infoCard.LblLane.Text = _pendingLane.Value.ToString();
                 _pendingLane = null;
+            }
+
+            if (_pendingEnds.HasValue) {
+                infoCard.TxtEnds.Text = _pendingEnds.Value.ToString();
+                _pendingEnds = null;
+            }
+
+            infoCard.TxtEnds.TextChanged += (s, args) => {
+                // TODO Restrict to numbers only.
+                var ends = int.Parse(infoCard.TxtEnds.Text);
+                this.InvokeEvent("Ends", ends, ends, null);
+            };
+
+            foreach (TextBox textBox in this.FindByTag("Bowls").Cast<TextBox>()) {
+                textBox.TextChanged += (s, args) => {
+                    // TODO Restrict to numbers only.
+                    // TODO This can be put directly on the TextBox in XAML.
+                    int teamIndex = textBox.Ancestors<TeamCard>().First().TeamIndex;
+                    var textBoxValue = int.Parse(textBox.Text);
+                    this.InvokeEvent("Bowls", textBoxValue, textBoxValue, teamIndex);
+                };
+            }
+        }
+
+        public int Ends {
+            get {
+                var infoCard = this.Descendants<InfoCard>().FirstOrDefault();
+                return infoCard?.Lane ?? this._pendingEnds ?? 0;
+            }
+            set {
+                var infoCard = this.Descendants<InfoCard>().FirstOrDefault();
+                if (infoCard != null) {
+                    infoCard.TxtEnds.Text = value.ToString();
+                }
+                else {
+                    this._pendingEnds = value;
+                }
             }
         }
 
         public int Lane {
             get {
                 var infoCard = this.Descendants<InfoCard>().FirstOrDefault();
-                return infoCard?.Lane ?? this._pendingLane ?? 0;
+                return infoCard?.Lane ?? this._pendingLane ?? -1;
             }
             set {
                 var infoCard = this.Descendants<InfoCard>().FirstOrDefault();
+
                 if (infoCard != null) {
-                    infoCard.LblLane.Text = value.ToString();
+                    infoCard.Lane = value + 1;
                 }
                 else {
-                    this._pendingLane = value;
+                    this._pendingLane = value + 1;
                 }
             }
         }
@@ -56,15 +99,6 @@ namespace Leagueinator.GUI.Controls {
             var infoCard = this.Descendants<InfoCard>().First();
             var textBlock = infoCard.Descendants<TextBlock>().Where(tb => tb.Name == "LblLane").First();
         }
-
-        public delegate void FormatChangedEventHandler(object sender, MatchCardFormatArgs e);
-
-        public static readonly RoutedEvent RegisteredFormatChangedEvent = EventManager.RegisterRoutedEvent(
-            "FormatChanged",                      // Event name
-            RoutingStrategy.Bubble,               // Routing strategy (Bubble, Tunnel, or Direct)
-            typeof(FormatChangedEventHandler),    // Delegate type
-            typeof(MatchCard)                     // Owner type
-        );
 
         // Force update the binding source when Enter is pressed
         protected void TxtEnterPressedHnd(object sender, KeyEventArgs e) {
@@ -78,15 +112,6 @@ namespace Leagueinator.GUI.Controls {
                     textBox.MoveFocus(request);
                 }
             }
-        }
-
-        /// <summary>
-        /// Handlers for when the MatchFormat changes.
-        /// The change occurs in the context menu.
-        /// </summary>
-        public event FormatChangedEventHandler FormatChanged {
-            add { this.AddHandler(RegisteredFormatChangedEvent, value); }
-            remove { this.RemoveHandler(RegisteredFormatChangedEvent, value); }
         }
 
         public TeamCard? GetTeamCard(int teamIndex) {
@@ -152,23 +177,12 @@ namespace Leagueinator.GUI.Controls {
                 }
                 e.TextBox.SelectAll();
             }
-
-            Debug.WriteLine($"HndUpdatePlayerText: {teamIndex}, {this.Lane}, {prev} → {after}");
-
-            var args = new MatchCardNameChangedArgs(
-                MyCustomEvent,
-                this,
-                teamIndex,
-                this.Lane,
-                prev,
-                after
-            );
-
-            this.RaiseEvent(args);
+  
+            this.InvokeEvent("Name", prev, after, teamIndex);
         }
 
         /// <summary>
-        /// Invoked when a tie checkbox matchRow changes.
+        /// Invoked when a tie checkBox matchRow changes.
         /// Will uncheck the other tie check box on this match card.
         /// Updates the underlying TeamRow matchRow for tie.
         /// </summary>
@@ -180,7 +194,7 @@ namespace Leagueinator.GUI.Controls {
             CheckBox checkTie0 = this.FindName("CheckTie0") as CheckBox ?? throw new NullReferenceException();
             CheckBox checkTie1 = this.FindName("CheckTie1") as CheckBox ?? throw new NullReferenceException();
 
-            // Uncheck the opposite checkbox.
+            // Uncheck the opposite checkBox.
             if (checkBox.IsChecked == true && checkBox == checkTie0) {
                 checkTie1.IsChecked = false;
             }
@@ -188,21 +202,29 @@ namespace Leagueinator.GUI.Controls {
                 checkTie0.IsChecked = false;
             }
 
-            // Set model matchRow according To which box is checked.            
+            int newCheckedTeamIndex = -1;
+
             if (checkTie0.IsChecked == true && checkTie1.IsChecked == false) {
-                //this.MatchRow.Teams[0]!.Tie = true;
-                //this.MatchRow.Teams[1]!.Tie = false;
+                newCheckedTeamIndex = 0;
             }
             else if (checkTie0.IsChecked == false && checkTie1.IsChecked == true) {
-                //this.MatchRow.Teams[0]!.Tie = false;
-                //this.MatchRow.Teams[1]!.Tie = true;
+                newCheckedTeamIndex = 1;
             }
             else {
-                //this.MatchRow.Teams[0]!.Tie = false;
-                //this.MatchRow.Teams[1]!.Tie = false;
+                newCheckedTeamIndex = -1;
             }
+
+            int lastCheckedTeamIndex = _lastCheckedTeamIndex;
+            this._lastCheckedTeamIndex = newCheckedTeamIndex;
+            this.InvokeEvent("Tie", lastCheckedTeamIndex, newCheckedTeamIndex, null);
         }
 
-        new private bool IsLoaded = false;
+        public void OnlyNumbers(object sender, TextCompositionEventArgs e) {
+            e.Handled = !IsTextNumeric(e.Text);
+        }
+
+        private bool IsTextNumeric(string text) {
+            return text.All(char.IsDigit);
+        }
     }
 }

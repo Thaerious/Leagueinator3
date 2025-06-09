@@ -1,6 +1,7 @@
 ﻿using Leagueinator.GUI.Utility.Extensions;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using static Leagueinator.GUI.Controls.DragDropDelegates;
 
 
@@ -48,6 +49,14 @@ namespace Leagueinator.GUI.Controls {
                     textBox.DragEnter += controller.HndDragEnter;
                     textBox.PreviewDragOver += controller.HndPreviewDragOver;
                 });
+        }
+
+        public void OnlyNumbers(object sender, TextCompositionEventArgs e) {
+            e.Handled = !IsTextNumeric(e.Text);
+        }
+
+        private bool IsTextNumeric(string text) {
+            return text.All(char.IsDigit);
         }
     }
 }

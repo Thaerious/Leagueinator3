@@ -1,8 +1,6 @@
 ﻿using Leagueinator.GUI.Controls;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Media;
-using MatchCardV1 = Leagueinator.GUI.Controls.MatchCardV1;
 
 namespace Leagueinator.GUI.Forms.Main {
     public partial class MainWindow : Window {
@@ -37,11 +35,13 @@ namespace Leagueinator.GUI.Forms.Main {
         /// </summary>
         /// <param name="roundRow">The associated roundRow</param>
         /// <returns></returns>
-        private DataButton<RoundData> AddRoundButton() {
+        private DataButton<RoundData> AddRoundButton(RoundData? source = null) {
+            source = source ?? new RoundData(this.EventData.MatchFormat, this.EventData.LaneCount, this.EventData.DefaultEnds);
+
             DataButton<RoundData> button = new() {
                 Content = $"Round {this.RoundButtonContainer.Children.Count + 1}",
                 Margin = new Thickness(3),
-                Data = new RoundData(this.EventData.MatchFormat, this.EventData.LaneCount)
+                Data = source
             };
 
             this.RoundButtonContainer.Children.Add(button);
@@ -70,12 +70,13 @@ namespace Leagueinator.GUI.Forms.Main {
             this.CurrentRoundButton = button;
             button.Background = Brushes.LightCyan;
 
-            // TODO: Implement round selection event.
+            this.PopulateMatchCards();
         }
 
         private void InvokeRoundButton(DataButton<RoundData>? button = null) {
             button ??= (DataButton<RoundData>)this.RoundButtonContainer.Children[^1];
-            this.PopulateMatchCards(button.Data!);
+            this.CurrentRoundButton = button;
+            this.PopulateMatchCards();
         }
     }
 }

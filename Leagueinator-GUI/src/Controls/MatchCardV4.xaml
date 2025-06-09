@@ -53,15 +53,17 @@
                     <!-- Team 1 Bowls  -->
                     <StackPanel VerticalAlignment="Center" Grid.Column="1" Margin="10">
                         <TextBlock HorizontalAlignment="Center" Text="Tie" FontFamily="Arial Black" FontSize="10" Margin="0,0,0,3"/>
-                        <CheckBox x:Name="CheckTie0" Tag="CheckTie" IsChecked="{Binding Tie}"
+                        <CheckBox x:Name="CheckTie0" Tag="CheckTie" IsChecked="false"
                                   Margin="0,0,0,10" HorizontalAlignment="Center" VerticalAlignment="Center" 
                                   RenderTransformOrigin="0.548,-0.431"  
                                   Unchecked="HndTieValueChanged" Checked="HndTieValueChanged"/>
-                        <TextBox x:Name="TxtBowls0" 
+                        <TextBox x:Name="TxtBowls0" Tag="Bowls"
                                  Padding="2" Width="30" 
-                                 Text="{Binding Bowls}" TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center"                                 
+                                 PreviewTextInput="OnlyNumbers"
+                                 Text="{Binding Bowls, RelativeSource={RelativeSource AncestorType=local:TeamCard}}"
+                                 TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center"                                 
                                  KeyDown="TxtEnterPressedHnd"
-                                 TabIndex="9" Tag="Bowls"/>
+                                 TabIndex="9"/>
                         <TextBlock HorizontalAlignment="Center" Text="Bowls" FontFamily="Arial Black" FontSize="10" Margin="0,3,0,0"/>
                     </StackPanel>
                 </Grid>
@@ -85,15 +87,17 @@
                     <!-- Team 2 Bowls -->
                     <StackPanel VerticalAlignment="Center" Grid.Column="0" Margin="10">
                         <TextBlock HorizontalAlignment="Center" Text="Tie" FontFamily="Arial Black" FontSize="10" Margin="0,0,0,3"/>
-                        <CheckBox x:Name="CheckTie1" Tag="CheckTie" IsChecked="{Binding Tie}" 
+                        <CheckBox x:Name="CheckTie1" Tag="CheckTie" IsChecked="false" 
                                   Margin="0,0,0,10" HorizontalAlignment="Center" VerticalAlignment="Center" 
                                   RenderTransformOrigin="0.548,-0.431"  
                                   Unchecked="HndTieValueChanged" Checked="HndTieValueChanged"/>
-                        <TextBox x:Name="TxtBowls1" 
+                        <TextBox x:Name="TxtBowls1" Tag="Bowls"                                 
                                  Padding="2" Width="30" 
-                                 Text="{Binding Bowls}" TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center"                                 
+                                 PreviewTextInput="OnlyNumbers"
+                                 Text="{Binding Bowls, RelativeSource={RelativeSource AncestorType=local:TeamCard}}"
+                                 TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center"                                 
                                  KeyDown="TxtEnterPressedHnd"
-                                 TabIndex="10" Tag="Bowls"/>
+                                 TabIndex="10"/>
                         <TextBlock HorizontalAlignment="Center" Text="Bowls" Margin="0,3,0,0" FontFamily="Arial Black" FontSize="10"/>
                     </StackPanel>
 

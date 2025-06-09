@@ -4,6 +4,17 @@ using System.Windows.Media;
 namespace Leagueinator.GUI.Utility.Extensions {
     public static class ControlExtensions {
 
+        public static IEnumerable<FrameworkElement> FindByTag(this DependencyObject root, object tag) {
+            for (int i = 0; i < VisualTreeHelper.GetChildrenCount(root); i++) {
+                var child = VisualTreeHelper.GetChild(root, i);
+                if (child is FrameworkElement fe && Equals(fe.Tag, tag))
+                    yield return fe;
+
+                foreach (var match in FindByTag(child, tag))
+                    yield return match;
+            }
+        }
+
         public static bool HasTag(this FrameworkElement source, string tag) {
             if (source is null) return false;
             if (source.Tag is null) return false;

@@ -36,7 +36,10 @@
                 <StackPanel VerticalAlignment="Center" Margin="10 10 10 10">
                     <local:MemoryTextBox Tag="PlayerName"  Padding="2" />
                     <TextBlock HorizontalAlignment="Center" Text="Score" FontFamily="Arial Black" FontSize="10" Margin="0,3,0,0"/>
-                    <TextBox Padding="2" Text="{Binding Bowls}" Width="30" TextAlignment="Center" Tag="Bowls"/>
+                    <TextBox Padding="2" Width="30" TextAlignment="Center" Tag="Bowls"
+                             PreviewTextInput="OnlyNumbers"
+                             Text="{Binding Bowls, RelativeSource={RelativeSource AncestorType=local:TeamCard}}"
+                             />
                 </StackPanel>
             </local:TeamCard>
 
@@ -47,7 +50,10 @@
                 <StackPanel VerticalAlignment="Center" Margin="10 10 10 10">
                     <local:MemoryTextBox Tag="PlayerName"  Padding="2" />
                     <TextBlock HorizontalAlignment="Center" Text="Score" FontFamily="Arial Black" FontSize="10" Margin="0,3,0,0"/>
-                    <TextBox Padding="2" Text="{Binding Bowls}" Width="30" TextAlignment="Center" Tag="Bowls"/>
+                    <TextBox Padding="2" Width="30" TextAlignment="Center" Tag="Bowls"
+                             PreviewTextInput="OnlyNumbers"
+                             Text="{Binding Bowls, RelativeSource={RelativeSource AncestorType=local:TeamCard}}"
+                             />
                 </StackPanel>
             </local:TeamCard>
 
@@ -61,7 +67,10 @@
                 <StackPanel VerticalAlignment="Center" Margin="10 10 10 10">
                     <local:MemoryTextBox Tag="PlayerName"  Padding="2" />
                     <TextBlock HorizontalAlignment="Center" Text="Score" FontFamily="Arial Black" FontSize="10" Margin="0,3,0,0"/>
-                    <TextBox Padding="2" Text="{Binding Bowls}" Width="30" TextAlignment="Center" Tag="Bowls"/>
+                    <TextBox Padding="2" Width="30" TextAlignment="Center" Tag="Bowls"
+                             PreviewTextInput="OnlyNumbers"
+                             Text="{Binding Bowls, RelativeSource={RelativeSource AncestorType=local:TeamCard}}"
+                             />
                 </StackPanel>
             </local:TeamCard>
 
@@ -72,7 +81,10 @@
                 <StackPanel VerticalAlignment="Center" Margin="10 10 10 10">
                     <local:MemoryTextBox Tag="PlayerName"  Padding="2" />
                     <TextBlock HorizontalAlignment="Center" Text="Score" FontFamily="Arial Black" FontSize="10" Margin="0,3,0,0"/>
-                    <TextBox Padding="2" Text="{Binding Bowls}" Width="30" TextAlignment="Center" Tag="Bowls"/>
+                    <TextBox Padding="2" Width="30" TextAlignment="Center" Tag="Bowls"
+                             PreviewTextInput="OnlyNumbers"
+                             Text="{Binding Bowls, RelativeSource={RelativeSource AncestorType=local:TeamCard}}"
+                             />
                 </StackPanel>
             </local:TeamCard>
         </Grid>

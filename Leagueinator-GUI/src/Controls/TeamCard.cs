@@ -1,4 +1,5 @@
 ﻿using Leagueinator.GUI.Utility.Extensions;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Xml.Linq;
@@ -24,6 +25,13 @@ namespace Leagueinator.GUI.Controls {
 
         public static readonly DependencyProperty TeamIndexProperty = DependencyProperty.Register(
             "TeamIndex",
+            typeof(int),
+            typeof(TeamCard),
+            new PropertyMetadata(default(int))
+        );
+
+        public static readonly DependencyProperty TeamBowlsPropery = DependencyProperty.Register(
+            "Bowls",
             typeof(int),
             typeof(TeamCard),
             new PropertyMetadata(default(int))
@@ -62,6 +70,13 @@ namespace Leagueinator.GUI.Controls {
             set { this.SetValue(TeamIndexProperty, value); }
         }
 
+        public int Bowls {
+            get { return (int)this.GetValue(TeamBowlsPropery); }
+            set { 
+                this.SetValue(TeamBowlsPropery, value); 
+            }
+        }  
+
         /// <summary>
         /// Determines whether any <see cref="MemoryTextBox"/> within the current object
         /// contains the specified name as its text.
@@ -95,6 +110,7 @@ namespace Leagueinator.GUI.Controls {
         /// If no such text box is available, an <see cref="InvalidOperationException"/> is thrown.
         /// </remarks>
         public void AddName(string name) {
+            Debug.WriteLine($"Adding name '{name}' to TeamCard {this.TeamIndex}");
             if (this.HasName(name)) return;
 
             var first = this.Descendants<MemoryTextBox>()
