@@ -46,18 +46,16 @@ namespace Leagueinator.GUI.Controls {
             }
 
             infoCard.TxtEnds.TextChanged += (s, args) => {
-                // TODO Restrict to numbers only.
                 var ends = int.Parse(infoCard.TxtEnds.Text);
-                this.InvokeEvent("Ends", ends, ends, null);
+                this.InvokeEvent("Ends", ends);
             };
 
             foreach (TextBox textBox in this.FindByTag("Bowls").Cast<TextBox>()) {
                 textBox.TextChanged += (s, args) => {
-                    // TODO Restrict to numbers only.
                     // TODO This can be put directly on the TextBox in XAML.
                     int teamIndex = textBox.Ancestors<TeamCard>().First().TeamIndex;
                     var textBoxValue = int.Parse(textBox.Text);
-                    this.InvokeEvent("Bowls", textBoxValue, textBoxValue, teamIndex);
+                    this.InvokeEvent("Bowls", textBoxValue, teamIndex);
                 };
             }
         }
@@ -127,7 +125,7 @@ namespace Leagueinator.GUI.Controls {
         /// <param name="sender"></param>
         /// <param name="e"></param>
         public void HndRemoveMatch(object _, RoutedEventArgs __) {
-            // TODO: Implement match removal logic.
+            this.InvokeEvent("Remove");
         }
 
         /// <summary>
@@ -145,8 +143,8 @@ namespace Leagueinator.GUI.Controls {
 
             bool success = Enum.TryParse(customData, out MatchFormat matchFormat);
             if (!success) throw new ArgumentException("Error on tag on context menu item");
-
-            // TODL: Raise the format changed event with the new match format.
+            
+            this.InvokeEvent("Format", matchFormat);
         }
 
         /// <summary>
@@ -159,6 +157,12 @@ namespace Leagueinator.GUI.Controls {
             string prev = e.Before?.Trim() ?? "";
             string after = e.After?.Trim() ?? "";
             int teamIndex = e.TextBox.Ancestors<TeamCard>().First().TeamIndex;
+
+            if (sender is not MemoryTextBox textBox) {
+                throw new NullReferenceException($"Sender is not a MemoryTextBox, it is of type {sender.GetType()}.");
+            }
+            var parent = (StackPanel)textBox.Parent ?? throw new NullReferenceException("Parent is not a StackPanel.");
+            int position = parent.Children.IndexOf(textBox);
 
             // If there is no change, focus next component and terminate.
             if (after == prev) {
@@ -178,7 +182,7 @@ namespace Leagueinator.GUI.Controls {
                 e.TextBox.SelectAll();
             }
   
-            this.InvokeEvent("Name", prev, after, teamIndex);
+            this.InvokeEvent("Name", prev, after, teamIndex, position);
         }
 
         /// <summary>
@@ -216,7 +220,7 @@ namespace Leagueinator.GUI.Controls {
 
             int lastCheckedTeamIndex = _lastCheckedTeamIndex;
             this._lastCheckedTeamIndex = newCheckedTeamIndex;
-            this.InvokeEvent("Tie", lastCheckedTeamIndex, newCheckedTeamIndex, null);
+            this.InvokeEvent("Tie", lastCheckedTeamIndex, newCheckedTeamIndex);
         }
 
         public void OnlyNumbers(object sender, TextCompositionEventArgs e) {

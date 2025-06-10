@@ -1,4 +1,5 @@
 ﻿using Leagueinator.GUI.Controls;
+using Leagueinator.GUI.Utility;
 using Leagueinator.GUI.Utility.Extensions;
 using System.Diagnostics;
 using System.Windows;
@@ -43,46 +44,37 @@ namespace Leagueinator.GUI.Forms.Main {
         }
 
         private void OnMatchCardUpdate(object sender, RoutedEventArgs e) {
-            if (e is not MatchCardUpdateArgs args) return;
-            if (args.Source is not MatchCard matchCard) return;
-
-            if (args.Lane < 0 || args.Lane >= this.RoundData.Count) {
-                throw new ArgumentOutOfRangeException(nameof(args.Lane), "Lane index is out of range.");
-            }
+            if (e is not MatchCardEventArgs args) return;
 
             switch (args.Field) {
                 case "Name":
-                    if (args.Team is null) throw new ArgumentException("Team index must be provided for player name changes.");
-                    this.OnPlayerNameChanged(args.Lane, (int)args.Team, (string)args.OldValue, (string)args.NewValue);
+                    if (e is not MatchCardNewArgs nameArgs) return;
+                    if (nameArgs.Team is null) throw new ArgumentException("Team index must be provided for player name changes.");
+                    if (nameArgs.Position is null) throw new ArgumentException("Position must be provided for player name changes.");
+                    this.RoundData.SetPlayer((string)nameArgs.NewValue, args.Lane, (int)nameArgs.Team, (int)nameArgs.Position);
                     break;
                 case "Ends":
-                    this.RoundData[args.Lane].Ends = (int)args.NewValue;
+                    if (e is not MatchCardNewArgs endsArgs) return;
+                    this.RoundData[endsArgs.Lane].Ends = (int)endsArgs.NewValue;
                     break;
                 case "Tie":
-                    this.RoundData[args.Lane].TieBreaker = (int)args.NewValue;
+                    if (e is not MatchCardUpdateArgs tieArgs) return;
+                    this.RoundData[tieArgs.Lane].TieBreaker = (int)tieArgs.NewValue;
                     break;
                 case "Bowls":
-                    if (args.Team is null) throw new ArgumentException("Team index must be provided for bowls changes.");
-                    this.RoundData[args.Lane].Score[(int)args.Team] = (int)args.NewValue;
+                    if (e is not MatchCardNewArgs bowlsArgs) return;
+                    if (bowlsArgs.Team is null) throw new ArgumentException("Team index must be provided for bowls changes.");
+                    this.RoundData[bowlsArgs.Lane].Score[(int)bowlsArgs.Team] = (int)bowlsArgs.NewValue;
                     break;
-            }
-        }
-
-        private void OnPlayerNameChanged(int lane, int team, string oldName, string newName) {
-            var index = lane;
-
-            if (oldName == "") {
-                // Add new player with newName to the match data.
-                PlayerData player = new(newName, team);
-                this.RoundData[index].Players.Add(player);
-            }
-            else if (newName == "") {
-                // Remove player with oldName from the match data.
-                this.RoundData[index].Players.RemoveAll(p => p.Name == oldName);
-            }
-            else {
-                // Replace oldName with newName in the match data.
-                this.RoundData[index].Replace(oldName, newName);
+                case "Format":
+                    if (e is not MatchCardNewArgs formatArgs) return;
+                    this.RoundData[args.Lane].MatchFormat = (MatchFormat)formatArgs.NewValue;
+                    this.PopulateMatchCards();
+                    break;
+                case "Remove":
+                    this.RoundData.RemoveAt(args.Lane);
+                    this.PopulateMatchCards();
+                    break;
             }
         }
 
@@ -120,7 +112,7 @@ namespace Leagueinator.GUI.Forms.Main {
             // Update data by removing empty lanes until the number of lanes matches the event data's lane count.
             for (int i = roundData.Count - 1; i >= 0; i--) {
                 if (roundData.Count <= this.EventData.LaneCount) break;
-                if (roundData[i].Players.Count != 0) continue;
+                if (roundData[i].CountPlayers() != 0) continue;
                 roundData.RemoveAt(i);
             }
 
@@ -144,7 +136,7 @@ namespace Leagueinator.GUI.Forms.Main {
 
             // Ensure all empty match data has the same match format as the event.
             foreach (MatchData matchData in roundData) {
-                if (matchData.Players.Count != 0) continue;
+                if (matchData.CountPlayers() != 0) continue;
                 matchData.MatchFormat = this.EventData.MatchFormat;
             }
         }
@@ -164,9 +156,11 @@ namespace Leagueinator.GUI.Forms.Main {
                 this.MatchCardStackPanel.Children.Add(matchCard);
 
                 matchCard.Loaded += (s, e) => {
-                    foreach (PlayerData player in matchData.Players) {
-                        TeamCard teamCard = matchCard.GetTeamCard(player.Team)!;
-                        teamCard.AddName(player.Name);
+                    for (int team = 0; team < matchData.Players.Length; team++) {
+                        for (int position = 0; position < matchData.Players[team].Length; position++) {
+                            TeamCard teamCard = matchCard.GetTeamCard(team)!;
+                            teamCard.SetName(RoundData[matchData.Lane].Players[team][position], position);
+                        }                       
                     }
 
                     for (int i = 0; i < matchData.Score.Length; i++) {

@@ -97,28 +97,9 @@ namespace Leagueinator.GUI.Controls {
                        .Any();
         }
 
-        /// <summary>
-        /// Sets the text of the first available <see cref="MemoryTextBox"/> To name.
-        /// </summary>
-        /// <param name="name">The name To add To a <see cref="MemoryTextBox"/> control.</param>
-        /// <exception cref="InvalidOperationException">
-        /// Thrown if there are no available <see cref="MemoryTextBox"/> controls with empty text To add the name.
-        /// </exception>
-        /// <remarks>
-        /// If the specified name is already present in any <see cref="MemoryTextBox"/>, the method returns without making any changes.
-        /// Otherwise, it assigns the name To the first <see cref="MemoryTextBox"/> that has empty text. 
-        /// If no such text box is available, an <see cref="InvalidOperationException"/> is thrown.
-        /// </remarks>
-        public void AddName(string name) {
-            Debug.WriteLine($"Adding name '{name}' to TeamCard {this.TeamIndex}");
-            if (this.HasName(name)) return;
-
-            var first = this.Descendants<MemoryTextBox>()
-                .Where(textBox => textBox.HasTag("PlayerName"))
-                .FirstOrDefault(textBox => textBox.Text.IsEmpty())
-                ?? throw new InvalidOperationException("No available text boxes.");
-
-            first.Text = name;
+        public void SetName(string name, int position) {
+            MemoryTextBox[] boxes = this.FindByTag("PlayerName").OfType<MemoryTextBox>().ToArray();
+            boxes[position].Text = name;
         }
 
         /// <summary>
