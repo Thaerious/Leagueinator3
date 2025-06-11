@@ -1,5 +1,6 @@
 ﻿using Leagueinator.GUI.Controls;
 using Leagueinator.GUI.Dialogs;
+using System.Windows.Controls;
 using System.Windows.Input;
 
 namespace Leagueinator.GUI.Forms.Main {
@@ -12,7 +13,7 @@ namespace Leagueinator.GUI.Forms.Main {
         /// <param name="e"></param>
         private void HndKeyDownRenamePlayer(object sender, KeyEventArgs e) {
             if (e.Key != Key.F2) return;
-            if (Keyboard.FocusedElement is not MemoryTextBox textBox) return;
+            if (Keyboard.FocusedElement is not TextBox textBox) return;
 
             this.ClearFocus();
             string oldName = textBox.Text;

@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System.Diagnostics;
+using System.Windows;
 using System.Windows.Controls;
 
 namespace Leagueinator.GUI.Controls {
@@ -32,29 +33,29 @@ namespace Leagueinator.GUI.Controls {
 
         public delegate void MatchCardUpdateHnd(object sender, MatchCardUpdateArgs e);
 
-        public void InvokeEvent(string field, int? teamIndex = default, int? position = default) {
+        public void InvokeEvent(string field, int? team = default, int? pos = default) {
             var args = new MatchCardEventArgs(this, field) {
-                Team = teamIndex,
-                Position = position,
-                Lane = this.Lane - 1 // Lane is 1-based index for display, convert to 0-based index for internal use
+                Team = team,
+                Position = pos,
+                Lane = this.Lane
             };
             this.RaiseEvent(args);
         }
 
-        public void InvokeEvent(string field, object newValue, int? teamIndex = default, int? position = default) {
-            var args = new MatchCardNewArgs(this, field, newValue) {
-                Team = teamIndex,
-                Position = position,
-                Lane = this.Lane - 1 // Lane is 1-based index for display, convert to 0-based index for internal use
+        public void InvokeEvent(string field, object value, int? team = default, int? pos = default) {
+            var args = new MatchCardNewArgs(this, field, value) {
+                Team = team,
+                Position = pos,
+                Lane = this.Lane
             };
             this.RaiseEvent(args);
         }
 
-        public void InvokeEvent(string field, object oldValue, object newValue, int? teamIndex = null, int? position = default) {
-            var args = new MatchCardUpdateArgs(this, field, oldValue, newValue) {
-                Team = teamIndex,
-                Position = position,
-                Lane = this.Lane - 1 // Lane is 1-based index for display, convert to 0-based index for internal use
+        public void InvokeEvent(string field, object old, object value, int? team = null, int? pos = default) {
+            var args = new MatchCardUpdateArgs(this, field, old, value) {
+                Team = team,
+                Position = pos,
+                Lane = this.Lane
             };
             this.RaiseEvent(args);
         }

@@ -1,40 +1,31 @@
-﻿using Leagueinator.GUI.Controls;
+﻿using Leagueinator.GUI.Model;
 using System.Reflection;
 using System.Windows;
 using Leagueinator.GUI.Dialogs;
+using System.Windows.Controls;
 
 namespace Leagueinator.GUI.Forms.Main {
 
     [System.Runtime.Versioning.SupportedOSPlatform("windows")] // get rid of CA1416 warning
     public partial class MainWindow : Window {
+
+        public event EventHandler<EventData>? OnEventData;
+
         public void HndMenuClick(object sender, RoutedEventArgs e) {
             this.ClearFocus();
         }
 
         public void HndSettings(object sender, RoutedEventArgs e) {
             this.ClearFocus();
-            SettingsDialog settingsDialog = new (this.EventData);
-            settingsDialog.Owner = this;
-            settingsDialog.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+            SettingsDialog settingsDialog = new(this.EventData) {
+                Owner = this,
+                WindowStartupLocation = WindowStartupLocation.CenterOwner
+            };
 
             if (settingsDialog.ShowDialog() == true) {
                 this.EventData = settingsDialog.EventData;
+                this.OnEventData?.Invoke(this, settingsDialog.EventData);
             }
-        }
-
-        private void HndChangeFormat(object sender, EventArgs e) {
-            this.ClearFocus();
-            //if (sender is not MenuItem menuItem) return;
-
-            //if (menuItem.Tag is null) return;  // tag is null during initialization
-            //if (menuItem.Tag is not string customData) throw new NullReferenceException("Missing tag on context menu item");
-
-            //bool success = Enum.TryParse(customData, out MatchFormat matchFormat);
-            //if (!success) throw new ArgumentException("Error on tag on context menu item");
-
-            //foreach (MatchRow matchRow in this.CurrentRoundRow.Matches) {
-            //    matchRow.MatchFormat = matchFormat;
-            //}
         }
 
         /// <summary>
@@ -46,6 +37,8 @@ namespace Leagueinator.GUI.Forms.Main {
             this.ClearFocus();
 
             // Remove the UI button and the model round.
+            var index = this.RoundButtonContainer.Children.IndexOf(this.CurrentRoundButton);
+            this.InvokeRoundEvent("Remove", index);
             this.RoundButtonContainer.Children.Remove(this.CurrentRoundButton);
 
             // Make sure there is at least one button and select the last one.
@@ -54,11 +47,11 @@ namespace Leagueinator.GUI.Forms.Main {
             }
 
             // If there are buttons left, select the last one.
-            this.InvokeRoundButton();
+            this.CurrentRoundButton = (Button)this.RoundButtonContainer.Children[^1];
 
             // Rename buttons
             int i = 1;
-            foreach (DataButton<RoundData> button in this.RoundButtonContainer.Children) {
+            foreach (Button button in this.RoundButtonContainer.Children) {
                 button.Content = $"Round {i++}";
             }
         }
@@ -66,19 +59,23 @@ namespace Leagueinator.GUI.Forms.Main {
         private void HndNewClick(object sender, RoutedEventArgs e) {
             this.ClearFocus();
 
-            //if (!this.IsSaved) {
-            //    ConfirmationDialog confDialog = new() {
-            //        Owner = this,
-            //        WindowStartupLocation = WindowStartupLocation.CenterOwner,
-            //        Text = "League not saved. Do you still want to create a new one?"
-            //    };
+            if (!this.IsSaved) {
+                ConfirmationDialog confDialog = new() {
+                    Owner = this,
+                    WindowStartupLocation = WindowStartupLocation.CenterOwner,
+                    Text = "League not saved. Do you still want to create a new one?"
+                };
 
-            //    if (confDialog.ShowDialog() == false) return;
-            //}
+                if (confDialog.ShowDialog() == false) return;
+            }
 
-            //this.League = NewLeague();
-            //this.FileName = "";
-            //this.IsSaved = true;
+            this.Title = "Leagueinator []";
+            this.RoundButtonContainer.Children.Clear();
+            Button button = this.AddRoundButton();
+            this.CurrentRoundButton = button;
+            button.Focus();
+            this.FileName = "";
+            this.IsSaved = true;
         }
         private void HndLoadClick(object sender, RoutedEventArgs e) {
             this.ClearFocus();
@@ -120,7 +117,7 @@ namespace Leagueinator.GUI.Forms.Main {
         private void HndSaveClick(object sender, RoutedEventArgs e) {
             this.ClearFocus();
 
-            //if (this.FileName.IsEmpty()) this.HndSaveAsClick(null, null);
+            //if (this.FileName == "") this.HndSaveAsClick(null, null);
             //else File.WriteAllText(this.FileName, this.League.WriteData());
             //this.IsSaved = true;
         }
@@ -162,8 +159,8 @@ namespace Leagueinator.GUI.Forms.Main {
 
         private void HndCopyRnd(object sender, RoutedEventArgs e) {
             this.ClearFocus();
-            RoundData currentData = this.RoundData;
-            RoundData newData = this.AddRoundButton(currentData.Copy()).Data!;
+            this.AddRoundButton();
+            this.InvokeRoundEvent("Copy");
             this.InvokeRoundButton();
         }
 
@@ -218,7 +215,7 @@ namespace Leagueinator.GUI.Forms.Main {
 
         private void HndShowDataClick(object sender, RoutedEventArgs e) {
             this.ClearFocus();
-            new TableViewer().Show(this.RoundData);
+            this.InvokeRoundEvent("Show");            
         }
 
         private void HndMatchesClick(object sender, RoutedEventArgs e) {

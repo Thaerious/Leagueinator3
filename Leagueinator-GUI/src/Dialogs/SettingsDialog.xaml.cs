@@ -1,6 +1,5 @@
-﻿using Leagueinator.GUI.Forms.Main;
+﻿using Leagueinator.GUI.Model;
 using System.Windows;
-using System.Windows.Input;
 
 namespace Leagueinator.GUI.Dialogs {
     /// <summary>
@@ -13,19 +12,19 @@ namespace Leagueinator.GUI.Dialogs {
             this.TxtEnds.Text = eventData.DefaultEnds.ToString();
 
             switch (eventData.MatchFormat) {
-                case Utility.MatchFormat.VS1:
+                case MatchFormat.VS1:
                     this.ListFormats.SelectedItem = this.ListFormats.Items[0];
                     break;
-                case Utility.MatchFormat.VS2:
+                case MatchFormat.VS2:
                     this.ListFormats.SelectedItem = this.ListFormats.Items[1];
                     break;
-                case Utility.MatchFormat.VS3:
+                case MatchFormat.VS3:
                     this.ListFormats.SelectedItem = this.ListFormats.Items[2];
                     break;
-                case Utility.MatchFormat.VS4:
+                case MatchFormat.VS4:
                     this.ListFormats.SelectedItem = this.ListFormats.Items[3];
                     break;
-                case Utility.MatchFormat.A4321:
+                case MatchFormat.A4321:
                     this.ListFormats.SelectedItem = this.ListFormats.Items[4];
                     break;
             }
@@ -34,7 +33,7 @@ namespace Leagueinator.GUI.Dialogs {
         public EventData EventData {
             get {
                 return new EventData() {
-                    MatchFormat = (Utility.MatchFormat)this.ListFormats.SelectedIndex,
+                    MatchFormat = (MatchFormat)this.ListFormats.SelectedIndex,
                     LaneCount = int.Parse(this.TxtLanes.Text),
                     DefaultEnds = int.Parse(this.TxtEnds.Text)
                 };

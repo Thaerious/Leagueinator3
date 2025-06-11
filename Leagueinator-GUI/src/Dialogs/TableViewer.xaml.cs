@@ -13,5 +13,9 @@ namespace Leagueinator.GUI.Dialogs {
             this.MainTextBlock.Text = obj.ToString();
             this.Show();
         }
+
+        public void Append(object obj) {
+            this.MainTextBlock.Text += "\n" + obj.ToString();
+        }
     }
 }

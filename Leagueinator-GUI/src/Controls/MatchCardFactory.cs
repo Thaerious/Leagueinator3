@@ -1,4 +1,4 @@
-﻿using Leagueinator.GUI.Utility;
+﻿using Leagueinator.GUI.Model;
 
 namespace Leagueinator.GUI.Controls {
     public static class MatchCardFactory {

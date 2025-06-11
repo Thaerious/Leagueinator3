@@ -44,7 +44,7 @@ namespace Leagueinator.GUI.Controls {
             this.DragEnter += controller.HndDragEnter;
             this.Drop += controller.HndDrop;
 
-            this.Descendants<MemoryTextBox>()
+            this.Descendants<TextBox>()
                 .Where(textBox => textBox.HasTag("PlayerName"))
                 .ToList()
                 .ForEach(textBox => {
@@ -78,38 +78,38 @@ namespace Leagueinator.GUI.Controls {
         }  
 
         /// <summary>
-        /// Determines whether any <see cref="MemoryTextBox"/> within the current object
+        /// Determines whether any <see cref="TextBox"/> within the current object
         /// contains the specified name as its text.
         /// </summary>
-        /// <param name="name">The name To search for within the text of <see cref="MemoryTextBox"/> controls.</param>
+        /// <param name="name">The name To search for within the text of <see cref="TextBox"/> controls.</param>
         /// <returns>
-        /// <c>true</c> if any <see cref="MemoryTextBox"/> contains the specified name as its text;
+        /// <c>true</c> if any <see cref="TextBox"/> contains the specified name as its text;
         /// otherwise, <c>false</c>.
         /// </returns>
         /// <remarks>
-        /// This method searches through all <see cref="MemoryTextBox"/> descendants of the current object
+        /// This method searches through all <see cref="TextBox"/> descendants of the current object
         /// and returns <c>true</c> if a match is found.
         /// </remarks>
         public bool HasName(string name) {
-            return this.Descendants<MemoryTextBox>()
+            return this.Descendants<TextBox>()
                        .Where(textBox => textBox.HasTag("PlayerName"))
                        .Where(textBox => textBox.Text == name)
                        .Any();
         }
 
         public void SetName(string name, int position) {
-            MemoryTextBox[] boxes = this.FindByTag("PlayerName").OfType<MemoryTextBox>().ToArray();
+            TextBox[] boxes = this.FindByTag("PlayerName").OfType<TextBox>().ToArray();
             boxes[position].Text = name;
         }
 
         /// <summary>
-        /// Removes the specified name from all <see cref="MemoryTextBox"/> controls that are descendants
-        /// of the current object. If a <see cref="MemoryTextBox"/> contains the specified name, 
+        /// Removes the specified name from all <see cref="TextBox"/> controls that are descendants
+        /// of the current object. If a <see cref="TextBox"/> contains the specified name, 
         /// its text is cleared.
         /// </summary>
         /// <param name="name">The name To remove from the text boxes.</param>
         public void RemoveName(string name) {
-            this.Descendants<MemoryTextBox>()
+            this.Descendants<TextBox>()
                 .Where(textBox => textBox.HasTag("PlayerName"))
                 .Where(textBox => textBox.Text == name)
                 .ToList()
@@ -119,11 +119,11 @@ namespace Leagueinator.GUI.Controls {
         }
 
         /// <summary>
-        /// Clears the text from all <see cref="MemoryTextBox"/> controls that are descendants
+        /// Clears the text from all <see cref="TextBox"/> controls that are descendants
         /// of the current object. 
         /// </summary>
         public void ClearNames() {
-            this.Descendants<MemoryTextBox>()
+            this.Descendants<TextBox>()
                 .Where(textBox => textBox.HasTag("PlayerName"))
                 .ToList()
                 .ForEach(textBox => {

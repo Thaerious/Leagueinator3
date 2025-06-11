@@ -34,7 +34,7 @@
                            BorderBrush="Black" BorderThickness="0 0 1 0" Grid.Column="0">
 
                 <StackPanel VerticalAlignment="Center" Margin="10 10 10 10">
-                    <local:MemoryTextBox Tag="PlayerName"  Padding="2" />
+                    <TextBox Tag="PlayerName"  Padding="2" />
                     <TextBlock HorizontalAlignment="Center" Text="Score" FontFamily="Arial Black" FontSize="10" Margin="0,3,0,0"/>
                     <TextBox Padding="2" Width="30" TextAlignment="Center" Tag="Bowls"
                              PreviewTextInput="OnlyNumbers"
@@ -48,7 +48,7 @@
                            BorderBrush="Black" BorderThickness="0 0 1 0" Grid.Column="1">
 
                 <StackPanel VerticalAlignment="Center" Margin="10 10 10 10">
-                    <local:MemoryTextBox Tag="PlayerName"  Padding="2" />
+                    <TextBox Tag="PlayerName"  Padding="2" />
                     <TextBlock HorizontalAlignment="Center" Text="Score" FontFamily="Arial Black" FontSize="10" Margin="0,3,0,0"/>
                     <TextBox Padding="2" Width="30" TextAlignment="Center" Tag="Bowls"
                              PreviewTextInput="OnlyNumbers"
@@ -65,7 +65,7 @@
                            BorderBrush="Black" BorderThickness="1 0 0 0" Grid.Column="3">
 
                 <StackPanel VerticalAlignment="Center" Margin="10 10 10 10">
-                    <local:MemoryTextBox Tag="PlayerName"  Padding="2" />
+                    <TextBox Tag="PlayerName"  Padding="2" />
                     <TextBlock HorizontalAlignment="Center" Text="Score" FontFamily="Arial Black" FontSize="10" Margin="0,3,0,0"/>
                     <TextBox Padding="2" Width="30" TextAlignment="Center" Tag="Bowls"
                              PreviewTextInput="OnlyNumbers"
@@ -79,7 +79,7 @@
                            BorderBrush="Black" BorderThickness="1 0 0 0" Grid.Column="4">
 
                 <StackPanel VerticalAlignment="Center" Margin="10 10 10 10">
-                    <local:MemoryTextBox Tag="PlayerName"  Padding="2" />
+                    <TextBox Tag="PlayerName"  Padding="2" />
                     <TextBlock HorizontalAlignment="Center" Text="Score" FontFamily="Arial Black" FontSize="10" Margin="0,3,0,0"/>
                     <TextBox Padding="2" Width="30" TextAlignment="Center" Tag="Bowls"
                              PreviewTextInput="OnlyNumbers"

@@ -1,4 +1,4 @@
-﻿namespace Leagueinator.GUI.Utility {
+﻿namespace Leagueinator.GUI.Model {
     public enum MatchFormat { VS1, VS2, VS3, VS4, A4321 };
 
     public static class MatchFormatMeta {

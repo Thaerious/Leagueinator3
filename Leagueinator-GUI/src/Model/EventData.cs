@@ -1,6 +1,6 @@
 ﻿using Leagueinator.GUI.Utility;
 
-namespace Leagueinator.GUI.Forms.Main {
+namespace Leagueinator.GUI.Model {
     public class EventData {
         public MatchFormat MatchFormat { get; set; } = MatchFormat.VS2;
         public int LaneCount { get; set; } = 8;

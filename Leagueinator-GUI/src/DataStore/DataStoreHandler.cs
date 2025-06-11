@@ -9,7 +9,7 @@ namespace Leagueinator.GUI.DataStore {
     public class DataStoreHandler {        
 
         public DataStoreHandler(MainWindow mainWindow) {
-            //mainWindow.OnRoundDataCreated += this.HandleRoundDataCreated;
+            //mainWindow.OnRoundData += this.HandleRoundDataCreated;
         }
     }
 }

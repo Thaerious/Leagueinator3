@@ -1,10 +1,8 @@
-﻿using Leagueinator.GUI.Utility.Extensions;
-using Leagueinator.GUI.Utility;
+﻿using Leagueinator.GUI.Model;
+using Leagueinator.GUI.Utility.Extensions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using static Leagueinator.GUI.Controls.MemoryTextBox;
-using System.Diagnostics;
 
 namespace Leagueinator.GUI.Controls {
 
@@ -14,13 +12,28 @@ namespace Leagueinator.GUI.Controls {
         private int _lastCheckedTeamIndex = -1;
 
         public MatchCard() {
-            this.AddHandler(RegisteredUpdateEvent, new MemoryEventHandler(this.HndUpdatePlayerText));
             this.MouseDown += this.MatchCard_MouseDown;
             this.Loaded += MatchCard_Loaded;               
         }
 
+        private void NameTextBoxChange(object sender, System.Windows.RoutedEventArgs e) { 
+            if (sender is not TextBox textBox) return;
+            var parent = (StackPanel)textBox.Parent ?? throw new NullReferenceException("Parent is not a StackPanel.");            
+
+            int teamIndex = textBox.Ancestors<TeamCard>().First().TeamIndex;
+            int position = parent.Children.IndexOf(textBox);
+
+            if (e is KeyEventArgs keyArgs) {
+                if (keyArgs.Key == Key.Enter) {
+                    this.InvokeEvent("Name", value: textBox.Text, team: teamIndex, pos: position);
+                }
+            }
+            else {
+                this.InvokeEvent("Name", value: textBox.Text, team: teamIndex, pos: position);
+            }
+        }
+
         internal void SetTieBreaker(int teamIndex) {
-            Debug.WriteLine($"Setting TieBreaker for MatchCard {this.Lane} to team index {teamIndex}.");
             foreach (CheckBox cb in this.FindByTag("CheckTie").Cast<CheckBox>()) {
                 var teamIndexForCB = cb.Ancestors<TeamCard>().FirstOrDefault()?.TeamIndex;
                 if (teamIndexForCB == teamIndex) {
@@ -47,7 +60,7 @@ namespace Leagueinator.GUI.Controls {
 
             infoCard.TxtEnds.TextChanged += (s, args) => {
                 var ends = int.Parse(infoCard.TxtEnds.Text);
-                this.InvokeEvent("Ends", ends);
+                this.InvokeEvent("Ends", value: ends);
             };
 
             foreach (TextBox textBox in this.FindByTag("Bowls").Cast<TextBox>()) {
@@ -55,8 +68,13 @@ namespace Leagueinator.GUI.Controls {
                     // TODO This can be put directly on the TextBox in XAML.
                     int teamIndex = textBox.Ancestors<TeamCard>().First().TeamIndex;
                     var textBoxValue = int.Parse(textBox.Text);
-                    this.InvokeEvent("Bowls", textBoxValue, teamIndex);
+                    this.InvokeEvent("Bowls", value:textBoxValue, team:teamIndex);
                 };
+            }
+
+            foreach (TextBox textBox in this.FindByTag("PlayerName").Cast<TextBox>()) {
+                textBox.KeyDown += this.NameTextBoxChange;
+                textBox.LostFocus += this.NameTextBoxChange;
             }
         }
 
@@ -79,7 +97,7 @@ namespace Leagueinator.GUI.Controls {
         public int Lane {
             get {
                 var infoCard = this.Descendants<InfoCard>().FirstOrDefault();
-                return infoCard?.Lane ?? this._pendingLane ?? -1;
+                return infoCard?.Lane - 1 ?? this._pendingLane ?? - 1;
             }
             set {
                 var infoCard = this.Descendants<InfoCard>().FirstOrDefault();
@@ -144,46 +162,46 @@ namespace Leagueinator.GUI.Controls {
             bool success = Enum.TryParse(customData, out MatchFormat matchFormat);
             if (!success) throw new ArgumentException("Error on tag on context menu item");
             
-            this.InvokeEvent("Format", matchFormat);
+            this.InvokeEvent("Format", value: matchFormat);
         }
 
         /// <summary>
-        /// Handles the changing of a MemoryTextBox text value;
+        /// Handles the changing of a TextBox text value;
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         /// <exception cref="NullReferenceException"></exception>
-        private void HndUpdatePlayerText(object sender, MemoryTextBoxArgs e) {
-            string prev = e.Before?.Trim() ?? "";
-            string after = e.After?.Trim() ?? "";
-            int teamIndex = e.TextBox.Ancestors<TeamCard>().First().TeamIndex;
+        //private void HndUpdatePlayerText(object sender, TextBoxArgs e) {
+        //    string prev = e.Before?.Trim() ?? "";
+        //    string after = e.After?.Trim() ?? "";
+        //    int teamIndex = e.TextBox.Ancestors<TeamCard>().First().TeamIndex;
 
-            if (sender is not MemoryTextBox textBox) {
-                throw new NullReferenceException($"Sender is not a MemoryTextBox, it is of type {sender.GetType()}.");
-            }
-            var parent = (StackPanel)textBox.Parent ?? throw new NullReferenceException("Parent is not a StackPanel.");
-            int position = parent.Children.IndexOf(textBox);
+        //    if (sender is not TextBox textBox) {
+        //        throw new NullReferenceException($"Sender is not a TextBox, it is of type {sender.GetType()}.");
+        //    }
+        //    var parent = (StackPanel)textBox.Parent ?? throw new NullReferenceException("Parent is not a StackPanel.");
+        //    int position = parent.Children.IndexOf(textBox);
 
-            // If there is no change, focus next component and terminate.
-            if (after == prev) {
-                var focusedElement = Keyboard.FocusedElement as UIElement;
-                TraversalRequest request = new TraversalRequest(FocusNavigationDirection.Next);
-                focusedElement?.MoveFocus(request);
-                return;
-            }
+        //    // If there is no change, focus next component and terminate.
+        //    if (after == prev) {
+        //        var focusedElement = Keyboard.FocusedElement as UIElement;
+        //        TraversalRequest request = new TraversalRequest(FocusNavigationDirection.Next);
+        //        focusedElement?.MoveFocus(request);
+        //        return;
+        //    }
 
-            // If enter initiated the event, focus next textbox.
-            if (e.Cause == Cause.EnterPressed) {
-                StackPanel stackPanel = (StackPanel)e.TextBox.Parent;
-                int index = stackPanel.Children.IndexOf(e.TextBox);
-                if (index + 1 < stackPanel.Children.Count) {
-                    stackPanel.Children[index + 1].Focus();
-                }
-                e.TextBox.SelectAll();
-            }
+        //    // If enter initiated the event, focus next textbox.
+        //    if (e.Cause == Cause.EnterPressed) {
+        //        StackPanel stackPanel = (StackPanel)e.TextBox.Parent;
+        //        int index = stackPanel.Children.IndexOf(e.TextBox);
+        //        if (index + 1 < stackPanel.Children.Count) {
+        //            stackPanel.Children[index + 1].Focus();
+        //        }
+        //        e.TextBox.SelectAll();
+        //    }
   
-            this.InvokeEvent("Name", prev, after, teamIndex, position);
-        }
+        //    this.InvokeRoundEvent("Name", prev, after, teamIndex, position);
+        //}
 
         /// <summary>
         /// Invoked when a tie checkBox matchRow changes.
@@ -220,7 +238,7 @@ namespace Leagueinator.GUI.Controls {
 
             int lastCheckedTeamIndex = _lastCheckedTeamIndex;
             this._lastCheckedTeamIndex = newCheckedTeamIndex;
-            this.InvokeEvent("Tie", lastCheckedTeamIndex, newCheckedTeamIndex);
+            this.InvokeEvent("Tie", value: newCheckedTeamIndex);
         }
 
         public void OnlyNumbers(object sender, TextCompositionEventArgs e) {

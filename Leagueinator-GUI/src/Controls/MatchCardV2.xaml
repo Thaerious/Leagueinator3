@@ -44,8 +44,8 @@
 
                     <!-- Player Containers -->
                     <StackPanel VerticalAlignment="Center" Grid.Column="0" Margin="10 10 0 10">
-                        <local:MemoryTextBox Tag="PlayerName"  Padding="2" MinWidth="130" TabIndex="1"/>
-                        <local:MemoryTextBox Tag="PlayerName"  Padding="2" MinWidth="130" TabIndex="2"/>
+                        <TextBox Tag="PlayerName"  Padding="2" MinWidth="130" TabIndex="1"/>
+                        <TextBox Tag="PlayerName"  Padding="2" MinWidth="130" TabIndex="2"/>
                     </StackPanel>
 
                     <!-- Team 1 Bowls  -->
@@ -103,8 +103,8 @@
                     <StackPanel 
                          VerticalAlignment="Center" Grid.Column="1" Margin="0 10 10 10"
                     >
-                        <local:MemoryTextBox Tag="PlayerName"  Padding="2" MinWidth="130" TabIndex="5"/>
-                        <local:MemoryTextBox Tag="PlayerName"  Padding="2" MinWidth="130" TabIndex="6"/>
+                        <TextBox Tag="PlayerName"  Padding="2" MinWidth="130" TabIndex="5"/>
+                        <TextBox Tag="PlayerName"  Padding="2" MinWidth="130" TabIndex="6"/>
                     </StackPanel>
                 </Grid>
             </local:TeamCard>

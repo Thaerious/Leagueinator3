@@ -44,10 +44,10 @@
 
                     <!-- Player Containers -->
                     <StackPanel VerticalAlignment="Center" Grid.Column="0" Margin="10 10 0 10">
-                        <local:MemoryTextBox Tag="PlayerName"  Padding="2" MinWidth="130" TabIndex="1"/>
-                        <local:MemoryTextBox Tag="PlayerName"  Padding="2" MinWidth="130" TabIndex="2"/>
-                        <local:MemoryTextBox Tag="PlayerName"  Padding="2" MinWidth="130" TabIndex="3"/>
-                        <local:MemoryTextBox Tag="PlayerName"  Padding="2" MinWidth="130" TabIndex="4"/>
+                        <TextBox Tag="PlayerName" Padding="2" MinWidth="130" TabIndex="1"/>
+                        <TextBox Tag="PlayerName" Padding="2" MinWidth="130" TabIndex="2"/>
+                        <TextBox Tag="PlayerName" Padding="2" MinWidth="130" TabIndex="3"/>
+                        <TextBox Tag="PlayerName" Padding="2" MinWidth="130" TabIndex="4"/>
                     </StackPanel>
 
                     <!-- Team 1 Bowls  -->
@@ -55,13 +55,13 @@
                         <TextBlock HorizontalAlignment="Center" Text="Tie" FontFamily="Arial Black" FontSize="10" Margin="0,0,0,3"/>
                         <CheckBox x:Name="CheckTie0" Tag="CheckTie" IsChecked="false"
                                   Margin="0,0,0,10" HorizontalAlignment="Center" VerticalAlignment="Center" 
-                                  RenderTransformOrigin="0.548,-0.431"  
+                                  RenderTransformOrigin="0.548,-0.431" 
                                   Unchecked="HndTieValueChanged" Checked="HndTieValueChanged"/>
                         <TextBox x:Name="TxtBowls0" Tag="Bowls"
                                  Padding="2" Width="30" 
                                  PreviewTextInput="OnlyNumbers"
                                  Text="{Binding Bowls, RelativeSource={RelativeSource AncestorType=local:TeamCard}}"
-                                 TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center"                                 
+                                 TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center"                                
                                  KeyDown="TxtEnterPressedHnd"
                                  TabIndex="9"/>
                         <TextBlock HorizontalAlignment="Center" Text="Bowls" FontFamily="Arial Black" FontSize="10" Margin="0,3,0,0"/>
@@ -76,7 +76,7 @@
             <local:TeamCard 
                 Style="{StaticResource HoverBorderStyle}"
                 x:Name="TeamCard1" TeamIndex="1"
-                BorderBrush="Black" BorderThickness="1 0 0 0" Grid.Column="4"                  
+                BorderBrush="Black" BorderThickness="1 0 0 0" Grid.Column="4"                 
 >
                 <Grid>
                     <Grid.ColumnDefinitions>
@@ -89,13 +89,13 @@
                         <TextBlock HorizontalAlignment="Center" Text="Tie" FontFamily="Arial Black" FontSize="10" Margin="0,0,0,3"/>
                         <CheckBox x:Name="CheckTie1" Tag="CheckTie" IsChecked="false" 
                                   Margin="0,0,0,10" HorizontalAlignment="Center" VerticalAlignment="Center" 
-                                  RenderTransformOrigin="0.548,-0.431"  
+                                  RenderTransformOrigin="0.548,-0.431" 
                                   Unchecked="HndTieValueChanged" Checked="HndTieValueChanged"/>
-                        <TextBox x:Name="TxtBowls1" Tag="Bowls"                                 
+                        <TextBox x:Name="TxtBowls1" Tag="Bowls"                                
                                  Padding="2" Width="30" 
                                  PreviewTextInput="OnlyNumbers"
                                  Text="{Binding Bowls, RelativeSource={RelativeSource AncestorType=local:TeamCard}}"
-                                 TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center"                                 
+                                 TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center"                                
                                  KeyDown="TxtEnterPressedHnd"
                                  TabIndex="10"/>
                         <TextBlock HorizontalAlignment="Center" Text="Bowls" Margin="0,3,0,0" FontFamily="Arial Black" FontSize="10"/>
@@ -105,10 +105,10 @@
                     <StackPanel 
                          VerticalAlignment="Center" Grid.Column="1" Margin="0 10 10 10"
                     >
-                        <local:MemoryTextBox Tag="PlayerName"  Padding="2" MinWidth="130" TabIndex="5"/>
-                        <local:MemoryTextBox Tag="PlayerName"  Padding="2" MinWidth="130" TabIndex="6"/>
-                        <local:MemoryTextBox Tag="PlayerName"  Padding="2" MinWidth="130" TabIndex="7"/>
-                        <local:MemoryTextBox Tag="PlayerName"  Padding="2" MinWidth="130" TabIndex="8"/>
+                        <TextBox Tag="PlayerName" Padding="2" MinWidth="130" TabIndex="5"/>
+                        <TextBox Tag="PlayerName" Padding="2" MinWidth="130" TabIndex="6"/>
+                        <TextBox Tag="PlayerName" Padding="2" MinWidth="130" TabIndex="7"/>
+                        <TextBox Tag="PlayerName" Padding="2" MinWidth="130" TabIndex="8"/>
                     </StackPanel>
                 </Grid>
             </local:TeamCard>
