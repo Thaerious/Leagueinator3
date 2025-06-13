@@ -57,8 +57,8 @@
                 <MenuItem Header="Assign Players" Click="HndAssignPlayers"/>
                 <MenuItem Header="Assign Lanes" Click="HndAssignLanes"/>
                 <MenuItem Header="Assign Matches">
-                    <MenuItem Header="Ranked Ladder" Click="HndRankedLadder"/>
-                    <MenuItem Header="Round Robin" Click="HndRoundRobin"/>
+                    <MenuItem Header="Ranked Ladder"/>
+                    <MenuItem Header="Round Robin"/>
                 </MenuItem>
             </MenuItem>
 

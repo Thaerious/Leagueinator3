@@ -13,6 +13,7 @@ namespace Leagueinator.GUI.Forms.Main {
     public partial class MainWindow : Window {
 
         private EventData EventData { get; set; } = new EventData();
+        private EventData FileEvent { get; set; } = new EventData();
 
         public MainWindow() {
             this.InitializeComponent();

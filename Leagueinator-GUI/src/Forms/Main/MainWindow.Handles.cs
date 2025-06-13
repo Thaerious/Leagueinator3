@@ -47,8 +47,10 @@ namespace Leagueinator.GUI.Forms.Main {
         }
 
         private void InvokeRoundEvent(string action, int index) {
-            var args = new RoundDataEventArgs(action, index);
-            this.OnRoundData?.Invoke(this, args);
+            this.Dispatcher.BeginInvoke(new Action(() => {
+                var args = new RoundDataEventArgs(action, index);
+                this.OnRoundData?.Invoke(this, args);
+            }));
         }
 
         private void InvokeRoundEvent(string action) {

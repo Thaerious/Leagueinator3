@@ -1,7 +1,9 @@
-﻿using Leagueinator.GUI.Model;
+﻿using Leagueinator.GUI.Dialogs;
+using Leagueinator.GUI.Forms.Print;
+using Leagueinator.GUI.Model;
+using Microsoft.Win32;
 using System.Reflection;
 using System.Windows;
-using Leagueinator.GUI.Dialogs;
 using System.Windows.Controls;
 
 namespace Leagueinator.GUI.Forms.Main {
@@ -80,75 +82,49 @@ namespace Leagueinator.GUI.Forms.Main {
         private void HndLoadClick(object sender, RoutedEventArgs e) {
             this.ClearFocus();
 
-            //if (!this.IsSaved) {
-            //    ConfirmationDialog confDialog = new() {
-            //        Owner = this,
-            //        WindowStartupLocation = WindowStartupLocation.CenterOwner,
-            //        Text = "League not saved. Do you still want to load?"
-            //    };
+            if (!this.IsSaved) {
+                ConfirmationDialog confDialog = new() {
+                    Owner = this,
+                    WindowStartupLocation = WindowStartupLocation.CenterOwner,
+                    Text = "League not saved. Do you still want to load?"
+                };
 
-            //    if (confDialog.ShowDialog() == false) return;
-            //}
+                if (confDialog.ShowDialog() == false) return;
+            }
 
-            //OpenFileDialog dialog = new OpenFileDialog {
-            //    Filter = "League Files (*.league)|*.league"
-            //};
+            OpenFileDialog dialog = new OpenFileDialog {
+                Filter = "League Files (*.league)|*.league"
+            };
 
-            //if (dialog.ShowDialog() == true) {
-            //    string text = File.ReadAllText(dialog.FileName);
-            //    this.League = new LeagueDecoder(text).Decode();
-            //    this.FileName = dialog.FileName;
-            //    this.IsSaved = true;
-            //}
-        }
-
-        private void HndAddMatch(object sender, RoutedEventArgs e) {
-            this.ClearFocus();
-
-            //if (this.CurrentRoundRow.Matches.Count == 0) {
-            //    this.CurrentRoundRow.Matches.Add(1);
-            //}
-            //else {
-            //    int nextLane = this.CurrentRoundRow.Matches.Select(mr => mr.Lane).Max() + 1;
-            //    this.CurrentRoundRow.Matches.Add(nextLane);
-            //}
+            if (dialog.ShowDialog() == true) {
+                this.OnFileEvent?.Invoke(this, new FileEventArgs("Load", dialog.FileName));
+                this.FileName = dialog.FileName;
+                this.IsSaved = true;
+            }
         }
 
         private void HndSaveClick(object sender, RoutedEventArgs e) {
             this.ClearFocus();
-
-            //if (this.FileName == "") this.HndSaveAsClick(null, null);
-            //else File.WriteAllText(this.FileName, this.League.WriteData());
-            //this.IsSaved = true;
+            if (this.FileName == "") this.HndSaveAsClick(null, null);
+            this.IsSaved = true;
         }
 
         private void HndSaveAsClick(object sender, RoutedEventArgs e) {
             this.ClearFocus();
 
-            //Microsoft.Win32.SaveFileDialog dialog = new();
-            //dialog.Filter = "League Files (*.league)|*.league";
+            Microsoft.Win32.SaveFileDialog dialog = new();
+            dialog.Filter = "League Files (*.league)|*.league";
 
-            //if (dialog.ShowDialog() == true) {
-            //    File.WriteAllText(dialog.FileName, this.League.WriteData());
-            //    this.FileName = dialog.FileName;
-            //    this.IsSaved = true;
-            //}
+            if (dialog.ShowDialog() == true) {
+                this.OnFileEvent?.Invoke(this, new FileEventArgs("Save", dialog.FileName));
+                this.FileName = dialog.FileName;
+                this.IsSaved = true;
+            }
         }
 
         private void HndExitClick(object sender, RoutedEventArgs e) {
             this.ClearFocus();
             this.Close();
-        }
-
-        private void HndGenNextRound(object sender, RoutedEventArgs args) {
-            this.ClearFocus();
-
-            //RoundRow nextRound = new CopyRound().GenerateRound(this.CurrentRoundRow);
-            //new AssignMatchesFactory().Run(nextRound);
-            //new LaneAssignerFactory().Run(nextRound);
-
-            //this.AddRoundButton(nextRound);
-            //this.InvokeRoundButton();
         }
 
         private void HndGenEmptyRound(object sender, RoutedEventArgs e) {
@@ -163,107 +139,36 @@ namespace Leagueinator.GUI.Forms.Main {
             this.InvokeRoundEvent("Copy");
             this.InvokeRoundButton();
         }
+        private void HndShowDataClick(object sender, RoutedEventArgs e) {
+            this.ClearFocus();
+            this.InvokeRoundEvent("Show");
+        }
+        private void HndViewTeamResults(object sender, RoutedEventArgs e) {
+            this.ClearFocus();
+
+            PrintWindow pw = new();
+            for (int i = 0; i < 10; i++) pw.AddTeam();
+            pw.Show();
+        }
+
+        private void HndGenNextRound(object sender, RoutedEventArgs args) {
+            this.ClearFocus();
+        }
 
         private void HndAssignLanes(object sender, RoutedEventArgs args) {
             this.ClearFocus();
-
-            //new LaneAssignerFactory().Run(CurrentRoundRow);
         }
 
         private void HndMatchAssignments(object sender, RoutedEventArgs e) {
             this.ClearFocus();
-
-            //PrinterForm form = new(new MatchAssignmentsBuilder().BuildElement(this.CurrentRoundRow)) {
-            //    Owner = this
-            //};
-
-            //form.Show();
-        }
-
-        private void HndViewTeamResults(object sender, RoutedEventArgs e) {
-            this.ClearFocus();           
-
-            //PlusResults plusResults = new(this.EventRow);
-            //TeamXMLBuilder xmlBuilder = new TeamXMLBuilder();
-            //Element element = xmlBuilder.BuildElement(plusResults);
-            //PrinterForm form = new(element) {
-            //    Owner = this
-            //};
-
-            //form.Show();
         }
 
         private void HndViewPlayerResults(object sender, RoutedEventArgs e) {
             this.ClearFocus();
-
-            //PlusResults plusResults = new(this.EventRow);
-            //PlayerXMLBuilder xmlBuilder = new PlayerXMLBuilder();
-            //Element element = xmlBuilder.BuildElement(plusResults);
-            //PrinterForm form = new(element) {
-            //    Owner = this
-            //};
-
-            //form.Show();
-        }
-
-        private void HndEventsClick(object sender, RoutedEventArgs e) {
-            this.ClearFocus();
-            //if (this.League is null) return;
-
-            //new TableViewer().Show(this.League.EventTable);
-        }
-
-        private void HndShowDataClick(object sender, RoutedEventArgs e) {
-            this.ClearFocus();
-            this.InvokeRoundEvent("Show");            
-        }
-
-        private void HndMatchesClick(object sender, RoutedEventArgs e) {
-            this.ClearFocus();
-            //if (this.League is null) return;
-
-            //new TableViewer().Show(this.League.MatchTable);
-        }
-
-        private void HndTeamsClick(object sender, RoutedEventArgs e) {
-            this.ClearFocus();
-            //if (this.League is null) return;
-
-            //new TableViewer().Show(this.League.TeamTable);
-        }
-
-        private void HndMembersClick(object sender, RoutedEventArgs e) {
-            this.ClearFocus();
-            //if (this.League is null) return;
-
-            //new TableViewer().Show(this.League.MemberTable);
-        }
-
-        private void HndRankedLadder(object sender, RoutedEventArgs e) {
-            this.ClearFocus();
-            //var factory = new AssignMatchesFactory();
-            //factory.Run(this.CurrentRoundRow);
-        }
-
-        private void HndRoundRobin(object sender, RoutedEventArgs e) {
-            this.ClearFocus();
-            //var factory = new RoundRobinFactory();
-            //factory.Run(this.CurrentRoundRow);
         }
 
         private void HndAssignPlayers(object sender, RoutedEventArgs e) {
             this.ClearFocus();
-
-
-            //foreach (TeamRow teamRow in this.CurrentRoundRow.Teams) {
-            //    if (teamRow.Bowls != 0) {
-            //        string msg = "Can not assign players in a round that has been played.";
-            //        MessageBox.Show(msg, "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
-            //        return;
-            //    }
-            //}
-
-            //new AssignPlayers().Run(this.EventRow.RoundRows.Last());
         }
 
         private void HndHelpAbout(object sender, RoutedEventArgs e) {

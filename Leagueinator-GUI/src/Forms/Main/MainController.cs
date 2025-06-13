@@ -7,6 +7,10 @@ using System.Windows;
 using static Leagueinator.GUI.Controls.MatchCard;
 
 namespace Leagueinator.GUI.Forms.Main {
+
+    /// <summary>
+    /// This glues the main window to the model and handles events from the main window.
+    /// </summary>
     public class MainController {
 
         private List<RoundData> RoundDataCollection { get; } = [];
@@ -27,6 +31,11 @@ namespace Leagueinator.GUI.Forms.Main {
             mainWindow.AddHandler(MatchCard.MatchCardUpdateEvent, new RoutedEventHandler(OnMatchCardUpdate));
             mainWindow.OnRoundData += this.OnRoundDataHnd;
             mainWindow.OnEventData += this.OnEventDataHnd;
+            mainWindow.OnFileEvent += this.OnFileEventHnd;
+        }
+
+        private void OnFileEventHnd(object? sender, MainWindow.FileEventArgs e) {
+            Debug.WriteLine($"FileEvent: {e.Action} for file {e.FileName}");
         }
 
         private void OnEventDataHnd(object? sender, EventData e) {
