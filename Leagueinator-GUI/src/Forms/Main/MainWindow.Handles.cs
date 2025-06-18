@@ -6,7 +6,6 @@ using System.Windows.Media;
 
 namespace Leagueinator.GUI.Forms.Main {
     public partial class MainWindow : Window {
-        private Button CurrentRoundButton;
 
         /// <summary>
         /// Event args for round data creation.
@@ -26,7 +25,7 @@ namespace Leagueinator.GUI.Forms.Main {
         /// </summary>
         /// <param name="roundRow">The associated roundRow</param>
         /// <returns></returns>
-        private Button AddRoundButton() {
+        public Button AddRoundButton() {
             Button button = new() {
                 Content = $"Round {this.RoundButtonContainer.Children.Count + 1}",
                 Margin = new Thickness(3)
@@ -34,10 +33,6 @@ namespace Leagueinator.GUI.Forms.Main {
 
             this.RoundButtonContainer.Children.Add(button);
             button.Click += this.HndClickSelectRound;
-            var index = this.RoundButtonContainer.Children.Count - 1;
-
-            this.InvokeRoundEvent(action: "Create", index: index);
-
             return button;
         }
 
@@ -47,10 +42,8 @@ namespace Leagueinator.GUI.Forms.Main {
         }
 
         private void InvokeRoundEvent(string action, int index) {
-            this.Dispatcher.BeginInvoke(new Action(() => {
-                var args = new RoundDataEventArgs(action, index);
-                this.OnRoundData?.Invoke(this, args);
-            }));
+            var args = new RoundDataEventArgs(action, index);
+            this.OnRoundData?.Invoke(this, args);
         }
 
         private void InvokeRoundEvent(string action) {
@@ -67,14 +60,6 @@ namespace Leagueinator.GUI.Forms.Main {
         private void HndClickSelectRound(object? sender, EventArgs? _) {            
             if (sender is not Button button) throw new NotSupportedException();
             this.ClearFocus();
-
-            if (this.CurrentRoundButton is not null) {
-                this.CurrentRoundButton.Background = Brushes.LightGray;
-            }
-
-            this.CurrentRoundButton = button;
-            button.Background = Brushes.Green;
-
             var index = this.RoundButtonContainer.Children.IndexOf(button);
             this.InvokeRoundEvent(action: "Select", index: index);
         }

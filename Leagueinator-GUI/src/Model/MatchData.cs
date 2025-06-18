@@ -28,9 +28,9 @@ namespace Leagueinator.GUI.Model {
         }
         public int Lane { get; set; } = -1;
         public int Ends { get; set; } = 0;
-        public int[] Score { get; private set; } = [];
+        public int[] Score { get; set; } = [];
 
-        public string[][] Players { get; private set; } = [];
+        public string[][] Players { get; set; } = [];
         public int TieBreaker { get; set; } = -1;
 
         public MatchData(MatchFormat matchFormat) {

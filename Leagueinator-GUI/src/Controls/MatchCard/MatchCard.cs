@@ -8,8 +8,9 @@ namespace Leagueinator.GUI.Controls {
 
     public abstract partial class MatchCard : UserControl {
         private int? _pendingLane = null;
-        private int? _pendingEnds = null;
+        private int? _pendingEnds = null;        
         private int _lastCheckedTeamIndex = -1;
+        public abstract MatchFormat MatchFormat { get; }
 
         public MatchCard() {
             this.MouseDown += this.MatchCard_MouseDown;

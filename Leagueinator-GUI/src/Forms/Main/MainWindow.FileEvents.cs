@@ -1,15 +1,16 @@
-﻿using System.Windows;
+﻿using Leagueinator.GUI.Model;
+using System.Windows;
 
 namespace Leagueinator.GUI.Forms.Main {
     public partial class MainWindow : Window {
-        /// <summary>
-        /// Event args for round data creation.
-        /// </summary>
-        public class FileEventArgs(string action, string filename) : EventArgs {
+        public class FileEventArgs(string action) : EventArgs {
             public string Action { get; private set; } = action;
-            public string FileName { get; private set; } = filename;
         }
 
         public event EventHandler<FileEventArgs>? OnFileEvent;
+
+        public void InvokeFileEvent(string action) {
+            this.OnFileEvent?.Invoke(this, new FileEventArgs(action));
+        }
     }
 }

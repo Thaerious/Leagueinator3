@@ -5,7 +5,7 @@ namespace Leagueinator.GUI.Model {
 
     public class RoundData : List<MatchData> {
         
-        private RoundData() : base() {}
+        public RoundData() : base() {}
 
         public RoundData(EventData eventData) : this(eventData.MatchFormat, eventData.LaneCount, eventData.DefaultEnds) {}
 
@@ -17,8 +17,6 @@ namespace Leagueinator.GUI.Model {
                 });
             }
         }
-
-
 
         public RoundData Copy() { 
             RoundData roundCopy = new();
@@ -101,8 +99,6 @@ namespace Leagueinator.GUI.Model {
         }
 
         public (int, int, int) PollPlayer(string name) {
-            if (string.IsNullOrEmpty(name)) return (-1, -1, -1);
-
             foreach (MatchData match in this) {
                 foreach (string[] team in match.Players) {
                     if (team.Contains(name)) {
