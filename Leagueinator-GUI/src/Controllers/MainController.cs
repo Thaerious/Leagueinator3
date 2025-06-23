@@ -1,7 +1,10 @@
-﻿using Leagueinator.GUI.Dialogs;
+﻿using Leagueinator.GUI.Controllers.Algorithms;
+using Leagueinator.GUI.Dialogs;
 using Leagueinator.GUI.Forms;
 using Leagueinator.GUI.Forms.Main;
+using Leagueinator.GUI.Forms.Print;
 using Leagueinator.GUI.Model;
+using Leagueinator.GUI.Model.Results;
 using Leagueinator.GUI.Utility;
 using Microsoft.Win32;
 using System.Diagnostics;
@@ -25,7 +28,7 @@ namespace Leagueinator.GUI.Controllers {
         public event SetRoundCount OnSetRoundCount = delegate { };
         public event UpdateRound OnUpdateRound = delegate { };
 
-        private List<RoundData> RoundDataCollection { get; set; } = [];
+        private RoundDataCollection RoundDataCollection { get; set; } = [];
 
         private RoundData RoundData { get => this.RoundDataCollection[this.CurrentRoundIndex]; }
 
@@ -113,21 +116,39 @@ namespace Leagueinator.GUI.Controllers {
                         this.InvokeSetTitle(this.FileName, false);
                     }
                     break;
+                case "PrintTeams":
+                    this.PrintTeams();
+                    break;
                 default:
                     throw new NotSupportedException($"Action '{e.Action}' is not supported.");
             }
+        }
+
+        public void PrintTeams() {
+            PrintWindow pw = new(this.RoundDataCollection);
+            pw.Show();
         }
 
         public void RoundDataHnd(object? sender, RoundDataEventArgs e) {
             Logger.Log($"MainController.RoundData: {e.Action} for index {e.Index}");
 
             switch (e.Action) {
-                case "AddRound":
-                    RoundData newRound = new(this.EventData);
-                    this.RoundDataCollection.Add(newRound);
-                    var createdIndex = this.RoundDataCollection.Count - 1;
-                    this.InvokeRoundEvent("AddRound", createdIndex, newRound);
-                    this.InvokeSetTitle(this.FileName, false);
+                case "GenerateRound": {
+                        var newRound = this.GenerateRound();
+                        var createdIndex = this.RoundDataCollection.IndexOf(newRound);
+                        this.CurrentRoundIndex = createdIndex;
+                        this.InvokeRoundEvent("AddRound", createdIndex, newRound);
+                        this.InvokeSetTitle(this.FileName, false);
+                        this.InvokeRoundEvent("Update");
+                    }
+                    break;
+                case "AddRound": {
+                        RoundData newRound = new(this.EventData);
+                        this.RoundDataCollection.Add(newRound);
+                        var createdIndex = this.RoundDataCollection.Count - 1;
+                        this.InvokeRoundEvent("AddRound", createdIndex, newRound);
+                        this.InvokeSetTitle(this.FileName, false);
+                    }
                     break;
                 case "Remove":
                     var previousIndex = this.CurrentRoundIndex;                    
@@ -151,25 +172,77 @@ namespace Leagueinator.GUI.Controllers {
                     this.InvokeRoundEvent("AddRound", copiedIndex);
                     this.InvokeSetTitle(this.FileName, false);
                     break;
-                case "Show":
-                    TableViewer tv = new TableViewer();
-                    tv.Append("Event Data:");
-                    tv.Append($"File Name: {this.FileName}");
-                    tv.Append($"Is Saved: {this.IsSaved}");
-                    tv.Append($"Number of Lanes: {this.EventData.LaneCount}");
-                    tv.Append($"Default Ends: {this.EventData.DefaultEnds}");
-                    tv.Append($"Match Format: {this.EventData.MatchFormat}");
-                    tv.Append("");
-                    tv.Append($"Current Round: {this.CurrentRoundIndex}");
+                case "AssignPlayersRandomly":
+                    this.RoundData.AssignPlayersRandomly();
+                    this.InvokeRoundEvent("Update");
+                    this.InvokeSetTitle(this.FileName, false);
+                    break;
+                case "AssignRankedLadder":
+                    RankedLadder ladder = new(this.RoundDataCollection, this.EventData);
+                    var nextRound = ladder.GenerateRound();
+                    Debug.WriteLine($"Generated next round with {nextRound.Count} matches.");
+                    Debug.WriteLine(nextRound);
+                    break;
+                case "AssignRoundRobin":
+                    break;
+                case "RoundResults": {
+                        RoundResults rr = new(this.RoundData);
+                        TableViewer tv = new TableViewer();
 
-                    foreach (RoundData round in this.RoundDataCollection) {
-                        tv.Append($"Round {this.RoundDataCollection.IndexOf(round) + 1}:");
-                        tv.Append(round);
+                        foreach (SingleResult result in rr.Results) {
+                            tv.Append(result.ToString());
+                        }
+
+                        tv.Show();
                     }
-                    tv.Show();
+                    break;
+                case "EventResults": {
+                        EventResults er = new(this.RoundDataCollection);
+                        TableViewer tv = new TableViewer();
+
+                        foreach (TeamResult result in er.ResultsByTeam) {
+                            tv.Append(result.ToString());
+                        }
+
+                        tv.Show();
+                    }
+                    break;
+                case "Show": {
+                        TableViewer tv = new TableViewer();
+                        tv.Append("Event Data:");
+                        tv.Append($"File Name: {this.FileName}");
+                        tv.Append($"Is Saved: {this.IsSaved}");
+                        tv.Append($"Number of Lanes: {this.EventData.LaneCount}");
+                        tv.Append($"Default Ends: {this.EventData.DefaultEnds}");
+                        tv.Append($"Match Format: {this.EventData.MatchFormat}");
+                        tv.Append($"Event Type: {this.EventData.EventType}");
+                        tv.Append("");
+                        tv.Append($"Current Round: {this.CurrentRoundIndex}");
+
+                        foreach (RoundData round in this.RoundDataCollection) {
+                            tv.Append($"Round {this.RoundDataCollection.IndexOf(round) + 1}:");
+                            tv.Append(round);
+                        }
+                        tv.Show();
+                    }
                     break;
                 default:
                     throw new NotSupportedException($"Action '{e.Action}' is not supported.");
+            }
+        }
+
+        private RoundData GenerateRound() {
+            switch(this.EventData.EventType) {
+                case EventType.RankedLadder:
+                    var newRound = new RankedLadder(this.RoundDataCollection, this.EventData).GenerateRound();
+                    this.RoundDataCollection.Add(newRound);
+                    return newRound;
+                //case EventType.RoundRobin:
+                //    break;
+                //case EventType.Motley:
+                //    break;
+                default:
+                    throw new NotSupportedException($"Match format '{this.EventData.MatchFormat}' is not supported.");
             }
         }
 
@@ -315,7 +388,7 @@ namespace Leagueinator.GUI.Controllers {
             var team = (int)args.Team;
             var pos = (int)args.Position;
 
-            if (name == string.Empty && this.RoundData[lane].Players[team][pos] == string.Empty) {
+            if (name == string.Empty && this.RoundData[lane].Teams[team][pos] == string.Empty) {
                 // If the name is empty and the player is already empty, do nothing.
                 return false;
             }

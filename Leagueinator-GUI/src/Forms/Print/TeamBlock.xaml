@@ -9,30 +9,21 @@
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
-            <StackPanel>
+            <StackPanel x:Name="PlayerNames">
                 <TextBlock Text="Names" FontWeight="Bold"/>
-                <TextBlock Text="Player 1" />
-                <TextBlock Text="Player 2" />
-                <TextBlock Text="Player 3" />
             </StackPanel>
 
             <Grid Grid.Column="1">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="50"/>
-                        <ColumnDefinition Width="50"/>
-                        <ColumnDefinition Width="50"/>
-                        <ColumnDefinition Width="50"/>
-                        <ColumnDefinition Width="50"/>
-                        <ColumnDefinition Width="50"/>                        
-                    </Grid.ColumnDefinitions>
-                    <TextBlock Grid.Column="0" Text="R" FontWeight="Bold"/>
-                    <TextBlock Grid.Column="1" Text="PF" FontWeight="Bold"/>
-                    <TextBlock Grid.Column="2" Text="PA" FontWeight="Bold"/>                    
-                    <TextBlock Grid.Column="3" Text="TB" FontWeight="Bold"/>
-                    <TextBlock Grid.Column="4" Text="E" FontWeight="Bold"/>
-                    <TextBlock Grid.Column="5" Text="L" FontWeight="Bold"/>
-                </Grid>
+                <StackPanel x:Name="Results" Orientation="Vertical">
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+                        <TextBlock Width="50" Text="R" FontWeight="Bold" TextAlignment="Center"/>
+                        <TextBlock Width="50" Text="F" FontWeight="Bold" TextAlignment="Center"/>
+                        <TextBlock Width="50" Text="A" FontWeight="Bold" TextAlignment="Center"/>
+                        <TextBlock Width="50" Text="T" FontWeight="Bold" TextAlignment="Center"/>
+                        <TextBlock Width="50" Text="E" FontWeight="Bold" TextAlignment="Center"/>
+                        <TextBlock Width="50" Text="L" FontWeight="Bold" TextAlignment="Center"/>
+                    </StackPanel>
+                </StackPanel>
             </Grid>
         </Grid>
     </Border>

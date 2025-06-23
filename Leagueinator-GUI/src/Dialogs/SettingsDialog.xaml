@@ -6,33 +6,39 @@
         xmlns:local="clr-namespace:Leagueinator.GUI.Dialogs"
         mc:Ignorable="d"
         SizeToContent="WidthAndHeight"
-        Title="Settings" Height="246" Width="300">
-    <StackPanel Margin="10">
-        <Grid>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="*"/>
-            </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
+        Title="Settings" Height="267" Width="300">
+    <StackPanel Margin="0">
 
-            <Label Grid.Column="0" Grid.Row="0" Content="Number of Lanes" VerticalAlignment="Center" Margin="10"/>
-            <TextBox x:Name="TxtLanes" Grid.Column="1" Grid.Row="0" VerticalAlignment="Center" Margin="10"/>
+        <StackPanel Margin="5" Orientation="Horizontal">
+            <Label Grid.Column="0" Grid.Row="0" Content="Number of Lanes" VerticalAlignment="Center" Margin="0" Width="100"/>
+            <TextBox x:Name="TxtLanes" Grid.Column="1" Grid.Row="0" VerticalAlignment="Center" Margin="0" Width="125"/>
+        </StackPanel>
 
-            <Label Grid.Column="0" Grid.Row="1" Content="Default Ends" VerticalAlignment="Center" Margin="10"/>
-            <TextBox x:Name="TxtEnds" Grid.Column="1" Grid.Row="1" VerticalAlignment="Center" Margin="10"/>
+        <StackPanel Margin="5" Orientation="Horizontal">
+            <Label Grid.Column="0" Grid.Row="1" Content="Default Ends" VerticalAlignment="Center" Margin="0" Width="100"/>
+            <TextBox x:Name="TxtEnds" Grid.Column="1" Grid.Row="1" VerticalAlignment="Center" Margin="0" Width="125"/>
+        </StackPanel>
 
-            <ListBox x:Name="ListFormats" Width="100" Grid.Row="2" HorizontalAlignment="Center" VerticalAlignment="Center" Grid.ColumnSpan="2" HorizontalContentAlignment="Center">
-                <ListBoxItem >1 vs 1</ListBoxItem>
-                <ListBoxItem>2 vs 2</ListBoxItem>
-                <ListBoxItem>3 vs 3</ListBoxItem>
-                <ListBoxItem>4 vs 4</ListBoxItem>
-                <ListBoxItem>4321</ListBoxItem>
-            </ListBox>
-        </Grid>
+        <StackPanel Margin="5" Orientation="Horizontal">
+            <Label Grid.Column="0" Grid.Row="1" Content="Event Type" VerticalAlignment="Center" Margin="0" Width="100"/>
+            <ComboBox x:Name="ListEventType" SelectedIndex="0" Width="125">
+                <ComboBoxItem>Ranked Ladder</ComboBoxItem>
+                <ComboBoxItem>Round Robin</ComboBoxItem>
+                <ComboBoxItem>Motley</ComboBoxItem>
+            </ComboBox>
+        </StackPanel>
+
+        <StackPanel Margin="5" Orientation="Horizontal">
+            <Label Grid.Column="0" Grid.Row="1" Content="Match Format" VerticalAlignment="Center" Margin="0" Width="100"/>
+            <ComboBox x:Name="ListMatchFormat" SelectedIndex="1" Width="125">
+                <ComboBoxItem >1 vs 1</ComboBoxItem>
+                <ComboBoxItem>2 vs 2</ComboBoxItem>
+                <ComboBoxItem>3 vs 3</ComboBoxItem>
+                <ComboBoxItem>4 vs 4</ComboBoxItem>
+                <ComboBoxItem>4321</ComboBoxItem>
+            </ComboBox>
+        </StackPanel>
+
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,10,0,0">
             <Button x:Name="ButOk" Content="OK" Width="80" Margin="0,0,5,0" Click="HndOkButtonClick"/>
             <Button Content="Cancel" Width="80" Click="HndCancelButtonClick"/>

@@ -1,17 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Leagueinator.GUI.Model.Results;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
 using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace Leagueinator.GUI.Forms.Print {
     /// <summary>
@@ -20,6 +10,53 @@ namespace Leagueinator.GUI.Forms.Print {
     public partial class TeamBlock : UserControl {
         public TeamBlock() {
             InitializeComponent();
+        }
+
+        public void AddPlayers(string[] players) {
+            foreach (string playerName in players) {
+                if (string.IsNullOrEmpty(playerName)) {
+                    continue; // Skip empty player names
+                }
+                var playerTextBlock = new TextBlock {
+                    Text = playerName,
+                    FontSize = 16,
+                    Margin = new Thickness(0, 0, 0, 5) // Add some spacing between names
+                };
+                this.PlayerNames.Children.Add(playerTextBlock);
+            }
+        }
+
+        public void AddResults(List<SingleResult> matchResults) {
+            foreach (SingleResult matchResult in matchResults) {
+                this.AddResult(matchResult);
+            }
+        }
+
+        internal void AddResult(SingleResult matchResult) {
+            StackPanel stackPanel = new StackPanel {
+                Orientation = Orientation.Horizontal,
+                HorizontalAlignment = HorizontalAlignment.Left
+            };
+
+            string[] values = { 
+                matchResult.Result.ToString(), 
+                $"{matchResult.BowlsFor}+{matchResult.PlusFor}",
+                $"{matchResult.BowlsAgainst}+{matchResult.PlusAgainst}",
+                $"{(matchResult.MatchData.TieBreaker == matchResult.TeamIndex ? 'Y' : 'N')}",
+                $"{matchResult.MatchData.Ends}",
+                $"{matchResult.MatchData.Lane + 1}",
+            };
+
+            foreach (string header in values) {
+                TextBlock textBlock = new TextBlock {
+                    Width = 50,
+                    Text = header,
+                    TextAlignment = TextAlignment.Center,
+                };
+                stackPanel.Children.Add(textBlock);
+            }
+
+            this.Results.Children.Add(stackPanel);
         }
     }
 }

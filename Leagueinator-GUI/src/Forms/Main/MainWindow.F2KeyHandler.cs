@@ -7,7 +7,6 @@ using System.Windows.Media;
 namespace Leagueinator.GUI.Forms.Main {
     public partial class MainWindow {
         internal void HighLightRound(int index) {
-            Debug.WriteLine($"MainWindow.HighLightRound: {index}");
             foreach (Button button in this.RoundButtonContainer.Children) {
                 button.Background = Brushes.LightGray;
             }

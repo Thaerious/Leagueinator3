@@ -94,14 +94,18 @@ namespace Leagueinator.GUI.Forms.Main {
             matchCard.Ends = matchData.Ends;
             matchCard.SetTieBreaker(matchData.TieBreaker);
 
-            for (int team = 0; team < matchData.Players.Length; team++) {
-                for (int position = 0; position < matchData.Players[team].Length; position++) {
+            matchCard.SuppressBowlsEvent = true;
+
+            for (int team = 0; team < matchData.Teams.Length; team++) {
+                for (int position = 0; position < matchData.Teams[team].Length; position++) {
                     TeamCard teamCard = matchCard.GetTeamCard(team)!;
-                    var name = matchData.Players[team][position];
+                    var name = matchData.Teams[team][position];
                     teamCard.SetName(name, position);
                     teamCard.Bowls = matchData.Score[team];
                 }
             }
+
+            matchCard.SuppressBowlsEvent = false;
         }
 
         public void RemoveRound(int index) {

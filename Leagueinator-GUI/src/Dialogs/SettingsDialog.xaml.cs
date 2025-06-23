@@ -13,9 +13,10 @@ namespace Leagueinator.GUI.Dialogs {
         public EventData EventData {
             get {
                 return new EventData {
-                    MatchFormat = (MatchFormat)this.ListFormats.SelectedIndex,
+                    MatchFormat = (MatchFormat)this.ListMatchFormat.SelectedIndex,
                     LaneCount = int.Parse(this.TxtLanes.Text),
-                    DefaultEnds = int.Parse(this.TxtEnds.Text)
+                    DefaultEnds = int.Parse(this.TxtEnds.Text),
+                    EventType = (EventType)this.ListEventType.SelectedIndex
                 };
             }
 
@@ -23,21 +24,33 @@ namespace Leagueinator.GUI.Dialogs {
                 this.TxtLanes.Text = value.LaneCount.ToString();
                 this.TxtEnds.Text = value.DefaultEnds.ToString();
 
+                switch(value.EventType) {
+                    case EventType.RankedLadder:
+                        this.ListEventType.SelectedItem = this.ListEventType.Items[0];
+                        break;
+                    case EventType.RoundRobin:
+                        this.ListEventType.SelectedItem = this.ListEventType.Items[1];
+                        break;
+                    case EventType.Motley:
+                        this.ListEventType.SelectedItem = this.ListEventType.Items[2];
+                        break;
+                }
+
                 switch (value.MatchFormat) {
                     case MatchFormat.VS1:
-                        this.ListFormats.SelectedItem = this.ListFormats.Items[0];
+                        this.ListMatchFormat.SelectedItem = this.ListMatchFormat.Items[0];
                         break;
                     case MatchFormat.VS2:
-                        this.ListFormats.SelectedItem = this.ListFormats.Items[1];
+                        this.ListMatchFormat.SelectedItem = this.ListMatchFormat.Items[1];
                         break;
                     case MatchFormat.VS3:
-                        this.ListFormats.SelectedItem = this.ListFormats.Items[2];
+                        this.ListMatchFormat.SelectedItem = this.ListMatchFormat.Items[2];
                         break;
                     case MatchFormat.VS4:
-                        this.ListFormats.SelectedItem = this.ListFormats.Items[3];
+                        this.ListMatchFormat.SelectedItem = this.ListMatchFormat.Items[3];
                         break;
                     case MatchFormat.A4321:
-                        this.ListFormats.SelectedItem = this.ListFormats.Items[4];
+                        this.ListMatchFormat.SelectedItem = this.ListMatchFormat.Items[4];
                         break;
                 }
             }

@@ -10,6 +10,8 @@ namespace Leagueinator.GUI.Controls {
         private int? _pendingLane = null;
         private int? _pendingEnds = null;        
         private int _lastCheckedTeamIndex = -1;
+        public bool SuppressBowlsEvent = false;
+
         public abstract MatchFormat MatchFormat { get; }
 
         public MatchCard() {
@@ -66,7 +68,7 @@ namespace Leagueinator.GUI.Controls {
 
             foreach (TextBox textBox in this.FindByTag("Bowls").Cast<TextBox>()) {
                 textBox.TextChanged += (s, args) => {
-                    // TODO This can be put directly on the TextBox in XAML.
+                    if (this.SuppressBowlsEvent) return; // Prevents looping when setting Bowls property
                     int teamIndex = textBox.Ancestors<TeamCard>().First().TeamIndex;
                     var textBoxValue = int.Parse(textBox.Text);
                     this.InvokeEvent("Bowls", value:textBoxValue, team:teamIndex);
@@ -175,7 +177,7 @@ namespace Leagueinator.GUI.Controls {
         //private void HndUpdatePlayerText(object sender, TextBoxArgs e) {
         //    string prev = e.Before?.Trim() ?? "";
         //    string after = e.After?.Trim() ?? "";
-        //    int teamIndex = e.TextBox.Ancestors<TeamCard>().First().TeamIndex;
+        //    int TeamIndex = e.TextBox.Ancestors<TeamCard>().First().TeamIndex;
 
         //    if (sender is not TextBox textBox) {
         //        throw new NullReferenceException($"Sender is not a TextBox, it is of type {sender.GetType()}.");
@@ -201,7 +203,7 @@ namespace Leagueinator.GUI.Controls {
         //        e.TextBox.SelectAll();
         //    }
   
-        //    this.InvokeRoundEvent("Name", prev, after, teamIndex, position);
+        //    this.InvokeRoundEvent("Name", prev, after, TeamIndex, position);
         //}
 
         /// <summary>

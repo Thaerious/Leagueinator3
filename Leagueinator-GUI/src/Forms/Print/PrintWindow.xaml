@@ -11,7 +11,7 @@
             <MenuItem Header="Print" Click="Hnd_Print"/>
             <MenuItem Header="Exit" Click="Hnd_Exit"/>
         </Menu>
-        <FlowDocumentScrollViewer >
+        <FlowDocumentScrollViewer  x:Name="ScrollViewer">
             <FlowDocument x:Name="DocViewer" PagePadding="50" ColumnWidth="9999" FontFamily="Arial">
                 <Section x:Name="TeamSection">
                     <!-- Dynamically add blocks here -->

@@ -37,6 +37,11 @@ namespace Leagueinator.GUI.Forms.Main {
             this.InvokeFileEvent("Load");
         }
 
+        private void HndAssignPlayersRandomly(object sender, RoutedEventArgs e) {
+            this.ClearFocus();
+            this.InvokeRoundEvent("AssignPlayersRandomly");
+        }   
+
         private void HndSaveClick(object sender, RoutedEventArgs e) {
             this.ClearFocus();
             this.InvokeFileEvent("Save");
@@ -66,24 +71,39 @@ namespace Leagueinator.GUI.Forms.Main {
             this.ClearFocus();
             this.InvokeRoundEvent("Show");
         }
+
+        private void HndShowRoundResultsClick(object sender, RoutedEventArgs e) {
+            this.ClearFocus();
+            this.InvokeRoundEvent("RoundResults");
+        }
+
+        private void HndShowEventResultsClick(object sender, RoutedEventArgs e) {
+            this.ClearFocus();
+            this.InvokeRoundEvent("EventResults");
+        }
+
         private void HndViewTeamResults(object sender, RoutedEventArgs e) {
             this.ClearFocus();
-
-            PrintWindow pw = new();
-            for (int i = 0; i < 10; i++) pw.AddTeam();
-            pw.Show();
+            this.InvokeActionEvent("PrintTeams");
         }
 
         private void HndGenNextRound(object sender, RoutedEventArgs args) {
             this.ClearFocus();
+            this.InvokeRoundEvent("GenerateRound");
         }
 
         private void HndAssignLanes(object sender, RoutedEventArgs args) {
             this.ClearFocus();
         }
 
-        private void HndMatchAssignments(object sender, RoutedEventArgs e) {
+        private void AssignRankedLadder(object sender, RoutedEventArgs args) {
             this.ClearFocus();
+            this.InvokeRoundEvent("AssignRankedLadder");
+        }   
+
+        private void AssignRoundRobin(object sender, RoutedEventArgs args) {
+            this.ClearFocus();
+            this.InvokeRoundEvent("AssignRoundRobin");
         }
 
         private void HndViewPlayerResults(object sender, RoutedEventArgs e) {
