@@ -1,5 +1,4 @@
 ﻿using Leagueinator.GUI.Utility.Extensions;
-using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -43,7 +42,7 @@ namespace Leagueinator.GUI.Controls {
             this.DragEnter += controller.HndDragEnter;
             this.Drop += controller.HndDrop;
 
-            this.Descendants<TextBox>()
+            this.GetDescendantsOfType<TextBox>()
                 .ToList()
                 .ForEach(textBox => {
                     textBox.AllowDrop = true;
@@ -56,7 +55,7 @@ namespace Leagueinator.GUI.Controls {
             e.Handled = !IsTextNumeric(e.Text);
         }
 
-        private bool IsTextNumeric(string text) {
+        private static bool IsTextNumeric(string text) {
             return text.All(char.IsDigit);
         }
     }

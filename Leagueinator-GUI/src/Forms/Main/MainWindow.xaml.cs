@@ -1,7 +1,9 @@
 ﻿using Leagueinator.GUI.Controls;
 using Leagueinator.GUI.Model;
 using Leagueinator.GUI.Utility.Extensions;
+using System.Diagnostics;
 using System.Windows;
+using System.Windows.Automation;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Threading;
@@ -18,7 +20,7 @@ namespace Leagueinator.GUI.Forms.Main {
             this.Title = "Leagueinator []";
             //this.InstantiateDragDropHnd();
             this.CurrentRoundButton = this.AddRoundButton();
-            this.CurrentRoundButton.Focus();            
+            this.CurrentRoundButton.Focus();
         }
 
         public void Ready() {
@@ -31,8 +33,8 @@ namespace Leagueinator.GUI.Forms.Main {
         }
 
         public MatchCard GetMatchCard(int lane) {
-            var descendants = this.Descendants<MatchCard>();
-            return this.Descendants<MatchCard>().First(MatchCard => MatchCard.Lane == lane);
+            var descendants = this.GetDescendantsOfType<MatchCard>();
+            return this.GetDescendantsOfType<MatchCard>().First(MatchCard => MatchCard.Lane == lane);
         }
 
         public void PopulateMatchCards(RoundData roundData) {
@@ -41,13 +43,15 @@ namespace Leagueinator.GUI.Forms.Main {
             }), DispatcherPriority.Background);
         }
 
-
         /// <summary>
         /// Fill matchRow cards with values from "roundRow".
         /// Clears all matchRow cards that does not have a value in "roundRow".
         /// </summary>
         /// <param name="roundRow"></param>
         private void DoPopulateMatchCards(RoundData roundData) {
+            int cardsToLoad = 0;
+            int cardsLoaded = 0;
+
             // Clear all match cards that are not in the round data.
             while (roundData.Count < this.MatchCardStackPanel.Children.Count) {
                 this.MatchCardStackPanel.Children.RemoveAt(0);
@@ -55,7 +59,7 @@ namespace Leagueinator.GUI.Forms.Main {
 
             for (int i = 0; i < roundData.Count; i++) {
                 MatchData matchData = roundData[i];
-                
+
                 if (i >= this.MatchCardStackPanel.Children.Count) {
                     MatchCard mc = MatchCardFactory.GenerateMatchCard(matchData.MatchFormat);
                     mc.Lane = matchData.Lane;
@@ -63,7 +67,7 @@ namespace Leagueinator.GUI.Forms.Main {
                     this.MatchCardStackPanel.Children.Add(mc);
 
                     mc.Loaded += (s, e) => {
-                        this.UpdateMatchCard(mc, matchData);
+                        mc.UpdateData(matchData);
                     };
                     continue;
                 }
@@ -77,35 +81,37 @@ namespace Leagueinator.GUI.Forms.Main {
                     matchCard.Lane = matchData.Lane;
                     matchCard.Ends = matchData.Ends;
                     this.MatchCardStackPanel.Children.Insert(i, matchCard);
+                    cardsToLoad++;
 
                     matchCard.Loaded += (s, e) => {
-                        this.UpdateMatchCard(matchCard, matchData);
+                        matchCard.UpdateData(matchData);
+                        cardsLoaded++;
+
+                        Debug.WriteLine($"MatchCard loaded: {cardsLoaded} / {cardsToLoad}");
+
+                        if (cardsLoaded == cardsToLoad) {
+                            this.AssignTabOrder();
+                        }
                     };
                     continue;
                 }
 
                 // If the matchCard is already loaded, update it.
-                this.UpdateMatchCard(matchCard, matchData);
+                matchCard.UpdateData(matchData);
             }
         }
 
-        private void UpdateMatchCard(MatchCard matchCard, MatchData matchData) {
-            matchCard.Lane = matchData.Lane;
-            matchCard.Ends = matchData.Ends;
-            matchCard.SetTieBreaker(matchData.TieBreaker);
+        private void AssignTabOrder() {
+            int nextTabIndex = 0;
 
-            matchCard.SuppressBowlsEvent = true;
+            var elements = this.MatchCardStackPanel.FindByTag("PlayerName")
+                .OfType<TextBox>();
 
-            for (int team = 0; team < matchData.Teams.Length; team++) {
-                for (int position = 0; position < matchData.Teams[team].Length; position++) {
-                    TeamCard teamCard = matchCard.GetTeamCard(team)!;
-                    var name = matchData.Teams[team][position];
-                    teamCard.SetName(name, position);
-                    teamCard.Bowls = matchData.Score[team];
-                }
+            Debug.WriteLine($"Assigning TabIndex to {elements.Count()} elements.");
+
+            foreach (var textBox in elements) {
+                textBox.TabIndex = nextTabIndex++;
             }
-
-            matchCard.SuppressBowlsEvent = false;
         }
 
         public void RemoveRound(int index) {

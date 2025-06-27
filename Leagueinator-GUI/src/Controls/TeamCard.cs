@@ -44,7 +44,7 @@ namespace Leagueinator.GUI.Controls {
             this.DragEnter += controller.HndDragEnter;
             this.Drop += controller.HndDrop;
 
-            this.Descendants<TextBox>()
+            this.GetDescendantsOfType<TextBox>()
                 .Where(textBox => textBox.HasTag("PlayerName"))
                 .ToList()
                 .ForEach(textBox => {
@@ -91,7 +91,7 @@ namespace Leagueinator.GUI.Controls {
         /// and returns <c>true</c> if a match is found.
         /// </remarks>
         public bool HasName(string name) {
-            return this.Descendants<TextBox>()
+            return this.GetDescendantsOfType<TextBox>()
                        .Where(textBox => textBox.HasTag("PlayerName"))
                        .Where(textBox => textBox.Text == name)
                        .Any();
@@ -109,7 +109,7 @@ namespace Leagueinator.GUI.Controls {
         /// </summary>
         /// <param name="name">The name To remove from the text boxes.</param>
         public void RemoveName(string name) {
-            this.Descendants<TextBox>()
+            this.GetDescendantsOfType<TextBox>()
                 .Where(textBox => textBox.HasTag("PlayerName"))
                 .Where(textBox => textBox.Text == name)
                 .ToList()
@@ -123,7 +123,7 @@ namespace Leagueinator.GUI.Controls {
         /// of the current object. 
         /// </summary>
         public void ClearNames() {
-            this.Descendants<TextBox>()
+            this.GetDescendantsOfType<TextBox>()
                 .Where(textBox => textBox.HasTag("PlayerName"))
                 .ToList()
                 .ForEach(textBox => {

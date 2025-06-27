@@ -4,61 +4,74 @@ using System.Windows.Media;
 namespace Leagueinator.GUI.Utility.Extensions {
     public static class ControlExtensions {
 
-        public static IEnumerable<FrameworkElement> FindByTag(this DependencyObject root, object tag) {
+        /// <summary>
+        /// Finds all descendant <see cref="FrameworkElement"/>s of the specified root that have a matching <see cref="FrameworkElement.Tag"/>.
+        /// </summary>
+        /// <param name="root">The root element to start the search from.</param>
+        /// <param name="tag">The tag value to match.</param>
+        /// <returns>An <see cref="IEnumerable{FrameworkElement}"/> containing all matching elements.</returns>
+        public static IEnumerable<FrameworkElement> FindByTag(this DependencyObject root, string tag) {
             for (int i = 0; i < VisualTreeHelper.GetChildrenCount(root); i++) {
                 var child = VisualTreeHelper.GetChild(root, i);
-                if (child is FrameworkElement fe && Equals(fe.Tag, tag))
-                    yield return fe;
+                if (child is FrameworkElement frameworkElement && frameworkElement.HasTag(tag))
+                    yield return frameworkElement;
 
                 foreach (var match in FindByTag(child, tag))
                     yield return match;
             }
         }
 
-        public static bool HasTag(this FrameworkElement source, string tag) {
-            if (source is null) return false;
-            if (source.Tag is null) return false;
-            if (source.Tag is not string allTags) return false;
+        /// <summary>
+        /// Checks whether a <see cref="FrameworkElement"/> has a specific tag among space-separated tag values.
+        /// </summary>
+        /// <param name="element">The element to check.</param>
+        /// <param name="tag">The tag to look for.</param>
+        /// <returns><c>true</c> if the tag is found; otherwise, <c>false</c>.</returns>
+        public static bool HasTag(this FrameworkElement element, string tag) {
+            if (element is null) return false;
+            if (element.Tag is null) return false;
+            if (element.Tag is not string tagString) return false;
 
-            List<string> split = [.. allTags.Split(" ")];
-            return split.Contains(tag);
+            List<string> tags = [.. tagString.Split(' ')];
+            return tags.Contains(tag);
         }
 
         /// <summary>
-        /// Retrieve all decedents (child elements recursively) that are of type <T>.
+        /// Retrieves all descendant elements of a given type from the visual tree, starting from the specified root.
         /// </summary>
-        /// <typeparam name="T">The type of decedent to retrieve</typeparam>
-        /// <param name="parent">Source element</param>
-        /// <returns></returns>
-        public static IEnumerable<T> Descendants<T>(this DependencyObject parent) where T : DependencyObject {
-            ArgumentNullException.ThrowIfNull(parent);
+        /// <typeparam name="T">The type of descendant to retrieve.</typeparam>
+        /// <param name="root">The root element from which to begin the search.</param>
+        /// <returns>An <see cref="IEnumerable{T}"/> of matching elements.</returns>
+        public static IEnumerable<T> GetDescendantsOfType<T>(this DependencyObject root) where T : DependencyObject {
+            ArgumentNullException.ThrowIfNull(root);
 
-            Queue<DependencyObject> sourceList = new();
-            sourceList.Enqueue(parent);
+            Queue<DependencyObject> queue = new();
+            queue.Enqueue(root);
 
-            while (sourceList.Count > 0) {
-                DependencyObject current = sourceList.Dequeue();
-                int childCount = VisualTreeHelper.GetChildrenCount(current);
+            while (queue.Count > 0) {
+                DependencyObject current = queue.Dequeue();
+                int childrenCount = VisualTreeHelper.GetChildrenCount(current);
 
-                // Loop through each child
-                for (int i = 0; i < childCount; i++) {
+                for (int i = 0; i < childrenCount; i++) {
                     var child = VisualTreeHelper.GetChild(current, i);
-
-                    // Check if the child is of the specified type
-                    if (child is T t) yield return t;
-
-                    // Recursively call this method on the child
-                    sourceList.Enqueue(child);
+                    if (child is T match) yield return match;
+                    queue.Enqueue(child);
                 }
             }
         }
 
-        public static IEnumerable<T> Ancestors<T>(this DependencyObject element) where T : DependencyObject {
-            DependencyObject parent = VisualTreeHelper.GetParent(element);
+        /// <summary>
+        /// Retrieves all ancestor elements of a given type from the visual tree, starting from the specified element and walking upward.
+        /// </summary>
+        /// <typeparam name="T">The type of ancestor to retrieve.</typeparam>
+        /// <param name="child">The starting element.</param>
+        /// <returns>An <see cref="IEnumerable{T}"/> of matching ancestors.</returns>
+        public static IEnumerable<T> Ancestors<T>(this DependencyObject child) where T : DependencyObject {
+            DependencyObject current = VisualTreeHelper.GetParent(child);
 
-            while (parent != null) {
-                if (parent is T t) yield return t;
-                parent = VisualTreeHelper.GetParent(parent);
+            while (current != null) {
+                if (current is T match) yield return match;
+                current = VisualTreeHelper.GetParent(current);
             }
         }
     }
