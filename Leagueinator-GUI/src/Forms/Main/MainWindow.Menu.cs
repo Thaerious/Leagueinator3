@@ -94,6 +94,7 @@ namespace Leagueinator.GUI.Forms.Main {
 
         private void HndAssignLanes(object sender, RoutedEventArgs args) {
             this.ClearFocus();
+            this.InvokeRoundEvent("AssignLanes");
         }
 
         private void AssignRankedLadder(object sender, RoutedEventArgs args) {

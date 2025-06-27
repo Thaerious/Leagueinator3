@@ -1,5 +1,4 @@
-﻿using Leagueinator.GUI.Model;
-using Leagueinator.GUI.Model.Results;
+﻿using Leagueinator.GUI.Model.Results;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
@@ -31,7 +30,7 @@ namespace Leagueinator.GUI.Forms.Print {
 
             // Outer wrapper table for the border
             Table outerTable = new Table {
-                Margin = new Thickness(5)
+                Margin = new Thickness(5),
             };
 
             outerTable.Columns.Add(new TableColumn());
@@ -41,20 +40,26 @@ namespace Leagueinator.GUI.Forms.Print {
             TableCell outerCell = new TableCell {
                 BorderThickness = new Thickness(1),
                 BorderBrush = Brushes.Black,
-                Padding = new Thickness(10)
+                Padding = new Thickness(5)
             };
 
             // Add team header
-            outerCell.Blocks.Add(new Paragraph(new Run(string.Join(", ", teamResult.Team))) {
-                FontWeight = FontWeights.Bold,
-                FontSize = 16,
-                Margin = new Thickness(0, 0, 0, 0)
-            });
+            string teamHeader = $"[{teamResult.Rank}] {string.Join(", ", teamResult.Team)}";
+
+            outerCell.Blocks.Add(
+                new Paragraph(new Run(teamHeader)) {
+                    FontWeight = FontWeights.Bold,
+                    FontSize = 16,
+                    Margin = new Thickness(0)
+                }
+            );
 
             // Inner results table
             Table resultsTable = new Table();
             for (int i = 0; i < 6; i++) {
-                resultsTable.Columns.Add(new TableColumn { Width = new GridLength(50) });
+                resultsTable.Columns.Add(
+                    new TableColumn { Width = new GridLength(70)}
+                );
             }
 
             TableRowGroup rows = new TableRowGroup();
@@ -62,12 +67,12 @@ namespace Leagueinator.GUI.Forms.Print {
             // Header row
             rows.Rows.Add(new TableRow {
                 Cells = {
-                    new TableCell(new Paragraph(new Run("R"))) { FontWeight = FontWeights.Bold },
-                    new TableCell(new Paragraph(new Run("F"))) { FontWeight = FontWeights.Bold },
-                    new TableCell(new Paragraph(new Run("A"))) { FontWeight = FontWeights.Bold },
-                    new TableCell(new Paragraph(new Run("T"))) { FontWeight = FontWeights.Bold },
-                    new TableCell(new Paragraph(new Run("E"))) { FontWeight = FontWeights.Bold },
-                    new TableCell(new Paragraph(new Run("L"))) { FontWeight = FontWeights.Bold },
+                    new TableCell(new Paragraph(new Run("Result"))) { FontWeight = FontWeights.Bold },
+                    new TableCell(new Paragraph(new Run("BF")))     { FontWeight = FontWeights.Bold },
+                    new TableCell(new Paragraph(new Run("BA")))     { FontWeight = FontWeights.Bold },
+                    new TableCell(new Paragraph(new Run("TB")))     { FontWeight = FontWeights.Bold },
+                    new TableCell(new Paragraph(new Run("Ends")))   { FontWeight = FontWeights.Bold },
+                    new TableCell(new Paragraph(new Run("Lane")))   { FontWeight = FontWeights.Bold },
                 }
             });
 
@@ -84,6 +89,17 @@ namespace Leagueinator.GUI.Forms.Print {
                     }
                 });
             }
+
+            rows.Rows.Add(new TableRow {
+                Cells = {
+                        new TableCell(new Paragraph(new Run(teamResult.CountWins.ToString()))),
+                        new TableCell(new Paragraph(new Run($"{teamResult.BowlsFor}+{teamResult.PlusFor}"))),
+                        new TableCell(new Paragraph(new Run($"{teamResult.BowlsAgainst}+{teamResult.PlusAgainst}"))),
+                        new TableCell(new Paragraph(new Run(" "))),
+                        new TableCell(new Paragraph(new Run($"{teamResult.CountEnds}"))),
+                        new TableCell(new Paragraph(new Run($" "))),
+                    }
+            });
 
             resultsTable.RowGroups.Add(rows);
             outerCell.Blocks.Add(resultsTable);
@@ -113,7 +129,7 @@ namespace Leagueinator.GUI.Forms.Print {
             var printDialog = new PrintDialog();
             if (printDialog.ShowDialog() == true) {
                 try {
-                    // Clone the FlowDocument to avoid printing the live one
+                    // Copy the FlowDocument to avoid printing the live one
                     FlowDocument clonedDoc = CloneFlowDocument(this.DocViewer);
 
                     IDocumentPaginatorSource docSource = clonedDoc as IDocumentPaginatorSource;

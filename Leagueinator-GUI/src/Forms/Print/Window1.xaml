@@ -1,0 +1,65 @@
+﻿<Window x:Class="Leagueinator.GUI.src.Forms.Print.Window1"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Leagueinator.GUI.src.Forms.Print"
+        mc:Ignorable="d"
+        Title="Window1" Height="450" Width="800">
+    <DockPanel>
+        <Menu DockPanel.Dock="Top">
+        </Menu>
+
+        <FlowDocumentScrollViewer  x:Name="ScrollViewer">
+            <FlowDocument x:Name="DocViewer" PagePadding="50" ColumnWidth="9999" FontFamily="Arial">
+                <Section x:Name="TeamSection">
+                    <Table Margin="5">
+                        <Table.Columns>
+                            <TableColumn Width="50"/>
+                            <TableColumn Width="100"/>
+                        </Table.Columns>
+
+                        <TableRowGroup>
+                            <TableRow>
+                                <!-- Left: Big number -->
+                                <TableCell BorderBrush="Black" BorderThickness="1" Padding="10" TextAlignment="Center">
+                                    <Paragraph FontSize="50" FontWeight="Bold">2</Paragraph>
+                                </TableCell>
+
+                                <!-- Right: Embedded table -->
+                                <TableCell BorderBrush="Black" BorderThickness="1" Padding="5">
+                                    <TableCell.Blocks>
+                                        <Table>
+                                            <Table.Columns>
+                                                <TableColumn Width="*"/>
+                                            </Table.Columns>
+                                            
+                                            <TableRowGroup>
+                                                <TableRow>
+                                                    <TableCell>
+                                                        <Paragraph>F</Paragraph>
+                                                    </TableCell>
+                                                    <TableCell>
+                                                        <Paragraph>10</Paragraph>
+                                                    </TableCell>
+                                                </TableRow>
+                                                <TableRow>
+                                                    <TableCell>
+                                                        <Paragraph>A</Paragraph>
+                                                    </TableCell>
+                                                    <TableCell>
+                                                        <Paragraph>8</Paragraph>
+                                                    </TableCell>
+                                                </TableRow>
+                                            </TableRowGroup>
+                                        </Table>
+                                    </TableCell.Blocks>
+                                </TableCell>
+                            </TableRow>
+                        </TableRowGroup>
+                    </Table>
+                </Section>
+            </FlowDocument>
+        </FlowDocumentScrollViewer>
+    </DockPanel>
+</Window>

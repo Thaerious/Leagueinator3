@@ -5,10 +5,10 @@ namespace Leagueinator.GUI.Model.Results {
     internal class TeamResult : IComparable<TeamResult>{
         public readonly List<SingleResult> MatchResults = [];
 
-        public readonly string[] Team;
+        public readonly TeamData Team;
 
-        public TeamResult(string[] team) {
-            this.Team = [.. team];
+        public TeamResult(TeamData team) {
+            this.Team = team;
         }
 
         public int Wins {
@@ -60,6 +60,20 @@ namespace Leagueinator.GUI.Model.Results {
         }
 
         public int Rank { get; set; } = -1;
+
+        public int CountWins {
+            get {
+                if (this.MatchResults.Count == 0) return 0;
+                return this.MatchResults.Count(r => r.Result == Result.Win);
+            }
+        }
+
+        public int CountEnds {
+            get {
+                if (this.MatchResults.Count == 0) return 0;
+                return this.MatchResults.Sum(r => r.Ends);
+            }
+        }
 
         public int BowlsFor {
             get {

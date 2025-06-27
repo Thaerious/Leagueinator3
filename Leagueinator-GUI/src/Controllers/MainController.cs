@@ -5,6 +5,7 @@ using Leagueinator.GUI.Forms.Main;
 using Leagueinator.GUI.Forms.Print;
 using Leagueinator.GUI.Model;
 using Leagueinator.GUI.Model.Results;
+using Leagueinator.GUI.src.Controllers.Algorithms;
 using Leagueinator.GUI.Utility;
 using Microsoft.Win32;
 using System.Diagnostics;
@@ -132,12 +133,32 @@ namespace Leagueinator.GUI.Controllers {
         public void RoundDataHnd(object? sender, RoundDataEventArgs e) {
             Logger.Log($"MainController.RoundData: {e.Action} for index {e.Index}");
 
+            try {
+                this._RoundDataHnd(sender, e);
+            }
+            catch (UnpairableTeamsException ex) {
+                MessageBox.Show("Could not assign teams uniquely.", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
+        }
+
+        private void _RoundDataHnd(object? sender, RoundDataEventArgs e) {
             switch (e.Action) {
+                case "AssignLanes": {
+                        AssignLanes assignLanes = new(this.EventData, this.RoundDataCollection, this.RoundData);
+                        RoundData newRound = assignLanes.DoAssignment();
+                        this.RoundDataCollection[this.CurrentRoundIndex] = newRound;
+                        this.InvokeSetTitle(this.FileName, false);
+                        this.InvokeRoundEvent("Update");
+                    } 
+                    break;
                 case "GenerateRound": {
                         var newRound = this.GenerateRound();
-                        var createdIndex = this.RoundDataCollection.IndexOf(newRound);
-                        this.CurrentRoundIndex = createdIndex;
-                        this.InvokeRoundEvent("AddRound", createdIndex, newRound);
+                        AssignLanes assignLanes = new(this.EventData, this.RoundDataCollection, newRound);
+                        newRound = assignLanes.DoAssignment();  
+                        this.RoundDataCollection.Add(newRound);
+                        this.CurrentRoundIndex = this.RoundDataCollection.Count - 1;
+
+                        this.InvokeRoundEvent("AddRound", this.CurrentRoundIndex, newRound);
                         this.InvokeSetTitle(this.FileName, false);
                         this.InvokeRoundEvent("Update");
                     }
@@ -235,7 +256,6 @@ namespace Leagueinator.GUI.Controllers {
             switch(this.EventData.EventType) {
                 case EventType.RankedLadder:
                     var newRound = new RankedLadder(this.RoundDataCollection, this.EventData).GenerateRound();
-                    this.RoundDataCollection.Add(newRound);
                     return newRound;
                 //case EventType.RoundRobin:
                 //    break;

@@ -11,6 +11,8 @@
     <DebugType>full</DebugType>
     <DebugSymbols>true</DebugSymbols>
     <Optimize>false</Optimize>
+
+    <StartupObject>Leagueinator.GUI.App</StartupObject>
   </PropertyGroup>
 
 

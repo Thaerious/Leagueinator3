@@ -1,10 +1,8 @@
-﻿using Leagueinator.GUI.Utility;
-using Leagueinator.GUI.Utility.Extensions;
+﻿using Leagueinator.GUI.Utility.Extensions;
 using System.Diagnostics;
 using System.Text;
 
 namespace Leagueinator.GUI.Model {
-
     public class RoundData : List<MatchData> {
         
         public RoundData() : base() {}
@@ -14,36 +12,23 @@ namespace Leagueinator.GUI.Model {
         }
 
         public void Fill(EventData eventData) {
-            while (this.Count < eventData.LaneCount) {
-                this.Add(new MatchData(eventData.MatchFormat) {
-                    Lane = this.Count,
-                    Ends = eventData.DefaultEnds
-                });
-            }
+            for (int i = 0; i < eventData.LaneCount; i++) {
+                if (!this.Any(m => m.Lane == i)) {
+                    this.Add(new MatchData(eventData.MatchFormat) {
+                        Lane = i,
+                        Ends = eventData.DefaultEnds
+                    });
+                }
+            }   
+
+            this.Sort((a, b) => a.Lane.CompareTo(b.Lane));
         }
 
         public RoundData Copy() { 
-            RoundData roundCopy = new();
+            RoundData roundCopy = [];
 
             foreach (MatchData match in this) {
-                MatchData matchCopy = new(match.MatchFormat) {
-                    Lane = match.Lane,
-                    Ends = match.Ends,
-                    TieBreaker = match.TieBreaker
-                };
-
-                // Deep copy Teams
-                for (int team = 0; team < match.Teams.Length; team++) {
-                    matchCopy.Teams[team] = new string[match.Teams[team].Length];
-                    for (int pos = 0; pos < match.Teams[team].Length; pos++) {
-                        matchCopy.Teams[team][pos] = match.Teams[team][pos];
-                    }
-                }
-
-                // Copy Score
-                Array.Copy(match.Score, matchCopy.Score, match.Score.Length);
-
-                roundCopy.Add(matchCopy);
+                roundCopy.Add(match.Copy());
             }
 
             return roundCopy;
@@ -53,6 +38,7 @@ namespace Leagueinator.GUI.Model {
             StringBuilder sb = new();
             foreach (MatchData match in this) {
                 sb.Append(match.ToString());
+                sb.Append('\n');
             }
             return sb.ToString();
         }
@@ -63,13 +49,7 @@ namespace Leagueinator.GUI.Model {
             }
 
             foreach (MatchData match in this) {
-                for (int team = 0; team < match.Teams.Length; team++) {
-                    for (int position = 0; position < match.Teams[team].Length; position++) {
-                        if (match.Teams[team][position] == name) {
-                            match.Teams[team][position] = string.Empty;
-                        }
-                    }
-                }
+                match.RemoveName(name);
             }
         }
 
@@ -94,8 +74,8 @@ namespace Leagueinator.GUI.Model {
             }
 
             foreach (MatchData match in this) {
-                foreach (string[] team in match.Teams) {
-                    if (team.Contains(name)) {
+                foreach (TeamData team in match.Teams) {
+                    if (team.Names.Contains(name)) {
                         return true;
                     }
                 }
@@ -105,9 +85,9 @@ namespace Leagueinator.GUI.Model {
 
         public (int, int, int) PollPlayer(string name) {
             foreach (MatchData match in this) {
-                foreach (string[] team in match.Teams) {
-                    if (team.Contains(name)) {
-                        return (match.Lane, Array.IndexOf(match.Teams, team), Array.IndexOf(team, name));
+                foreach (TeamData team in match.Teams) {
+                    if (team.Names.Contains(name)) {
+                        return (match.Lane, Array.IndexOf(match.Teams, team), team.IndexOf(name));
                     }
                 }
             }
@@ -117,7 +97,7 @@ namespace Leagueinator.GUI.Model {
         internal void AssignPlayersRandomly() {
             var dict = new Dictionary<(int, int, int), string>();
 
-            // Populate the dictionary with player names and their positions
+            // Populate the dictionary with player Names and their positions
             foreach (MatchData match in this) {
                 for (int team = 0; team < match.Teams.Length; team++) {
                     for (int position = 0; position < match.Teams[team].Length; position++) {

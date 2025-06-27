@@ -4,17 +4,17 @@ namespace Leagueinator.GUI.Model.Results {
 
     public class SingleResult : IComparable<SingleResult> {
 
-        public SingleResult(MatchData matchData, int team) {
+        public SingleResult(MatchData matchData, int teamIndex) {
             this.MatchData = matchData;
-            this.TeamIndex = team;
-            this.Players = (string[])matchData.Teams[team].Clone();
+            this.TeamIndex = teamIndex;
+            this.TeamData = matchData.Teams[teamIndex];
             this.Ends = matchData.Ends;
-            this.Bowls = matchData.Score[team];
+            this.Bowls = matchData.Score[teamIndex];
             this.Against = matchData.Score.Sum() - this.Bowls;
             this.Rank = -1; // Default rank, this is set by the RoundResults class
         }
 
-        public string[] Players { get; } = [];
+        public TeamData? TeamData { get; } = null;
 
         public Result Result {
             get {
@@ -29,8 +29,9 @@ namespace Leagueinator.GUI.Model.Results {
         }
 
         public override string ToString() {
-            return $"{this.Rank}: {this.Result} [{string.Join(", ", this.Players)}]  (For: {this.BowlsFor}+{this.PlusFor}, Against: {this.BowlsAgainst}+{this.PlusAgainst}, Ends: {this.Ends} Lane: {this.MatchData.Lane + 1})";
+            return $"{this.Rank}: {this.Result} [{this.TeamData}]  (For: {this.BowlsFor}+{this.PlusFor}, Against: {this.BowlsAgainst}+{this.PlusAgainst}, Ends: {this.Ends} Lane: {this.MatchData.Lane + 1})";
         }
+
         public int Ends { get; set; } = 0;
 
         public int Bowls { get; set; } = 0;

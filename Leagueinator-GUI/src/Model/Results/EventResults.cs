@@ -56,16 +56,16 @@ namespace Leagueinator.GUI.Model.Results {
                 ResultsByRound.Add(new RoundResults(round));
             }
 
-            Dictionary<string[], TeamResult> teamResultsMap = new(new StringArrayComparer());
+            Dictionary<TeamData, TeamResult> teamResultsMap = [];
 
             // Aggregate results by team
             foreach (RoundResults roundResults in this.ResultsByRound) {
                 foreach (SingleResult singleResult in roundResults.Results) {
-                    if (teamResultsMap.ContainsKey(singleResult.Players) == false) {
-                        teamResultsMap.Add(singleResult.Players, new TeamResult(singleResult.Players));
+                    if (teamResultsMap.ContainsKey(singleResult.TeamData) == false) {
+                        teamResultsMap.Add(singleResult.TeamData, new TeamResult(singleResult.TeamData));
                     }
 
-                    TeamResult teamResults = teamResultsMap[singleResult.Players];
+                    TeamResult teamResults = teamResultsMap[singleResult.TeamData];
                     teamResults.MatchResults.Add(singleResult);
                 }
             }
