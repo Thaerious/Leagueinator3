@@ -1,11 +1,11 @@
 ﻿using Leagueinator.GUI.Controllers.Algorithms;
+using Leagueinator.GUI.Controls;
 using Leagueinator.GUI.Dialogs;
 using Leagueinator.GUI.Forms;
 using Leagueinator.GUI.Forms.Main;
 using Leagueinator.GUI.Forms.Print;
 using Leagueinator.GUI.Model;
 using Leagueinator.GUI.Model.Results;
-using Leagueinator.GUI.src.Controllers.Algorithms;
 using Leagueinator.GUI.Utility;
 using Microsoft.Win32;
 using System.Diagnostics;
@@ -138,6 +138,9 @@ namespace Leagueinator.GUI.Controllers {
             }
             catch (UnpairableTeamsException ex) {
                 MessageBox.Show("Could not assign teams uniquely.", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
+            catch (AlgoLogicException ex) {
+                MessageBox.Show(ex.Message, "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
         }
 
@@ -476,6 +479,35 @@ namespace Leagueinator.GUI.Controllers {
             foreach (MatchData matchData in roundData) {
                 if (matchData.CountPlayers() != 0) continue;
                 matchData.MatchFormat = eventData.MatchFormat;
+            }
+        }
+
+        internal void DragEndHnd(object sender, RoutedEventArgs e) {
+            if (e is not DragEndArgs args) return;
+            Debug.WriteLine("MainController.DragEndHnd called.");
+            Debug.WriteLine($"From: {args.From.Name}, To: {args.To.Name}");
+
+            switch (args.From) {
+                case TeamCard teamCard: {
+                        if (args.To is TeamCard target) {
+                            TeamData from = this.RoundData[teamCard.MatchCard.Lane].Teams[teamCard.TeamIndex];
+                            TeamData to = this.RoundData[target.MatchCard.Lane].Teams[target.TeamIndex];
+
+                            this.RoundData[target.MatchCard.Lane].Teams[target.TeamIndex] = from;
+                            this.RoundData[teamCard.MatchCard.Lane].Teams[teamCard.TeamIndex] = to;
+
+                            this.InvokeRoundEvent("Update");
+                        }
+                    }
+                    break;
+                case InfoCard infoCard: {
+                        if (args.To is TeamCard tcTarget) {
+
+                        }
+                        else if (args.To is InfoCard icTarget) {
+                        }
+                    }
+                    break;
             }
         }
     }

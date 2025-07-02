@@ -52,6 +52,9 @@ namespace Leagueinator.GUI.Model {
         /// Gets or sets the tiebreaker value for the match. Default is -1 (no tiebreaker).
         /// </summary>
         public int TieBreaker { get; set; } = -1;
+        public List<string> Players { 
+            get => this.Teams.SelectMany(team => team.Names).ToList();
+        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MatchData"/> class with the specified match format.

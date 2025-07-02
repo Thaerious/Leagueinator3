@@ -21,6 +21,10 @@ namespace Leagueinator.GUI.Model {
             return new TeamData(this.Names);
         }
 
+        public void Clear() {
+            Array.Fill(this.Names, string.Empty);
+        }   
+
         public string this[int index] {
             get {
                 if (index < 0 || index >= this.Names.Length) {

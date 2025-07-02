@@ -1,11 +1,23 @@
-﻿using Leagueinator.GUI.Dialogs;
-using System.Diagnostics;
+﻿using Leagueinator.GUI.Controls;
+using Leagueinator.GUI.Dialogs;
+using Leagueinator.GUI.Controllers;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 
 namespace Leagueinator.GUI.Forms.Main {
     public partial class MainWindow {
+        public event RoutedEventHandler OnMatchCardUpdate {
+            add => AddHandler(MatchCard.MatchCardUpdateEvent, value);
+            remove => RemoveHandler(MatchCard.MatchCardUpdateEvent, value);
+        }
+
+        public event RoutedEventHandler OnDragEnd {
+            add => AddHandler(DragDropController.RegisteredDragEndEvent, value);
+            remove => RemoveHandler(DragDropController.RegisteredDragEndEvent, value);
+        }
+
         internal void HighLightRound(int index) {
             foreach (Button button in this.RoundButtonContainer.Children) {
                 button.Background = Brushes.LightGray;

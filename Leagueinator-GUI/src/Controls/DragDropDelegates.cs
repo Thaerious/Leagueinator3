@@ -1,11 +1,15 @@
 ﻿using System.Windows;
 
 namespace Leagueinator.GUI.Controls {
-    public class DragBeginArgs(RoutedEvent routedEvent, FrameworkElement from) : RoutedEventArgs(routedEvent) {
+    public class DragBeginArgs(RoutedEvent routedEvent, FrameworkElement from) 
+               : RoutedEventArgs(routedEvent) {
+
         public FrameworkElement From = from;
     }
 
-    public class DragEndArgs(RoutedEvent routedEvent, FrameworkElement from, FrameworkElement to) : RoutedEventArgs(routedEvent) {
+    public class DragEndArgs(RoutedEvent routedEvent, FrameworkElement from, FrameworkElement to) 
+               : RoutedEventArgs(routedEvent) {
+
         public FrameworkElement From = from;
         public FrameworkElement To = to;
     }

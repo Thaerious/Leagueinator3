@@ -1,4 +1,5 @@
-﻿using Leagueinator.GUI.Utility.Extensions;
+﻿using Leagueinator.GUI.Controllers;
+using Leagueinator.GUI.Utility.Extensions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -28,10 +29,10 @@ namespace Leagueinator.GUI.Controls {
 
         public int Lane {
             get {
-                return int.Parse(this.LblLane.Text);
+                return int.Parse(this.LblLane.Text) - 1;
             }
             set {
-                this.LblLane.Text = value.ToString();
+                this.LblLane.Text = (value + 1).ToString();
             }
         }
 

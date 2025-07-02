@@ -1,10 +1,11 @@
-﻿using Leagueinator.GUI.Utility.Extensions;
+﻿using Leagueinator.GUI.Controls;
+using Leagueinator.GUI.Utility.Extensions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using static Leagueinator.GUI.Controls.DragDropDelegates;
 
-namespace Leagueinator.GUI.Controls {
+namespace Leagueinator.GUI.Controllers {
     public class DragDropController {
 
         public DragDropController(FrameworkElement targetElement) {
@@ -44,18 +45,14 @@ namespace Leagueinator.GUI.Controls {
         public void HndPreMouseDown(object _, MouseButtonEventArgs e) {
             if (e.LeftButton != MouseButtonState.Pressed) return;
 
-            DependencyObject? clickedElement = e.OriginalSource as DependencyObject;
-            if (clickedElement != null && clickedElement.Ancestors<TextBox>().Any()) {
-                return;
-            }
+            var clickedElement = e.OriginalSource as DependencyObject;
+            if (clickedElement != null && clickedElement.Ancestors<TextBox>().Any())                 return;
 
-            if (clickedElement != null && clickedElement.Ancestors<CheckBox>().Any()) {
-                return;
-            }
+            if (clickedElement != null && clickedElement.Ancestors<CheckBox>().Any())                 return;
 
             e.Handled = true;
 
-            DragBeginArgs args = new(DragDropController.RegisteredDragBeginEvent, this.TargetElement);
+            DragBeginArgs args = new(RegisteredDragBeginEvent, this.TargetElement);
             this.TargetElement.RaiseEvent(args);
             DataObject dataObject = new(DataFormats.Serializable, this.TargetElement);
             DragDrop.DoDragDrop(this.TargetElement, dataObject, DragDropEffects.Move);
@@ -66,7 +63,7 @@ namespace Leagueinator.GUI.Controls {
 
             e.Handled = true;
 
-            DragEndArgs args = new(DragDropController.RegisteredDragEndEvent, from, this.TargetElement);
+            DragEndArgs args = new(RegisteredDragEndEvent, from, this.TargetElement);
             this.TargetElement.RaiseEvent(args);
         }
     }

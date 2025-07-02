@@ -58,23 +58,13 @@
                     <MenuItem Header="Randomly" Click="HndAssignPlayersRandomly"/>
                 </MenuItem>
                 <MenuItem Header="Assign Lanes" Click="HndAssignLanes"/>
-                <MenuItem Header="Assign Matches">
-                    <MenuItem Header="Ranked Ladder" Click="AssignRankedLadder"/>
-                    <MenuItem Header="Round Robin"  Click="AssignRoundRobin"/>
-                </MenuItem>
             </MenuItem>
 
             <!-- Result (Report) Menu -->
             <MenuItem Header="View">
                 <MenuItem Header="Results By Team" Click="HndViewTeamResults"/>
-                <MenuItem Header="Results By Player" Click="HndViewPlayerResults"/>
-            </MenuItem>
-
-            <!-- Debug (Tables) Menu -->
-            <MenuItem Header="Tables" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" Click="HndMenuClick">
+                <MenuItem IsEnabled="False" Header="Results By Player" Click="HndViewPlayerResults"/>
                 <MenuItem Header="Show Data" Click="HndShowDataClick"/>
-                <MenuItem Header="Show Round Results" Click="HndShowRoundResultsClick"/>
-                <MenuItem Header="Show Event Results" Click="HndShowEventResultsClick"/>
             </MenuItem>
 
             <!-- Help Menu -->

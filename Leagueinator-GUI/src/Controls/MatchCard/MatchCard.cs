@@ -70,18 +70,41 @@ namespace Leagueinator.GUI.Controls {
             };
 
             foreach (TextBox textBox in this.FindByTag("Bowls").Cast<TextBox>()) {
-                textBox.TextChanged += (s, args) => {
-                    if (this.SuppressBowlsEvent) return; // Prevents looping when setting Bowls property
-                    int teamIndex = textBox.Ancestors<TeamCard>().First().TeamIndex;
-                    var textBoxValue = int.Parse(textBox.Text);
-                    this.InvokeEvent("Bowls", value:textBoxValue, team:teamIndex);
-                };
+                textBox.TextChanged += this.TextBoxInvokeBowlsEvent;
+                textBox.PreviewMouseLeftButtonDown += this.TextBox_PreviewMouseLeftButtonDown;
+                textBox.GotKeyboardFocus += this.TextBox_GotKeyboardFocus;
             }
 
             foreach (TextBox textBox in this.FindByTag("PlayerName").Cast<TextBox>()) {
                 textBox.KeyDown += this.NameTextBoxChange;
                 textBox.LostFocus += this.NameTextBoxChange;
             }
+        }
+
+        private void TextBoxInvokeBowlsEvent(object sender, TextChangedEventArgs e) {
+            if (this.SuppressBowlsEvent) return; // Prevents looping when setting Bowls property
+            if (sender is not TextBox textBox) return;
+
+            if (textBox.Text.Trim() == "") {
+                textBox.Text = "0"; // Default to 0 if empty
+                textBox.SelectAll(); // Select all text for easy editing
+                return;
+            }
+            int teamIndex = textBox.Ancestors<TeamCard>().First().TeamIndex;
+            var textBoxValue = int.Parse(textBox.Text);
+            this.InvokeEvent("Bowls", value: textBoxValue, team: teamIndex);
+        }
+
+        private void TextBox_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e) {
+            var textBox = sender as TextBox;
+            if (textBox != null && !textBox.IsKeyboardFocusWithin) {
+                e.Handled = true; // Prevents default focus/caret behavior
+                textBox.Focus();  // Triggers GotKeyboardFocus
+            }
+        }
+
+        private void TextBox_GotKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e) {
+            (sender as TextBox)?.SelectAll();
         }
 
         public int Ends {
@@ -103,16 +126,16 @@ namespace Leagueinator.GUI.Controls {
         public int Lane {
             get {
                 var infoCard = this.GetDescendantsOfType<InfoCard>().FirstOrDefault();
-                return infoCard?.Lane - 1 ?? this._pendingLane ?? - 1;
+                return infoCard?.Lane ?? this._pendingLane ?? - 1;
             }
             set {
                 var infoCard = this.GetDescendantsOfType<InfoCard>().FirstOrDefault();
 
                 if (infoCard != null) {
-                    infoCard.Lane = value + 1;
+                    infoCard.Lane = value;
                 }
                 else {
-                    this._pendingLane = value + 1;
+                    this._pendingLane = value;
                 }
             }
         }
@@ -230,11 +253,7 @@ namespace Leagueinator.GUI.Controls {
         }
 
         public void OnlyNumbers(object sender, TextCompositionEventArgs e) {
-            e.Handled = !IsTextNumeric(e.Text);
-        }
-
-        private bool IsTextNumeric(string text) {
-            return text.All(char.IsDigit);
+            e.Handled = !e.Text.All(char.IsDigit);
         }
     }
 }
