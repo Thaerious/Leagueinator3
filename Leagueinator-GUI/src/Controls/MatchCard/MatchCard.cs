@@ -64,15 +64,14 @@ namespace Leagueinator.GUI.Controls {
                 _pendingEnds = null;
             }
 
-            infoCard.TxtEnds.TextChanged += (s, args) => {
-                var ends = int.Parse(infoCard.TxtEnds.Text);
-                this.InvokeEvent("Ends", value: ends);
-            };
+            infoCard.TxtEnds.TextChanged += this.TextBoxInvokeEndsEvent;
+            infoCard.TxtEnds.PreviewMouseLeftButtonDown += this.TextBoxPreventDefaultCaretBehaviour;
+            infoCard.TxtEnds.GotKeyboardFocus += this.TextBoxSelectAllOnFocus;
 
             foreach (TextBox textBox in this.FindByTag("Bowls").Cast<TextBox>()) {
                 textBox.TextChanged += this.TextBoxInvokeBowlsEvent;
-                textBox.PreviewMouseLeftButtonDown += this.TextBox_PreviewMouseLeftButtonDown;
-                textBox.GotKeyboardFocus += this.TextBox_GotKeyboardFocus;
+                textBox.PreviewMouseLeftButtonDown += this.TextBoxPreventDefaultCaretBehaviour;
+                textBox.GotKeyboardFocus += this.TextBoxSelectAllOnFocus;
             }
 
             foreach (TextBox textBox in this.FindByTag("PlayerName").Cast<TextBox>()) {
@@ -80,6 +79,19 @@ namespace Leagueinator.GUI.Controls {
                 textBox.LostFocus += this.NameTextBoxChange;
             }
         }
+
+        private void TextBoxInvokeEndsEvent(object sender, TextChangedEventArgs e) {
+            if (sender is not TextBox textBox) return;
+
+            if (textBox.Text.Trim() == "") {
+                textBox.Text = "0"; // Default to 0 if empty
+                textBox.SelectAll(); // Select all text for easy editing
+                return;
+            }
+
+            int endsValue = int.Parse(textBox.Text);
+            this.InvokeEvent("Ends", value: endsValue);
+        }   
 
         private void TextBoxInvokeBowlsEvent(object sender, TextChangedEventArgs e) {
             if (this.SuppressBowlsEvent) return; // Prevents looping when setting Bowls property
@@ -90,20 +102,20 @@ namespace Leagueinator.GUI.Controls {
                 textBox.SelectAll(); // Select all text for easy editing
                 return;
             }
+
             int teamIndex = textBox.Ancestors<TeamCard>().First().TeamIndex;
             var textBoxValue = int.Parse(textBox.Text);
             this.InvokeEvent("Bowls", value: textBoxValue, team: teamIndex);
         }
 
-        private void TextBox_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e) {
-            var textBox = sender as TextBox;
-            if (textBox != null && !textBox.IsKeyboardFocusWithin) {
+        private void TextBoxPreventDefaultCaretBehaviour(object sender, MouseButtonEventArgs e) {
+            if (sender is TextBox textBox && !textBox.IsKeyboardFocusWithin) {
                 e.Handled = true; // Prevents default focus/caret behavior
                 textBox.Focus();  // Triggers GotKeyboardFocus
             }
         }
 
-        private void TextBox_GotKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e) {
+        private void TextBoxSelectAllOnFocus(object sender, KeyboardFocusChangedEventArgs e) {
             (sender as TextBox)?.SelectAll();
         }
 
