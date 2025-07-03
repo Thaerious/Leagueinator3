@@ -1,5 +1,6 @@
 ﻿using Leagueinator.GUI.Forms.Print;
 using Microsoft.Win32;
+using System.Diagnostics;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
@@ -16,6 +17,11 @@ namespace Leagueinator.GUI.Forms.Main {
         public void HndSettings(object sender, RoutedEventArgs e) {
             this.ClearFocus();
             this.InvokeActionEvent("Settings");
+        }
+
+        public void HndSwap(object? sender, RoutedEventArgs e) {
+            this.ClearFocus();
+            this.InvokeRoundEvent("Swap");
         }
 
         /// <summary>

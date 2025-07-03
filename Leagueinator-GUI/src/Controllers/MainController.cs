@@ -29,9 +29,9 @@ namespace Leagueinator.GUI.Controllers {
         public event SetRoundCount OnSetRoundCount = delegate { };
         public event UpdateRound OnUpdateRound = delegate { };
 
-        private RoundDataCollection RoundDataCollection { get; set; } = [];
+        internal RoundDataCollection RoundDataCollection { get; set; } = [];
 
-        private RoundData RoundData { get => this.RoundDataCollection[this.CurrentRoundIndex]; }
+        internal RoundData RoundData { get => this.RoundDataCollection[this.CurrentRoundIndex]; }
 
         private int CurrentRoundIndex { get; set; } = 0;
 
@@ -110,7 +110,6 @@ namespace Leagueinator.GUI.Controllers {
                     };
 
                     if (dialog.ShowDialog() == true) {
-                        Debug.WriteLine("SettingsDialog confirmed changes.");
                         this.EventData = dialog.EventData;
                         this.SyncRoundData(dialog.EventData);
                         this.InvokeRoundEvent("Update");
@@ -250,8 +249,6 @@ namespace Leagueinator.GUI.Controllers {
                         tv.Show();
                     }
                     break;
-                default:
-                    throw new NotSupportedException($"Action '{e.Action}' is not supported.");
             }
         }
 

@@ -1,7 +1,11 @@
 ﻿using Leagueinator.GUI.Controllers;
+using Leagueinator.GUI.Controls;
 using Leagueinator.GUI.Forms.Main;
+using Leagueinator.GUI.src.Controllers;
 using Leagueinator.GUI.Utility;
+using Leagueinator.GUI.Utility.Extensions;
 using System.Diagnostics;
+using System.Linq;
 using System.Windows;
 using System.Windows.Threading;
 
@@ -28,21 +32,46 @@ namespace Leagueinator.GUI {
                 main.Loaded += (object s, global::System.Windows.RoutedEventArgs e) => {
                     Debug.WriteLine("MainWindow Loaded");
                     MainController mainController = new(main);
+                    FocusController focusController = new(mainController);
 
                     // Initialize controller listeners for handling UI generated events
-                    main.OnDragEnd += mainController.DragEndHnd;
+                    main.OnDragEnd         += mainController.DragEndHnd;
                     main.OnMatchCardUpdate += mainController.MatchCardUpdateHnd;
-                    main.OnRoundData += mainController.RoundDataHnd;
-                    main.OnFileEvent += mainController.FileEventHnd;
-                    main.OnActionEvent += mainController.ActionEventHnd;
+                    main.OnRoundData       += mainController.RoundDataHnd;
+                    main.OnRoundData       += focusController.RoundDataHnd;
+                    main.OnFileEvent       += mainController.FileEventHnd;                    
+                    main.OnActionEvent     += mainController.ActionEventHnd;
+                    main.OnRequestFocus    += focusController.RequestFocusHnd;
 
                     // Initialize UI listeners for handling controller generated events
-                    mainController.OnUpdateRound += this.UpdateRoundHnd;
-                    mainController.OnSetRoundCount += this.SetRoundCountHnd;
-                    mainController.OnSetTitle += this.SetTitleHnd;
+                    mainController.OnUpdateRound    += this.UpdateRoundHnd;
+                    mainController.OnSetRoundCount  += this.SetRoundCountHnd;
+                    mainController.OnSetTitle       += this.SetTitleHnd;
+                    focusController.OnFocusGranted  += this.GrantFocus;
+                    focusController.OnFocusRevoked  += this.RevokeFocus;
+
                     main.Ready();
                 };
             });
+        }
+
+        private void GrantFocus(object sender, FocusController.FocusArgs args) {
+            TeamCard? card = this.MainWindow
+                                .GetDescendantsOfType<TeamCard>()
+                                .Where(card => card.MatchCard.Lane.Equals(args.TeamId.MatchIndex))
+                                .FirstOrDefault(card => card.TeamIndex.Equals(args.TeamId.TeamIndex));
+
+            if (card is not null) card.Background = Colors.TeamPanelFocused;
+        }
+
+        private void RevokeFocus(object sender, FocusController.FocusArgs args) {
+            TeamCard? card = this.MainWindow
+                                .GetDescendantsOfType<TeamCard>()
+                                .Where(card => card.MatchCard.Lane.Equals(args.TeamId.MatchIndex))
+                                .FirstOrDefault(card => card.TeamIndex.Equals(args.TeamId.TeamIndex));
+
+            if (card is not null) card.Background = Colors.TeamPanelDefault;
+
         }
 
         private void App_DispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e) {

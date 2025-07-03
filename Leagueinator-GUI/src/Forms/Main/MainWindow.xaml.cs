@@ -3,7 +3,6 @@ using Leagueinator.GUI.Model;
 using Leagueinator.GUI.Utility.Extensions;
 using System.Diagnostics;
 using System.Windows;
-using System.Windows.Automation;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Threading;

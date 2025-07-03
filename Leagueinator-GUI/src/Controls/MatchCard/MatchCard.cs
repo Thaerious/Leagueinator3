@@ -154,20 +154,6 @@ namespace Leagueinator.GUI.Controls {
             var textBlock = infoCard.GetDescendantsOfType<TextBlock>().Where(tb => tb.Name == "LblLane").First();
         }
 
-        // Force update the binding source when Enter is pressed
-        protected void TxtEnterPressedHnd(object sender, KeyEventArgs e) {
-            if (e.Key == Key.Enter) {
-                if (sender is TextBox textBox) {
-                    // Trigger binding update
-                    textBox.GetBindingExpression(TextBox.TextProperty).UpdateSource();
-
-                    // Move focus To the next control in the tab order
-                    TraversalRequest request = new TraversalRequest(FocusNavigationDirection.Next);
-                    textBox.MoveFocus(request);
-                }
-            }
-        }
-
         public TeamCard? GetTeamCard(int teamIndex) {
             return this
                 .GetDescendantsOfType<TeamCard>()

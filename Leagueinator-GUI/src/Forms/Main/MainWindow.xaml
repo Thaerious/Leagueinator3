@@ -3,22 +3,23 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:Leagueinator.GUI.Controls"
-        xmlns:Source="clr-namespace:Leagueinator.GUI.Forms.Main" 
+        xmlns:local="clr-namespace:Leagueinator.GUI.Forms.Main"
         x:Class="Leagueinator.GUI.Forms.Main.MainWindow"
         mc:Ignorable="d"
         Title="MainWindow" Height="800" Width="1000" MinWidth="800"
         KeyDown="HndKeyDownRenamePlayer"
     >
-    
+
     <Window.CommandBindings>
         <CommandBinding Command="Save" Executed="HndSaveClick"/>
         <CommandBinding Command="SaveAs" Executed="HndSaveAsClick"/>
+        <CommandBinding Command="{x:Static local:CustomCommands.Swap}" Executed="HndSwap"/>
     </Window.CommandBindings>
 
     <Window.InputBindings>
         <KeyBinding Key="S" Modifiers="Control" Command="Save"/>
         <KeyBinding Key="S" Modifiers="Control+Shift" Command="SaveAs"/>
+        <KeyBinding Key="X" Modifiers="Control" Command="{x:Static local:CustomCommands.Swap}"/>
     </Window.InputBindings>
 
     <Grid>
@@ -49,6 +50,7 @@
                 <MenuItem Header="Add Round" Click="HndGenEmptyRound"/>
                 <MenuItem Header="Copy Round" Click="HndCopyRnd"/>
                 <MenuItem Header="Delete Round" Click="HndDeleteRnd"/>
+                <MenuItem Header="Swap" Command="{x:Static local:CustomCommands.Swap}" InputGestureText="Ctrl+X"/>
             </MenuItem>
 
             <!-- Action Menu -->
@@ -80,7 +82,9 @@
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="40"/>
                 </Grid.RowDefinitions>
-                <StackPanel x:Name="RoundButtonContainer"/>
+                <StackPanel x:Name="RoundButtonContainer" 
+                            MouseLeftButtonDown="HndClearFocus"
+                            Background="Transparent"/>
             </Grid>
         </Border>
 

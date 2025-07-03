@@ -1,9 +1,11 @@
 ﻿using Leagueinator.GUI.Controls;
+using Leagueinator.GUI.src.Controllers;
 using Leagueinator.GUI.Utility.Extensions;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using static Leagueinator.GUI.Controls.DragDropDelegates;
+using static Leagueinator.GUI.Controllers.DragDropDelegates;
 
 namespace Leagueinator.GUI.Controllers {
     public class DragDropController {
@@ -11,6 +13,13 @@ namespace Leagueinator.GUI.Controllers {
         public DragDropController(FrameworkElement targetElement) {
             this.TargetElement = targetElement;
         }
+
+        public static readonly RoutedEvent RequestFocusEvent = EventManager.RegisterRoutedEvent(
+            "RequestFocus",                       // Event name
+            RoutingStrategy.Bubble,               // Routing strategy (Bubble, Tunnel, or Direct)
+            typeof(RequestFocus),                 // Delegate type
+            typeof(FrameworkElement)              // Owner type
+        );
 
         public static readonly RoutedEvent RegisteredDragBeginEvent = EventManager.RegisterRoutedEvent(
             "DragBegin",                          // Event name
@@ -45,10 +54,10 @@ namespace Leagueinator.GUI.Controllers {
         public void HndPreMouseDown(object _, MouseButtonEventArgs e) {
             if (e.LeftButton != MouseButtonState.Pressed) return;
 
+            // If the clicked element is a TextBox or CheckBox terminate the drag operation.
             var clickedElement = e.OriginalSource as DependencyObject;
-            if (clickedElement != null && clickedElement.Ancestors<TextBox>().Any())                 return;
-
-            if (clickedElement != null && clickedElement.Ancestors<CheckBox>().Any())                 return;
+            if (clickedElement != null && clickedElement.Ancestors<TextBox>().Any()) return;
+            if (clickedElement != null && clickedElement.Ancestors<CheckBox>().Any()) return;
 
             e.Handled = true;
 
@@ -59,12 +68,34 @@ namespace Leagueinator.GUI.Controllers {
         }
 
         public void HndDrop(object _, DragEventArgs e) {
+            // If the data is not of type FrameworkElement, ignore the drop.
             if (e.Data.GetData(DataFormats.Serializable) is not FrameworkElement from) return;
 
             e.Handled = true;
 
-            DragEndArgs args = new(RegisteredDragEndEvent, from, this.TargetElement);
-            this.TargetElement.RaiseEvent(args);
+            // If the target element is the same as the source, ignore the drop.
+            if (from == this.TargetElement) {
+                HndRequestFocus(from, Keyboard.Modifiers.HasFlag(ModifierKeys.Shift));
+            }
+            else {
+                // Raise the DragEnd event with the source element and the target element.
+                DragEndArgs args = new(RegisteredDragEndEvent, from, this.TargetElement);
+                this.TargetElement.RaiseEvent(args);
+            }
+        }
+
+        private static void HndRequestFocus(FrameworkElement e, bool append) {
+            if (e is not TeamCard teamCard) {
+                Debug.WriteLine("RequestFocus: Not a TeamCard");
+                return;
+            }
+
+            int teamIndex = teamCard.TeamIndex;
+            int lane = teamCard.MatchCard.Lane;
+            TeamID teamID = new(teamIndex, lane);
+
+            RequestFocusArgs args = new(RequestFocusEvent, teamID, append);
+            teamCard.RaiseEvent(args);
         }
     }
 }

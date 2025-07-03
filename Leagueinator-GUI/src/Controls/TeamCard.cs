@@ -2,7 +2,7 @@
 using Leagueinator.GUI.Utility.Extensions;
 using System.Windows;
 using System.Windows.Controls;
-using static Leagueinator.GUI.Controls.DragDropDelegates;
+using static Leagueinator.GUI.Controllers.DragDropDelegates;
 
 namespace Leagueinator.GUI.Controls {
     public class TeamCard : Border {

@@ -18,6 +18,11 @@ namespace Leagueinator.GUI.Forms.Main {
             remove => RemoveHandler(DragDropController.RegisteredDragEndEvent, value);
         }
 
+        public event RoutedEventHandler OnRequestFocus {
+            add => AddHandler(DragDropController.RequestFocusEvent, value);
+            remove => RemoveHandler(DragDropController.RequestFocusEvent, value);
+        }
+
         internal void HighLightRound(int index) {
             foreach (Button button in this.RoundButtonContainer.Children) {
                 button.Background = Brushes.LightGray;

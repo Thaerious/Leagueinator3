@@ -1,6 +1,4 @@
 ﻿
-using System.Diagnostics;
-
 namespace Leagueinator.GUI.Model.Results {
     /// <summary>
     /// Aggregates results across all rounds of an event.

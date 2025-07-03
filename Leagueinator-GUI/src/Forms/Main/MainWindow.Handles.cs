@@ -1,8 +1,12 @@
-﻿using Leagueinator.GUI.Controls;
+﻿using Leagueinator.GUI.Controllers;
+using Leagueinator.GUI.Controls;
+using Leagueinator.GUI.src.Controllers;
 using System.Diagnostics;
+using System.Reflection.Metadata.Ecma335;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using static Leagueinator.GUI.Controllers.DragDropDelegates;
 
 namespace Leagueinator.GUI.Forms.Main {
     public partial class MainWindow : Window {
@@ -62,6 +66,11 @@ namespace Leagueinator.GUI.Forms.Main {
             this.ClearFocus();
             var index = this.RoundButtonContainer.Children.IndexOf(button);
             this.InvokeRoundEvent(action: "Select", index: index);
+        }
+
+        private void HndClearFocus(object? sender, EventArgs? _) {
+            ClearFocusArgs args = new(DragDropController.RequestFocusEvent);
+            this.RaiseEvent(args);
         }
     }
 }

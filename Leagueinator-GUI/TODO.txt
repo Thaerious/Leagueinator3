@@ -1,4 +1,5 @@
 ﻿- Removing a match throws an exception.
 - Add ctrl-c / ctrl-v to copy/paste matches.
+- Drag/Drop controller should send anonymous data, not framework elements. (ie TeamID)
 
 + Losing focus on a player name doesn't save changes.
