@@ -1,7 +1,10 @@
 ﻿
-namespace Leagueinator.GUI.Model.Results {
+namespace Leagueinator.GUI.Model {
     public class RoundDataCollection : List<RoundData> {
 
+        /// <summary>
+        /// Generate a collection of all unique teams that have played in any match across all rounds.
+        /// </summary>
         public HashSet<TeamData> Teams {
             get {
                 HashSet<TeamData> teams = [];
@@ -20,7 +23,7 @@ namespace Leagueinator.GUI.Model.Results {
 
 
         /// <summary>
-        /// Returns a list of all matches that the given targetTeam has played in.
+        /// Returns a list of all matches that a team has played in.
         /// </summary>
         /// <param name="targetTeam"></param>
         /// <returns></returns>

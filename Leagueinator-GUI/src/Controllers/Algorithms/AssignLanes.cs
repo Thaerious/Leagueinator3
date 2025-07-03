@@ -1,7 +1,6 @@
 ﻿using Leagueinator.GUI.Model;
 using Leagueinator.GUI.Model.Results;
 using System.Diagnostics;
-using System.Text.RegularExpressions;
 
 namespace Leagueinator.GUI.Controllers.Algorithms {
     /// <summary>

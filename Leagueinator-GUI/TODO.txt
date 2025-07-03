@@ -1,0 +1,4 @@
+﻿- Removing a match throws an exception.
+- Add ctrl-c / ctrl-v to copy/paste matches.
+
++ Losing focus on a player name doesn't save changes.

@@ -85,7 +85,6 @@ namespace Leagueinator.GUI {
         }
 
         private void UpdateRoundHnd(object sender, RoundEventData args) {
-            Logger.Log($"App.UpdateRound: {args.Action}, {args.Index}");
             var main = (MainWindow)this.MainWindow;
 
             switch (args.Action) {

@@ -5,7 +5,9 @@ namespace Leagueinator.GUI.Model.Results {
     internal class TeamResult : IComparable<TeamResult>{
         public readonly List<SingleResult> MatchResults = [];
 
-        public readonly TeamData Team;
+        public TeamData Team {
+            get; private set;
+        }
 
         public TeamResult(TeamData team) {
             this.Team = team;

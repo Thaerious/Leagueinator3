@@ -1,4 +1,6 @@
-﻿using Leagueinator.GUI.Model.Results;
+﻿using Leagueinator.GUI.Model;
+using Leagueinator.GUI.Model.Results;
+using System.Diagnostics;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
@@ -10,13 +12,14 @@ namespace Leagueinator.GUI.Forms.Print {
     /// Interaction logic for PrintWindow.xaml
     /// </summary>
     public partial class PrintWindow : Window {
-        private RoundDataCollection RoundDataCollection;
+        private readonly RoundDataCollection RoundDataCollection;
 
         public PrintWindow(RoundDataCollection roundDataCollection) {
             this.RoundDataCollection = roundDataCollection;
             InitializeComponent();
 
             EventResults eventResults = new EventResults(roundDataCollection);
+            Debug.WriteLine($"Event Results: {eventResults.ResultsByTeam.Count} teams, {eventResults.ResultsByRound.Count} rounds");
 
             this.Loaded += (s, e) => {
                 foreach (TeamResult teamResult in eventResults.ResultsByTeam) {
@@ -58,7 +61,7 @@ namespace Leagueinator.GUI.Forms.Print {
             Table resultsTable = new Table();
             for (int i = 0; i < 6; i++) {
                 resultsTable.Columns.Add(
-                    new TableColumn { Width = new GridLength(70)}
+                    new TableColumn { Width = new GridLength(70) }
                 );
             }
 
@@ -73,23 +76,16 @@ namespace Leagueinator.GUI.Forms.Print {
                     new TableCell(new Paragraph(new Run("TB")))     { FontWeight = FontWeights.Bold },
                     new TableCell(new Paragraph(new Run("Ends")))   { FontWeight = FontWeights.Bold },
                     new TableCell(new Paragraph(new Run("Lane")))   { FontWeight = FontWeights.Bold },
+                    new TableCell(new Paragraph(new Run("VS")))     { FontWeight = FontWeights.Bold },
                 }
             });
 
             // Data rows
-            foreach (var result in teamResult.MatchResults) {
-                rows.Rows.Add(new TableRow {
-                    Cells = {
-                        new TableCell(new Paragraph(new Run(result.Result.ToString()))),
-                        new TableCell(new Paragraph(new Run($"{result.BowlsFor}+{result.PlusFor}"))),
-                        new TableCell(new Paragraph(new Run($"{result.BowlsAgainst}+{result.PlusAgainst}"))),
-                        new TableCell(new Paragraph(new Run(result.MatchData.TieBreaker == result.TeamIndex ? "✓" : " "))),
-                        new TableCell(new Paragraph(new Run($"{result.MatchData.Ends}"))),
-                        new TableCell(new Paragraph(new Run($"{result.MatchData.Lane + 1}"))),
-                    }
-                });
+            foreach (SingleResult result in teamResult.MatchResults) {
+                rows.Rows.Add(this.AddResult(result));
             }
 
+            // Add summary row for the team
             rows.Rows.Add(new TableRow {
                 Cells = {
                         new TableCell(new Paragraph(new Run(teamResult.CountWins.ToString()))),
@@ -111,6 +107,25 @@ namespace Leagueinator.GUI.Forms.Print {
 
             section.Blocks.Add(outerTable);
             this.TeamSection.Blocks.Add(section);
+        }
+
+        private TableRow AddResult(SingleResult result) {
+            List<string> names = [..result.MatchData.Players];
+            names = [.. names.Except(result.TeamData.Names)];
+            var joinNames = string.Join(", ", names);
+
+
+            return new TableRow {
+                Cells = {
+                    new TableCell(new Paragraph(new Run(result.Result.ToString()))),
+                    new TableCell(new Paragraph(new Run($"{result.BowlsFor}+{result.PlusFor}"))),
+                    new TableCell(new Paragraph(new Run($"{result.BowlsAgainst}+{result.PlusAgainst}"))),
+                    new TableCell(new Paragraph(new Run(result.MatchData.TieBreaker == result.TeamIndex ? "✓" : " "))),
+                    new TableCell(new Paragraph(new Run($"{result.MatchData.Ends}"))),
+                    new TableCell(new Paragraph(new Run($"{result.MatchData.Lane + 1}"))),
+                    new TableCell(new Paragraph(new Run($"{joinNames}"))),
+                }
+            };
         }
 
         private FlowDocument CloneFlowDocument(FlowDocument original) {

@@ -14,10 +14,11 @@ namespace Leagueinator.GUI.Model.Results {
             this.Rank = -1; // Default rank, this is set by the RoundResults class
         }
 
-        public TeamData? TeamData { get; } = null;
+        public TeamData TeamData { get; }
 
         public Result Result {
             get {
+                if (this.MatchData.Score.Sum() == 0) return Result.Vacant;
                 if (this.BowlsFor > this.BowlsAgainst) return Result.Win;
                 if (this.BowlsFor < this.BowlsAgainst) return Result.Loss;
                 if (this.PlusFor > this.PlusAgainst) return Result.Win;

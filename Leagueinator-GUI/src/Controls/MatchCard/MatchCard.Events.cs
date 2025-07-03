@@ -5,22 +5,24 @@ using System.Windows.Controls;
 namespace Leagueinator.GUI.Controls {
     public abstract partial class MatchCard : UserControl {
 
-        public class MatchCardEventArgs(object source, string field) 
+        public class MatchCardEventArgs(object source, string field, bool echo = false) 
                    : RoutedEventArgs(MatchCardUpdateEvent, source) {
             public string Field { get; } = field;
             public int Lane { get; internal set; }
+
+            public bool Echo { get; } = echo;   
 
             public int? Team { get; internal set; } = null; 
             public int? Position { get; internal set; } = null; 
         }
 
-        public class MatchCardNewArgs(object source, string field, object newValue)
-                   : MatchCardEventArgs(source, field) {
+        public class MatchCardNewArgs(object source, string field, object newValue, bool echo = false)
+                   : MatchCardEventArgs(source, field, echo) {
             public object NewValue { get; } = newValue;
         }
 
-        public class MatchCardUpdateArgs(object source, string field, object oldValue, object newValue) 
-                   : MatchCardNewArgs(source, field, newValue) {
+        public class MatchCardUpdateArgs(object source, string field, object oldValue, object newValue, bool echo = false) 
+                   : MatchCardNewArgs(source, field, newValue, echo) {
             public object OldValue { get; } = oldValue;
         }
 

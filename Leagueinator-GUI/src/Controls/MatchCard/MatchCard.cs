@@ -20,7 +20,7 @@ namespace Leagueinator.GUI.Controls {
             this.Loaded += MatchCard_Loaded;               
         }
 
-        private void NameTextBoxChange(object sender, System.Windows.RoutedEventArgs e) { 
+        protected void NameTextBoxChange(object sender, RoutedEventArgs e) {             
             if (sender is not TextBox textBox) return;
             var parent = (StackPanel)textBox.Parent ?? throw new NullReferenceException("Parent is not a StackPanel.");            
 
@@ -28,14 +28,11 @@ namespace Leagueinator.GUI.Controls {
             int position = parent.Children.IndexOf(textBox);
 
             if (e is KeyEventArgs keyArgs) {
+                this.InvokeEvent("Name", value: textBox.Text, team: teamIndex, pos: position);
                 if (keyArgs.Key == Key.Enter) {
-                    this.InvokeEvent("Name", value: textBox.Text, team: teamIndex, pos: position);
                     TraversalRequest request = new TraversalRequest(FocusNavigationDirection.Next);
                     textBox.MoveFocus(request);
                 }
-            }
-            else {
-                this.InvokeEvent("Name", value: textBox.Text, team: teamIndex, pos: position);
             }
         }
 
@@ -75,7 +72,7 @@ namespace Leagueinator.GUI.Controls {
             }
 
             foreach (TextBox textBox in this.FindByTag("PlayerName").Cast<TextBox>()) {
-                textBox.KeyDown += this.NameTextBoxChange;
+                textBox.KeyUp += this.NameTextBoxChange;
                 textBox.LostFocus += this.NameTextBoxChange;
             }
         }
