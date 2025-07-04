@@ -2,6 +2,7 @@
 using Leagueinator.GUI.Utility.Extensions;
 using System.Windows;
 using System.Windows.Controls;
+using System.Xml.Linq;
 
 namespace Leagueinator.GUI.Controls {
     public class TeamCard : Border {
@@ -31,6 +32,17 @@ namespace Leagueinator.GUI.Controls {
             set => SetValue(BowlsProperty, value);
         }
 
+        public string this[int i] {
+            get {
+                TextBox[] boxes = [.. this.FindByTag("PlayerName").OfType<TextBox>()];
+                return boxes[i].Text;
+            }
+            set {
+                TextBox[] boxes = [.. this.FindByTag("PlayerName").OfType<TextBox>()];
+                boxes[i].Text = value;
+            }
+        }
+
         #endregion
 
         #region Handles
@@ -53,10 +65,5 @@ namespace Leagueinator.GUI.Controls {
         }
 
         #endregion
-
-        public void SetName(string name, int position) {
-            TextBox[] boxes = this.FindByTag("PlayerName").OfType<TextBox>().ToArray();
-            boxes[position].Text = name;
-        }
     }
 }

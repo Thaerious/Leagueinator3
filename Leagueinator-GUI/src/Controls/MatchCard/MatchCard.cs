@@ -216,7 +216,7 @@ namespace Leagueinator.GUI.Controls {
                 for (int position = 0; position < matchData.Teams[team].Length; position++) {
                     TeamCard teamCard = this.GetTeamCard(team)!;
                     var name = matchData.Teams[team][position];
-                    teamCard.SetName(name, position);
+                    teamCard[position] = name;
                     teamCard.Bowls = matchData.Score[team];
                 }
             }

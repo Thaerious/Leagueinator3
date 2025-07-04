@@ -2,9 +2,6 @@
 using Leagueinator.GUI.Utility.Extensions;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Input;
-using static Leagueinator.GUI.Controllers.DragDropDelegates;
-
 
 namespace Leagueinator.GUI.Controls {
     /// <summary>
@@ -12,29 +9,17 @@ namespace Leagueinator.GUI.Controls {
     /// </summary>
     public partial class InfoCard : UserControl {
         public InfoCard() {
-            this.Loaded += this.HndLoaded;
-            this.AllowDrop = true;
+            this.AllowDrop = true
+            this.Loaded += this.HndLoaded;;
             this.InitializeComponent();
         }
 
-        public event DragBegin OnDragBegin {
-            add { this.AddHandler(DragDropController.RegisteredDragBeginEvent, value); }
-            remove { this.RemoveHandler(DragDropController.RegisteredDragBeginEvent, value); }
-        }
-
-        public event DragEnd OnDragEnd {
-            add { this.AddHandler(DragDropController.RegisteredDragEndEvent, value); }
-            remove { this.RemoveHandler(DragDropController.RegisteredDragEndEvent, value); }
-        }
-
         public int Lane {
-            get {
-                return int.Parse(this.LblLane.Text) - 1;
-            }
-            set {
-                this.LblLane.Text = (value + 1).ToString();
-            }
+            get => int.Parse(this.LblLane.Text) - 1;
+            set => this.LblLane.Text = (value + 1).ToString();
         }
+
+        #region Handles
 
         private void HndLoaded(object sender, RoutedEventArgs e) {
             DragDropController controller = new DragDropController(this);
@@ -42,6 +27,7 @@ namespace Leagueinator.GUI.Controls {
             this.PreviewMouseDown += controller.HndPreMouseDown;
             this.DragEnter += controller.HndDragEnter;
             this.Drop += controller.HndDrop;
+            this.TxtEnds.PreviewTextInput += InputHandlers.OnlyNumbers;
 
             this.GetDescendantsOfType<TextBox>()
                 .ToList()
@@ -52,12 +38,6 @@ namespace Leagueinator.GUI.Controls {
                 });
         }
 
-        public void OnlyNumbers(object sender, TextCompositionEventArgs e) {
-            e.Handled = !IsTextNumeric(e.Text);
-        }
-
-        private static bool IsTextNumeric(string text) {
-            return text.All(char.IsDigit);
-        }
+        #endregion
     }
 }

@@ -12,13 +12,12 @@
     <Border BorderBrush="DarkGreen" Width="100">
         <StackPanel>
             <!-- Lane -->
-            <TextBlock x:Name="LblLane" Text="{Binding Lane}"
+            <TextBlock x:Name="LblLane" Text="0"
                    FontFamily="Arial Black" FontSize="20"
                    HorizontalAlignment="Center" Margin="0,10,0,10"/>
 
             <!-- Ends -->
             <TextBox x:Name="TxtEnds" Text="10"
-                     PreviewTextInput="OnlyNumbers"
                      Padding="2" Width="30" TextAlignment="Center" FontSize="14" IsTabStop="False"/>
 
             <TextBlock 
