@@ -1,4 +1,6 @@
-﻿using System.Diagnostics;
+﻿using Leagueinator.GUI.Forms.Main;
+using Leagueinator.GUI.Utility.Extensions;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -34,32 +36,5 @@ namespace Leagueinator.GUI.Controls {
         );
 
         public delegate void MatchCardUpdateHnd(object sender, MatchCardUpdateArgs e);
-
-        public void InvokeEvent(string field, int? team = default, int? pos = default) {
-            var args = new MatchCardEventArgs(this, field) {
-                Team = team,
-                Position = pos,
-                Lane = this.Lane
-            };
-            this.RaiseEvent(args);
-        }
-
-        public void InvokeEvent(string field, object value, int? team = default, int? pos = default) {
-            var args = new MatchCardNewArgs(this, field, value) {
-                Team = team,
-                Position = pos,
-                Lane = this.Lane
-            };
-            this.RaiseEvent(args);
-        }
-
-        public void InvokeEvent(string field, object old, object value, int? team = null, int? pos = default) {
-            var args = new MatchCardUpdateArgs(this, field, old, value) {
-                Team = team,
-                Position = pos,
-                Lane = this.Lane
-            };
-            this.RaiseEvent(args);
-        }
     }
 }

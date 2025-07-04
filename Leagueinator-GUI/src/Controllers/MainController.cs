@@ -10,17 +10,19 @@ using Leagueinator.GUI.Utility;
 using Microsoft.Win32;
 using System.Diagnostics;
 using System.IO;
+using System.Reflection;
+using System.Reflection.Metadata.Ecma335;
 using System.Text.Json;
 using System.Windows;
+using System.Windows.Controls;
 using static Leagueinator.GUI.Controls.MatchCard;
-using static Leagueinator.GUI.Forms.Main.MainWindow;
 
 namespace Leagueinator.GUI.Controllers {
 
     /// <summary>
     /// This glues the MainWindow window to the model and handles events from the MainWindow window.
     /// </summary>
-    public class MainController {
+    public class MainController : NamedEventController{
         public delegate void SetFilename(object sender, string filename, bool saved);    
         public delegate void SetRoundCount(object sender, int count);   
         public delegate void UpdateRound(object sender, RoundEventData roundData);
@@ -65,253 +67,258 @@ namespace Leagueinator.GUI.Controllers {
             this.OnSetTitle.Invoke(this, filename, saved);
         }   
 
-        public void FileEventHnd(object? sender, FileEventArgs e) {
-            Logger.Log($"MainController.FileEvent: {e.Action}");
-
-            switch(e.Action) {
-                case "Load":
-                    this.Load();
-                    this.OnSetRoundCount.Invoke(this, this.RoundDataCollection.Count);
-                    this.InvokeRoundEvent("Update");
-                    this.InvokeSetTitle(this.FileName, true);
-                    break;
-                case "Save":
-                    if (this.FileName != "Leagueinator") {
-                        this.Save(this.FileName);
-                    }
-                    else {
-                        this.SaveAs();
-                    }
-                    this.InvokeSetTitle(this.FileName, true);
-
-                    break;
-                case "SaveAs":
-                    this.SaveAs();
-                    this.InvokeSetTitle(this.FileName, true);
-                    break;  
-                case "New":
-                    this.NewEvent();
-                    this.OnSetRoundCount.Invoke(this, this.RoundDataCollection.Count);
-                    this.InvokeRoundEvent("Update");
-                    this.InvokeSetTitle("Leagueinator", true);
-                    this.FileName = "Leagueinator";
-                    break;
-                default:
-                    throw new NotSupportedException($"Action '{e.Action}' is not supported.");
-            }
+        internal void DoLoad(NamedEventArgs e) {
+            Logger.Log("MainController.DoLoad");
+            this.Load();
+            this.OnSetRoundCount.Invoke(this, this.RoundDataCollection.Count);
+            this.InvokeRoundEvent("Update");
+            this.InvokeSetTitle(this.FileName, true);
         }
-        internal void ActionEventHnd(object? sender, ActionEventArg e) {
-            Logger.Log($"MainController.ActionEventHnd: {e.Action}");
 
-            switch (e.Action) {
-                case "Settings":
-                    var dialog = new SettingsDialog() {
-                        EventData = this.EventData,
-                    };
+        internal void DoSave(NamedEventArgs e) {
+            Logger.Log("MainController.DoSave");
+            if (this.FileName != "Leagueinator") {
+                this.Save(this.FileName);
+            }
+            else {
+                this.SaveAs();
+            }
+            this.InvokeSetTitle(this.FileName, true);
+        }
 
-                    if (dialog.ShowDialog() == true) {
-                        this.EventData = dialog.EventData;
-                        this.SyncRoundData(dialog.EventData);
-                        this.InvokeRoundEvent("Update");
-                        this.InvokeSetTitle(this.FileName, false);
-                    }
-                    break;
-                case "PrintTeams":
-                    this.PrintTeams();
-                    break;
-                default:
-                    throw new NotSupportedException($"Action '{e.Action}' is not supported.");
+        internal void DoSaveAs(NamedEventArgs e) {
+            Logger.Log("MainController.DoSaveAs");
+            this.SaveAs();
+            this.InvokeSetTitle(this.FileName, true);
+        }
+
+        internal void DoNew(NamedEventArgs e) {
+            Logger.Log("MainController.DoNew");
+            this.NewEvent();
+            this.OnSetRoundCount.Invoke(this, this.RoundDataCollection.Count);
+            this.InvokeRoundEvent("Update");
+            this.InvokeSetTitle("Leagueinator", true);
+            this.FileName = "Leagueinator";
+        }
+
+        internal void DoSettings(NamedEventArgs e) {
+            Logger.Log("MainController.DoSettings");
+            var dialog = new SettingsDialog() {
+                EventData = this.EventData,
+            };
+            if (dialog.ShowDialog() == true) {
+                this.EventData = dialog.EventData;
+                this.SyncRoundData(dialog.EventData);
+                this.InvokeRoundEvent("Update");
+                this.InvokeSetTitle(this.FileName, false);
             }
         }
 
-        public void PrintTeams() {
+        internal void DoPrintTeams(NamedEventArgs e) {
+            Logger.Log("MainController.DoPrintTeams");
             PrintWindow pw = new(this.RoundDataCollection);
             pw.Show();
         }
 
-        public void RoundDataHnd(object? sender, RoundDataEventArgs e) {
-            Logger.Log($"MainController.RoundData: {e.Action} for index {e.Index}");
+        internal void DoAssignLanes(NamedEventArgs e) {
+            Logger.Log("MainController.DoAssignLanes");
+            AssignLanes assignLanes = new(this.EventData, this.RoundDataCollection, this.RoundData);
+            RoundData newRound = assignLanes.DoAssignment();
+            this.RoundDataCollection[this.CurrentRoundIndex] = newRound;
+            this.InvokeSetTitle(this.FileName, false);
+            this.InvokeRoundEvent("Update");
+        }
 
-            try {
-                this._RoundDataHnd(sender, e);
+        internal void DoGenerateRound(NamedEventArgs e) {
+            Logger.Log("MainController.DoGenerateRound");
+            var newRound = this.GenerateRound();
+            AssignLanes assignLanes = new(this.EventData, this.RoundDataCollection, newRound);
+            newRound = assignLanes.DoAssignment();  
+            this.RoundDataCollection.Add(newRound);
+            this.CurrentRoundIndex = this.RoundDataCollection.Count - 1;
+            this.InvokeRoundEvent("AddRound", this.CurrentRoundIndex, newRound);
+            this.InvokeSetTitle(this.FileName, false);
+            this.InvokeRoundEvent("Update");
+        }
+
+        internal void DoAddRound(NamedEventArgs e) {
+            Logger.Log("MainController.DoAddRound");
+            RoundData newRound = new(this.EventData);
+            this.RoundDataCollection.Add(newRound);
+            var createdIndex = this.RoundDataCollection.Count - 1;
+            this.InvokeRoundEvent("AddRound", createdIndex, newRound);
+            this.InvokeSetTitle(this.FileName, false);
+        }
+
+        internal void DoRemoveRound(NamedEventArgs e) {
+            Logger.Log("MainController.DoRemoveRound");
+            var previousIndex = this.CurrentRoundIndex;                    
+            this.RemoveRound(this.CurrentRoundIndex);
+            this.InvokeRoundEvent("Update");
+            this.InvokeRoundEvent("RemoveRound", previousIndex, null);
+            this.InvokeSetTitle(this.FileName, false);
+        }
+
+        internal void DoSelectRound(NamedEventArgs e) {
+            if (e is not NamedEventArgs<int> intEvent) {
+                throw new ArgumentException("NamedEventArgs must contain an integer index for round selection.");
             }
-            catch (UnpairableTeamsException ex) {
-                MessageBox.Show("Could not assign teams uniquely.", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+
+            Logger.Log("MainController.DoSelectRound");
+            int index = intEvent.Data;
+
+            if (index == -1) {
+                this.CurrentRoundIndex = this.RoundDataCollection.Count - 1;
             }
-            catch (AlgoLogicException ex) {
-                MessageBox.Show(ex.Message, "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+            else {
+                this.CurrentRoundIndex = index;
+            }                        
+            this.InvokeRoundEvent("Update");
+        }
+
+        internal void DoCopyRound(NamedEventArgs e) {
+            Logger.Log("MainController.DoCopyRound");
+            this.RoundDataCollection.Add(this.RoundData.Copy());
+            var copiedIndex = this.RoundDataCollection.Count - 1;
+            this.InvokeRoundEvent("AddRound", copiedIndex);
+            this.InvokeSetTitle(this.FileName, false);
+        }
+
+        internal void DoAssignPlayersRandomly(NamedEventArgs e) {
+            Logger.Log("MainController.DoAssignPlayersRandomly");
+            this.RoundData.AssignPlayersRandomly();
+            this.InvokeRoundEvent("Update");
+            this.InvokeSetTitle(this.FileName, false);
+        }
+
+        internal void DoRoundResults(NamedEventArgs e) {
+            Logger.Log("MainController.DoRoundResults");
+            RoundResults rr = new(this.RoundData);
+            TableViewer tv = new TableViewer();
+
+            foreach (SingleResult result in rr.Results) {
+                tv.Append(result.ToString());
+            }
+
+            tv.Show();
+        }
+
+        internal void DoEventResults(object? sender, NamedEventArgs e) {
+            Logger.Log("MainController.DoEventResults");
+            EventResults er = new(this.RoundDataCollection);
+            TableViewer tv = new TableViewer();
+            foreach (TeamResult result in er.ResultsByTeam) {
+                tv.Append(result.ToString());
+            }
+            tv.Show();
+        }
+
+        internal void DoShow(NamedEventArgs e) {
+            Logger.Log("MainController.DoShow");
+            TableViewer tv = new TableViewer();
+            tv.Append("Event Data:");
+            tv.Append($"File Name: {this.FileName}");
+            tv.Append($"Is Saved: {this.IsSaved}");
+            tv.Append($"Number of Lanes: {this.EventData.LaneCount}");
+            tv.Append($"Default Ends: {this.EventData.DefaultEnds}");
+            tv.Append($"Match Format: {this.EventData.MatchFormat}");
+            tv.Append($"Event Type: {this.EventData.EventType}");
+            tv.Append("");
+            tv.Append($"Current Round: {this.CurrentRoundIndex}");
+            foreach (RoundData round in this.RoundDataCollection) {
+                tv.Append($"Round {this.RoundDataCollection.IndexOf(round) + 1}:");
+                tv.Append(round);
+            }
+            tv.Show();
+        }
+
+        internal void DoPlayerName(NamedEventArgs e) {
+            if (e is not NamedEventArgs<Dictionary<string, object>> args) {
+                throw new ArgumentException($"Found {e.GetType()} expected {typeof(Dictionary<string, object>)}");
+            }
+
+            Logger.Log("MainController.DoPlayerName");
+
+            string name = args.Data["value"] as string ?? string.Empty;
+            int lane = args.Data["lane"] as int? ?? throw new ArgumentException("Lane index must be provided for player name changes.");
+            int teamIndex = args.Data["team"] as int? ?? throw new ArgumentException("Team index must be provided for player name changes.");
+            int position = args.Data["pos"] as int? ?? throw new ArgumentException("Position must be provided for player name changes.");
+
+            if (this.UpdateName(name, lane, teamIndex, position)) {
+                this.InvokeRoundEvent("Update");
+                this.InvokeSetTitle(this.FileName, false);
             }
         }
 
-        private void _RoundDataHnd(object? sender, RoundDataEventArgs e) {
-            switch (e.Action) {
-                case "AssignLanes": {
-                        AssignLanes assignLanes = new(this.EventData, this.RoundDataCollection, this.RoundData);
-                        RoundData newRound = assignLanes.DoAssignment();
-                        this.RoundDataCollection[this.CurrentRoundIndex] = newRound;
-                        this.InvokeSetTitle(this.FileName, false);
-                        this.InvokeRoundEvent("Update");
-                    } 
-                    break;
-                case "GenerateRound": {
-                        var newRound = this.GenerateRound();
-                        AssignLanes assignLanes = new(this.EventData, this.RoundDataCollection, newRound);
-                        newRound = assignLanes.DoAssignment();  
-                        this.RoundDataCollection.Add(newRound);
-                        this.CurrentRoundIndex = this.RoundDataCollection.Count - 1;
-
-                        this.InvokeRoundEvent("AddRound", this.CurrentRoundIndex, newRound);
-                        this.InvokeSetTitle(this.FileName, false);
-                        this.InvokeRoundEvent("Update");
-                    }
-                    break;
-                case "AddRound": {
-                        RoundData newRound = new(this.EventData);
-                        this.RoundDataCollection.Add(newRound);
-                        var createdIndex = this.RoundDataCollection.Count - 1;
-                        this.InvokeRoundEvent("AddRound", createdIndex, newRound);
-                        this.InvokeSetTitle(this.FileName, false);
-                    }
-                    break;
-                case "Remove":
-                    var previousIndex = this.CurrentRoundIndex;                    
-                    this.RemoveRound(this.CurrentRoundIndex);
-                    this.InvokeRoundEvent("Update");
-                    this.InvokeRoundEvent("RemoveRound", previousIndex, null);
-                    this.InvokeSetTitle(this.FileName, false);
-                    break;
-                case "Select":
-                    if (e.Index == -1) {
-                        this.CurrentRoundIndex = this.RoundDataCollection.Count - 1;
-                    }
-                    else {
-                        this.CurrentRoundIndex = e.Index;
-                    }                        
-                    this.InvokeRoundEvent("Update");
-                    break;
-                case "Copy":
-                    this.RoundDataCollection.Add(this.RoundData.Copy());
-                    var copiedIndex = this.RoundDataCollection.Count - 1;
-                    this.InvokeRoundEvent("AddRound", copiedIndex);
-                    this.InvokeSetTitle(this.FileName, false);
-                    break;
-                case "AssignPlayersRandomly":
-                    this.RoundData.AssignPlayersRandomly();
-                    this.InvokeRoundEvent("Update");
-                    this.InvokeSetTitle(this.FileName, false);
-                    break;
-                case "AssignRankedLadder":
-                    RankedLadder ladder = new(this.RoundDataCollection, this.EventData);
-                    var nextRound = ladder.GenerateRound();
-                    Debug.WriteLine($"Generated next round with {nextRound.Count} matches.");
-                    Debug.WriteLine(nextRound);
-                    break;
-                case "AssignRoundRobin":
-                    break;
-                case "RoundResults": {
-                        RoundResults rr = new(this.RoundData);
-                        TableViewer tv = new TableViewer();
-
-                        foreach (SingleResult result in rr.Results) {
-                            tv.Append(result.ToString());
-                        }
-
-                        tv.Show();
-                    }
-                    break;
-                case "EventResults": {
-                        EventResults er = new(this.RoundDataCollection);
-                        TableViewer tv = new TableViewer();
-
-                        foreach (TeamResult result in er.ResultsByTeam) {
-                            tv.Append(result.ToString());
-                        }
-
-                        tv.Show();
-                    }
-                    break;
-                case "Show": {
-                        TableViewer tv = new TableViewer();
-                        tv.Append("Event Data:");
-                        tv.Append($"File Name: {this.FileName}");
-                        tv.Append($"Is Saved: {this.IsSaved}");
-                        tv.Append($"Number of Lanes: {this.EventData.LaneCount}");
-                        tv.Append($"Default Ends: {this.EventData.DefaultEnds}");
-                        tv.Append($"Match Format: {this.EventData.MatchFormat}");
-                        tv.Append($"Event Type: {this.EventData.EventType}");
-                        tv.Append("");
-                        tv.Append($"Current Round: {this.CurrentRoundIndex}");
-
-                        foreach (RoundData round in this.RoundDataCollection) {
-                            tv.Append($"Round {this.RoundDataCollection.IndexOf(round) + 1}:");
-                            tv.Append(round);
-                        }
-                        tv.Show();
-                    }
-                    break;
+        internal void DoEnds(NamedEventArgs e) {
+            if (e is not NamedEventArgs<Dictionary<string, int>> args) {
+                throw new ArgumentException($"Found {e.GetType()} expected {typeof(Dictionary<string, int>)}");
             }
+            Logger.Log("MainController.DoEnds");
+
+            int lane = args.Data["lane"] as int? ?? throw new ArgumentException("Lane index must be provided for ends changes.");
+            int ends = args.Data["ends"] as int? ?? throw new ArgumentException("Ends value must be provided for ends changes.");
+            
+            this.RoundData[lane].Ends = ends;
+            this.InvokeRoundEvent("Update");
+            this.InvokeSetTitle(this.FileName, false);
         }
 
-        private RoundData GenerateRound() {
-            switch(this.EventData.EventType) {
-                case EventType.RankedLadder:
-                    var newRound = new RankedLadder(this.RoundDataCollection, this.EventData).GenerateRound();
-                    return newRound;
-                //case EventType.RoundRobin:
-                //    break;
-                //case EventType.Motley:
-                //    break;
-                default:
-                    throw new NotSupportedException($"Match format '{this.EventData.MatchFormat}' is not supported.");
+        internal void DoTieBreaker(NamedEventArgs e) {
+            if (e is not NamedEventArgs<Dictionary<string, object>> args) {
+                throw new ArgumentException($"Found {e.GetType()} expected {typeof(Dictionary<string, object>)}");
             }
+            Logger.Log("MainController.DoTieBreaker");
+
+            int lane = args.Data["lane"] as int? ?? throw new ArgumentException("Lane index must be provided for tie breaker changes.");
+            int tieBreaker = args.Data["value"] as int? ?? throw new ArgumentException("Tie breaker value must be provided for tie breaker changes.");
+            
+            this.RoundData[lane].TieBreaker = tieBreaker;
+            this.InvokeRoundEvent("Update");
+            this.InvokeSetTitle(this.FileName, false);
         }
 
-        public void MatchCardUpdateHnd(object sender, RoutedEventArgs e) {
-            if (e is not MatchCardEventArgs args) return;
-            Logger.Log($"MainController.MatchCardUpdate: {args.Field} for lane {args.Lane}");
-
-            switch (args.Field) {
-                case "Name":
-                    if (e is not MatchCardNewArgs nameArgs) return;
-                    if (this.UpdateName(nameArgs)) {
-                        this.InvokeRoundEvent("Update");
-                        this.InvokeSetTitle(this.FileName, false);
-                    }
-                    break;
-                case "Ends":
-                    if (e is not MatchCardNewArgs endsArgs) return;
-                    this.RoundData[endsArgs.Lane].Ends = (int)endsArgs.NewValue;
-                    this.InvokeRoundEvent("Update");
-                    this.InvokeSetTitle(this.FileName, false);
-                    break;
-                case "Tie":
-                    if (e is not MatchCardNewArgs tieArgs) return;
-                    this.RoundData[tieArgs.Lane].TieBreaker = (int)tieArgs.NewValue;
-                    this.InvokeRoundEvent("Update");
-                    this.InvokeSetTitle(this.FileName, false);
-                    break;
-                case "Bowls":
-                    if (e is not MatchCardNewArgs bowlsArgs) return;
-                    if (bowlsArgs.Team is null) throw new ArgumentException("Team index must be provided for bowls changes.");
-                    this.RoundData[bowlsArgs.Lane].Score[(int)bowlsArgs.Team] = (int)bowlsArgs.NewValue;
-                    this.InvokeRoundEvent("Update");
-                    this.InvokeSetTitle(this.FileName, false);
-                    break;
-                case "Format":
-                    if (e is not MatchCardNewArgs formatArgs) return;
-                    this.RoundData[args.Lane].MatchFormat = (MatchFormat)formatArgs.NewValue;
-                    this.InvokeRoundEvent("Update");
-                    this.InvokeSetTitle(this.FileName, false);
-                    break;
-                case "Remove":
-                    this.RoundData.RemoveAt(args.Lane);
-                    if (this.CurrentRoundIndex == args.Lane) {
-                        this.CurrentRoundIndex = Math.Max(0, this.CurrentRoundIndex - 1);
-                    }
-                    this.InvokeRoundEvent("RemoveMatch", args.Lane);
-                    this.InvokeSetTitle(this.FileName, false);
-                    break;
+        internal void DoBowls(NamedEventArgs e) {
+            if (e is not NamedEventArgs<Dictionary<string, object>> args) {
+                throw new ArgumentException($"Found {e.GetType()} expected {typeof(Dictionary<string, object>)}");
             }
+            Logger.Log("MainController.DoBowls");
+
+            int lane = args.Data["lane"] as int? ?? throw new ArgumentException("Lane index must be provided for bowls changes.");
+            int teamIndex = args.Data["team"] as int? ?? throw new ArgumentException("Team index must be provided for bowls changes.");
+            int bowls = args.Data["value"] as int? ?? throw new ArgumentException("Bowls value must be provided for bowls changes.");
+
+            this.RoundData[lane].Score[teamIndex] = bowls;
+            this.InvokeRoundEvent("Update");
+            this.InvokeSetTitle(this.FileName, false);
+        }
+
+        internal void DoMatchFormat(NamedEventArgs e) {
+            if (e is not NamedEventArgs<Dictionary<string, object>> args) {
+                throw new ArgumentException($"Found {e.GetType()} expected {typeof(Dictionary<string, object>)}");
+            }
+            Logger.Log("MainController.DoMatchFormat");
+
+            int lane = args.Data["lane"] as int? ?? throw new ArgumentException("Lane index must be provided for match format changes.");
+            MatchFormat format = args.Data["value"] as MatchFormat? ?? throw new ArgumentException("Match format must be provided for match format changes.");
+
+            this.RoundData[lane].MatchFormat = format;
+            this.InvokeRoundEvent("Update");
+            this.InvokeSetTitle(this.FileName, false);
+        }
+
+        internal void DoRemoveMatch(NamedEventArgs e) {
+            if (e is not NamedEventArgs<int> args) {
+                throw new ArgumentException($"Found {e.GetType()} expected {typeof(NamedEventArgs<int>)}");
+            }
+            Logger.Log("MainController.DoRemoveMatch");
+
+            this.RoundData.RemoveAt(args.Data);
+            if (this.CurrentRoundIndex == args.Data) {
+                this.CurrentRoundIndex = Math.Max(0, this.CurrentRoundIndex - 1);
+            }
+            this.InvokeRoundEvent("RemoveMatch", args.Data);
+            this.InvokeSetTitle(this.FileName, false);
         }
 
         private void NewEvent() {
@@ -399,15 +406,7 @@ namespace Leagueinator.GUI.Controllers {
             Debug.WriteLine($"Removed round at index {index}. Current round index is now {this.CurrentRoundIndex}.");
         }
 
-        private bool UpdateName(MatchCardNewArgs args) {
-            if (args.Team is null) throw new ArgumentException("Team index must be provided for player name changes.");
-            if (args.Position is null) throw new ArgumentException("Position must be provided for player name changes.");
-
-            var name = (string)args.NewValue;
-            var lane = args.Lane;
-            var team = (int)args.Team;
-            var pos = (int)args.Position;
-
+        private bool UpdateName(string name, int lane, int team, int pos) {
             if (name == string.Empty && this.RoundData[lane].Teams[team][pos] == string.Empty) {
                 // If the name is empty and the player is already empty, do nothing.
                 return false;
@@ -425,7 +424,7 @@ namespace Leagueinator.GUI.Controllers {
                 this.RoundData.RemovePlayer(name);
             }
 
-            this.RoundData.SetPlayer((string)args.NewValue, args.Lane, (int)args.Team, (int)args.Position);
+            this.RoundData.SetPlayer(name, lane, team, pos);
             return true;
         }
 
@@ -479,6 +478,19 @@ namespace Leagueinator.GUI.Controllers {
             }
         }
 
+        private RoundData GenerateRound() {
+            switch (this.EventData.EventType) {
+                case EventType.RankedLadder:
+                    var newRound = new RankedLadder(this.RoundDataCollection, this.EventData).GenerateRound();
+                    return newRound;
+                //case EventType.RoundRobin:
+                //    break;
+                //case EventType.Motley:
+                //    break;
+                default:
+                    throw new NotSupportedException($"Match format '{this.EventData.MatchFormat}' is not supported.");
+            }
+        }
         internal void DragEndHnd(object sender, RoutedEventArgs e) {
             if (e is not DragEndArgs args) return;
             Debug.WriteLine("MainController.DragEndHnd called.");

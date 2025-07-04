@@ -1,4 +1,5 @@
 ﻿using Leagueinator.GUI.Forms.Print;
+using Leagueinator.GUI.src.Controllers;
 using Microsoft.Win32;
 using System.Diagnostics;
 using System.Reflection;
@@ -16,12 +17,12 @@ namespace Leagueinator.GUI.Forms.Main {
 
         public void HndSettings(object sender, RoutedEventArgs e) {
             this.ClearFocus();
-            this.InvokeActionEvent("Settings");
+            this.InvokeNamedEvent(EventName.Settings);
         }
 
         public void HndSwap(object? sender, RoutedEventArgs e) {
             this.ClearFocus();
-            this.InvokeRoundEvent("Swap");
+            this.InvokeNamedEvent(EventName.Swap);
         }
 
         /// <summary>
@@ -31,31 +32,31 @@ namespace Leagueinator.GUI.Forms.Main {
         /// <param name="e"></param>
         private void HndDeleteRnd(object sender, RoutedEventArgs e) {
             this.ClearFocus();
-            this.InvokeRoundEvent("Remove");
+            this.InvokeNamedEvent(EventName.RemoveRound);
         }
 
         private void HndNewClick(object sender, RoutedEventArgs e) {
             this.ClearFocus();
-            this.InvokeFileEvent("New");
+            this.InvokeNamedEvent(EventName.New);
         }
         private void HndLoadClick(object sender, RoutedEventArgs e) {
             this.ClearFocus();
-            this.InvokeFileEvent("Load");
+            this.InvokeNamedEvent(EventName.Load);
         }
 
         private void HndAssignPlayersRandomly(object sender, RoutedEventArgs e) {
             this.ClearFocus();
-            this.InvokeRoundEvent("AssignPlayersRandomly");
+            this.InvokeNamedEvent(EventName.AssignPlayersRandomly);
         }   
 
         private void HndSaveClick(object sender, RoutedEventArgs e) {
             this.ClearFocus();
-            this.InvokeFileEvent("Save");
+            this.InvokeNamedEvent(EventName.Save);
         }
 
         private void HndSaveAsClick(object sender, RoutedEventArgs e) {
             this.ClearFocus();
-            this.InvokeFileEvent("SaveAs");
+            this.InvokeNamedEvent(EventName.SaveAs);
         }
 
         private void HndExitClick(object sender, RoutedEventArgs e) {
@@ -65,59 +66,45 @@ namespace Leagueinator.GUI.Forms.Main {
 
         private void HndGenEmptyRound(object sender, RoutedEventArgs e) {
             this.ClearFocus();
-            this.InvokeRoundEvent(action: "AddRound");
-            this.InvokeRoundEvent(action: "Select");
+            this.InvokeNamedEvent(EventName.AddRound);
+            this.InvokeNamedEvent(EventName.Select);
         }
 
         private void HndCopyRnd(object sender, RoutedEventArgs e) {
             this.ClearFocus();
-            this.InvokeRoundEvent("Copy");
+            this.InvokeNamedEvent(EventName.Copy);
         }
         private void HndShowDataClick(object sender, RoutedEventArgs e) {
             this.ClearFocus();
-            this.InvokeRoundEvent("Show");
+            this.InvokeNamedEvent(EventName.Show);
         }
 
         private void HndShowRoundResultsClick(object sender, RoutedEventArgs e) {
             this.ClearFocus();
-            this.InvokeRoundEvent("RoundResults");
+            this.InvokeNamedEvent(EventName.RoundResults);
         }
 
         private void HndShowEventResultsClick(object sender, RoutedEventArgs e) {
             this.ClearFocus();
-            this.InvokeRoundEvent("EventResults");
+            this.InvokeNamedEvent(EventName.EventResults);
         }
 
         private void HndViewTeamResults(object sender, RoutedEventArgs e) {
             this.ClearFocus();
-            this.InvokeActionEvent("PrintTeams");
+            this.InvokeNamedEvent(EventName.PrintTeams);
         }
 
         private void HndGenNextRound(object sender, RoutedEventArgs args) {
             this.ClearFocus();
-            this.InvokeRoundEvent("GenerateRound");
+            this.InvokeNamedEvent(EventName.GenerateRound);
         }
 
         private void HndAssignLanes(object sender, RoutedEventArgs args) {
             this.ClearFocus();
-            this.InvokeRoundEvent("AssignLanes");
-        }
-
-        private void AssignRankedLadder(object sender, RoutedEventArgs args) {
-            this.ClearFocus();
-            this.InvokeRoundEvent("AssignRankedLadder");
-        }   
-
-        private void AssignRoundRobin(object sender, RoutedEventArgs args) {
-            this.ClearFocus();
-            this.InvokeRoundEvent("AssignRoundRobin");
+            this.InvokeNamedEvent(EventName.AssignLanes);
         }
 
         private void HndViewPlayerResults(object sender, RoutedEventArgs e) {
-            this.ClearFocus();
-        }
-
-        private void HndAssignPlayers(object sender, RoutedEventArgs e) {
             this.ClearFocus();
         }
 

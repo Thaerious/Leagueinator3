@@ -36,11 +36,7 @@ namespace Leagueinator.GUI {
 
                     // Initialize controller listeners for handling UI generated events
                     main.OnDragEnd         += mainController.DragEndHnd;
-                    main.OnMatchCardUpdate += mainController.MatchCardUpdateHnd;
-                    main.OnRoundData       += mainController.RoundDataHnd;
-                    main.OnRoundData       += focusController.RoundDataHnd;
-                    main.OnFileEvent       += mainController.FileEventHnd;                    
-                    main.OnActionEvent     += mainController.ActionEventHnd;
+                    main.OnNamedEvent      += mainController.NamedEventHnd;
                     main.OnRequestFocus    += focusController.RequestFocusHnd;
 
                     // Initialize UI listeners for handling controller generated events

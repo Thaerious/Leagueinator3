@@ -13,12 +13,10 @@
             Margin="0,0,0,10" HorizontalAlignment="Center" VerticalAlignment="Center" 
             RenderTransformOrigin="0.548,-0.431"                
             IsTabStop="False"/>
-        <TextBox Tag="Bowls"
-            Padding="2" Width="30" 
-            PreviewTextInput="OnlyNumbers"
-            Text="{Binding Bowls, RelativeSource={RelativeSource AncestorType=local:TeamCard}}"
+        <TextBox Name="Bowls" Tag="Bowls"
+            Padding="2" Width="30"             
+            Text="0"
             TextAlignment="Center" HorizontalAlignment="Center" VerticalAlignment="Center"                                 
-            KeyDown="TxtEnterPressedHnd"
             IsTabStop="False"/>
         <TextBlock Text="Bowls" HorizontalAlignment="Center" 
             Margin="0,3,0,0" FontFamily="Arial Black" FontSize="10"

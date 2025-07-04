@@ -12,65 +12,26 @@ namespace Leagueinator.GUI.Controls {
             this.Loaded += this.HndLoaded;
         }
 
-        #region Events
-
-        public event DragBegin OnDragBegin {
-            add { this.AddHandler(DragDropController.RegisteredDragBeginEvent, value); }
-            remove { this.RemoveHandler(DragDropController.RegisteredDragBeginEvent, value); }
-        }
-
-        public event DragEnd OnDragEnd {
-            add { this.AddHandler(DragDropController.RegisteredDragEndEvent, value); }
-            remove { this.RemoveHandler(DragDropController.RegisteredDragEndEvent, value); }
-        }
-
-        #endregion
-
-        // TODO REMOVE TEAM INDEX PROPERTY
-        public static readonly DependencyProperty TeamIndexProperty = DependencyProperty.Register(
-            "TeamIndex",
-            typeof(int),
-            typeof(TeamCard),
-            new PropertyMetadata(default(int))
-        );
-
-        public static readonly DependencyProperty TeamBowlsPropery = DependencyProperty.Register(
-            "Bowls",
-            typeof(int),
-            typeof(TeamCard),
-            new PropertyMetadata(default(int))
-        );
-
         #region Properties
 
-        public MatchCard MatchCard {
-            get {
-                return this.Ancestors<MatchCard>().First()
-                       ?? throw new NullReferenceException("MatchCard not found in ancestors of TeamCard.");
-            }
+        public BowlsPanel BowlsPanel => this.Ancestors<BowlsPanel>().First();
+
+        public MatchCard MatchCard => this.Ancestors<MatchCard>().First();
+
+        public static readonly DependencyProperty TeamIndexProperty =
+            DependencyProperty.Register(nameof(TeamIndex), typeof(int), typeof(TeamCard));
+
+        public int TeamIndex {
+            get => (int)GetValue(TeamIndexProperty);
+            set => SetValue(TeamIndexProperty, value);
         }
 
-        /// <summary>
-        /// Gets or sets the index of the team associated with this <see cref="TeamCard"/>.
-        /// </summary>
-        /// <value>
-        /// An integer representing the index of the team. The default value is determined by the 
-        /// <see cref="TeamIndexProperty"/> dependency property.
-        /// </value>
-        /// <remarks>
-        /// The <see cref="TeamIndex"/> property is a dependency property, meaning it supports data binding, 
-        /// animation, styling, and other WPF features.
-        /// </remarks>
-        public int TeamIndex {
-            get { return (int)this.GetValue(TeamIndexProperty); }
-            set { this.SetValue(TeamIndexProperty, value); }
-        }
+        public static readonly DependencyProperty BowlsProperty =
+            DependencyProperty.Register(nameof(Bowls), typeof(int), typeof(TeamCard));
 
         public int Bowls {
-            get { return (int)this.GetValue(TeamBowlsPropery); }
-            set {
-                this.SetValue(TeamBowlsPropery, value);
-            }
+            get => (int)GetValue(BowlsProperty);
+            set => SetValue(BowlsProperty, value);
         }
 
         #endregion

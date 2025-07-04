@@ -17,12 +17,12 @@ namespace Leagueinator.GUI.src.Controllers {
         public event FocusGranted OnFocusGranted = delegate { };
         public event FocusRevoked OnFocusRevoked = delegate { };
 
-        public void InvokeFocusGranted(TeamID target) {
+        private void InvokeFocusGranted(TeamID target) {
             FocusArgs args = new(target, "granted");
             this.OnFocusGranted.Invoke(this, args);
         }
 
-        public void InvokeFocusRevoked(TeamID target) {
+        private void InvokeFocusRevoked(TeamID target) {
             Debug.WriteLine("InvokeFocusRevoked: " + target);
             FocusArgs args = new(target, "revoked");
             this.OnFocusRevoked.Invoke(this, args);
@@ -40,21 +40,6 @@ namespace Leagueinator.GUI.src.Controllers {
             }
             else {
                 throw new NotSupportedException($"Unsupported event type: {e.GetType()}");
-            }
-        }
-
-        public void RoundDataHnd(object? sender, RoundDataEventArgs e) {
-            switch (e.Action) {
-                case "Swap": {
-                        if (this.Focused.Count <= 1) return;
-
-                        for(int i = 0; i < this.Focused.Count - 1; i++) {
-                            this.DoSwap(this.Focused[i], this.Focused[i+1]);
-                        }
-
-                        this.ClearFocus();
-                    }
-                    break;
             }
         }
 

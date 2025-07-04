@@ -1,6 +1,7 @@
-﻿using Leagueinator.GUI.Model;
+﻿using Leagueinator.GUI.Forms.Main;
+using Leagueinator.GUI.Model;
+using Leagueinator.GUI.src.Controllers;
 using Leagueinator.GUI.Utility.Extensions;
-using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -28,7 +29,13 @@ namespace Leagueinator.GUI.Controls {
             int position = parent.Children.IndexOf(textBox);
 
             if (e is KeyEventArgs keyArgs) {
-                this.InvokeEvent("Name", value: textBox.Text, team: teamIndex, pos: position);
+                this.InvokeNamedEvent(EventName.PlayerName, new Dictionary<string, object> {
+                    ["lane"] = this.Lane,
+                    ["value"] = textBox.Text,
+                    ["team"] = teamIndex,
+                    ["pos"] = position
+                });
+
                 if (keyArgs.Key == Key.Enter) {
                     TraversalRequest request = new TraversalRequest(FocusNavigationDirection.Next);
                     textBox.MoveFocus(request);
@@ -86,8 +93,10 @@ namespace Leagueinator.GUI.Controls {
                 return;
             }
 
-            int endsValue = int.Parse(textBox.Text);
-            this.InvokeEvent("Ends", value: endsValue);
+            this.InvokeNamedEvent(EventName.Ends, new Dictionary<string, int> {
+                ["lane"] = this.Lane,
+                ["ends"] = int.Parse(textBox.Text)
+            });
         }   
 
         private void TextBoxInvokeBowlsEvent(object sender, TextChangedEventArgs e) {
@@ -102,7 +111,11 @@ namespace Leagueinator.GUI.Controls {
 
             int teamIndex = textBox.Ancestors<TeamCard>().First().TeamIndex;
             var textBoxValue = int.Parse(textBox.Text);
-            this.InvokeEvent("Bowls", value: textBoxValue, team: teamIndex);
+            this.InvokeNamedEvent(EventName.Bowls, new Dictionary<string, object> {
+                ["lane"] = this.Lane,
+                ["value"] = textBoxValue,
+                ["team"] = teamIndex
+            });
         }
 
         private void TextBoxPreventDefaultCaretBehaviour(object sender, MouseButtonEventArgs e) {
@@ -167,7 +180,7 @@ namespace Leagueinator.GUI.Controls {
         /// <param name="sender"></param>
         /// <param name="e"></param>
         public void HndRemoveMatch(object _, RoutedEventArgs __) {
-            this.InvokeEvent("Remove");
+            this.InvokeNamedEvent(EventName.RemoveMatch, this.Lane);
         }
 
         /// <summary>
@@ -186,7 +199,10 @@ namespace Leagueinator.GUI.Controls {
             bool success = Enum.TryParse(customData, out MatchFormat matchFormat);
             if (!success) throw new ArgumentException("Error on tag on context menu item");
             
-            this.InvokeEvent("Format", value: matchFormat);
+            this.InvokeNamedEvent(EventName.MatchFormat, new Dictionary<string, object> {
+                ["lane"] = this.Lane,
+                ["value"] = matchFormat
+            });
         }
 
         public void UpdateData(MatchData matchData) {
@@ -244,7 +260,10 @@ namespace Leagueinator.GUI.Controls {
 
             int lastCheckedTeamIndex = _lastCheckedTeamIndex;
             this._lastCheckedTeamIndex = newCheckedTeamIndex;
-            this.InvokeEvent("Tie", value: newCheckedTeamIndex);
+            this.InvokeNamedEvent(EventName.TieBreaker, new Dictionary<string, object> {
+                ["lane"] = this.Lane,
+                ["value"] = newCheckedTeamIndex,
+            });
         }
 
         public void OnlyNumbers(object sender, TextCompositionEventArgs e) {
