@@ -21,6 +21,24 @@ namespace Leagueinator.GUI.Utility.Extensions {
             }
         }
 
+        public static IEnumerable<DependencyObject> GetDescendants(this DependencyObject root) {
+            ArgumentNullException.ThrowIfNull(root);
+
+            Queue<DependencyObject> queue = new();
+            queue.Enqueue(root);
+
+            while (queue.Count > 0) {
+                DependencyObject current = queue.Dequeue();
+                int childrenCount = VisualTreeHelper.GetChildrenCount(current);
+
+                for (int i = 0; i < childrenCount; i++) {
+                    var child = VisualTreeHelper.GetChild(current, i);
+                    yield return child;
+                    queue.Enqueue(child);
+                }
+            }
+        }
+
         /// <summary>
         /// Checks whether a <see cref="FrameworkElement"/> has a specific tag among space-separated tag values.
         /// </summary>

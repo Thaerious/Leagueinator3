@@ -82,7 +82,7 @@
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="40"/>
                 </Grid.RowDefinitions>
-                <StackPanel x:Name="RoundButtonContainer" 
+                <StackPanel x:Name="RoundButtonStackPanel" 
                             MouseLeftButtonDown="HndClearFocus"
                             Background="Transparent"/>
             </Grid>
@@ -91,7 +91,9 @@
         <!-- Match Cards (Get put into CardStackPanel) -->
         <Border BorderBrush="Black" BorderThickness="1 2 2 2" Grid.Column="2"  Grid.Row="1">
             <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
-                <StackPanel x:Name="MatchCardStackPanel"/>
+                <StackPanel 
+                    MouseLeftButtonDown="HndClearFocus"
+                    x:Name="MatchCardStackPanel"/>
             </ScrollViewer>
         </Border>
     </Grid>

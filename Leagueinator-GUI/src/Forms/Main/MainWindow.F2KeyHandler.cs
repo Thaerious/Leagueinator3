@@ -24,11 +24,11 @@ namespace Leagueinator.GUI.Forms.Main {
         }
 
         internal void HighLightRound(int index) {
-            foreach (Button button in this.RoundButtonContainer.Children) {
+            foreach (Button button in this.RoundButtonStackPanel.Children) {
                 button.Background = Brushes.LightGray;
             }
 
-            Button selected = (Button)this.RoundButtonContainer.Children[index];
+            Button selected = (Button)this.RoundButtonStackPanel.Children[index];
             selected.Background = Brushes.Green;
         }
 

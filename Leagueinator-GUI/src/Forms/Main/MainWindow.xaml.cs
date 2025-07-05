@@ -13,14 +13,24 @@ namespace Leagueinator.GUI.Forms.Main {
     /// Interaction logic for MainWindow.xaml
     /// </summary>
     public partial class MainWindow : Window {
-        private Button CurrentRoundButton { get; set; }
 
         public MainWindow() {
             this.InitializeComponent();
             this.Title = "Leagueinator []";
-            //this.InstantiateDragDropHnd();
-            this.CurrentRoundButton = this.AddRoundButton();
-            this.CurrentRoundButton.Focus();
+            var button = this.AddRoundButton();
+            button.Focus();
+
+            Debug.WriteLine("Adding load handler");
+            this.Loaded += this.OnLoadDo;
+        }
+
+        private void OnLoadDo(object sender, RoutedEventArgs e) {
+            this.RoundButtonStackPanel.PreviewMouseDown += (s, e) => {
+                Keyboard.ClearFocus();
+            };
+            this.MatchCardStackPanel.PreviewMouseDown += (s, e) => {
+                Keyboard.ClearFocus();
+            };
         }
 
         public void Ready() {
@@ -116,11 +126,11 @@ namespace Leagueinator.GUI.Forms.Main {
 
         public void RemoveRound(int index) {
             // Remove the button
-            this.RoundButtonContainer.Children.RemoveAt(index);
+            this.RoundButtonStackPanel.Children.RemoveAt(index);
 
             // Rename buttons
             int i = 1;
-            foreach (Button button in this.RoundButtonContainer.Children) {
+            foreach (Button button in this.RoundButtonStackPanel.Children) {
                 button.Content = $"Round {i++}";
             }
         }

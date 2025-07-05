@@ -67,7 +67,7 @@ namespace Leagueinator.GUI.Forms.Main {
         private void HndGenEmptyRound(object sender, RoutedEventArgs e) {
             this.ClearFocus();
             this.InvokeNamedEvent(EventName.AddRound);
-            this.InvokeNamedEvent(EventName.Select);
+            this.InvokeNamedEvent(EventName.SelectRound);
         }
 
         private void HndCopyRnd(object sender, RoutedEventArgs e) {

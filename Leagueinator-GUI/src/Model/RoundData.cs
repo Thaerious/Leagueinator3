@@ -59,12 +59,6 @@ namespace Leagueinator.GUI.Model {
                 this.RemovePlayer(name);
             }
 
-            if (teamIndex < 0 || teamIndex >= this.Count) {
-                throw new ArgumentOutOfRangeException(nameof(teamIndex), "Team index is out of range.");
-            }
-            if (position < 0 || position >= this[teamIndex].Teams.Length) {
-                throw new ArgumentOutOfRangeException(nameof(position), "Position is out of range.");
-            }
             this[lane].Teams[teamIndex][position] = name;
         }
 

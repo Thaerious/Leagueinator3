@@ -9,8 +9,8 @@ namespace Leagueinator.GUI.Controls {
     /// </summary>
     public partial class InfoCard : UserControl {
         public InfoCard() {
-            this.AllowDrop = true
-            this.Loaded += this.HndLoaded;;
+            this.AllowDrop = true;
+            this.Loaded += this.HndLoaded;
             this.InitializeComponent();
         }
 

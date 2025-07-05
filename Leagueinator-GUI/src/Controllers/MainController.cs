@@ -10,12 +10,8 @@ using Leagueinator.GUI.Utility;
 using Microsoft.Win32;
 using System.Diagnostics;
 using System.IO;
-using System.Reflection;
-using System.Reflection.Metadata.Ecma335;
 using System.Text.Json;
 using System.Windows;
-using System.Windows.Controls;
-using static Leagueinator.GUI.Controls.MatchCard;
 
 namespace Leagueinator.GUI.Controllers {
 
@@ -67,7 +63,7 @@ namespace Leagueinator.GUI.Controllers {
             this.OnSetTitle.Invoke(this, filename, saved);
         }   
 
-        internal void DoLoad(NamedEventArgs e) {
+        internal void DoLoad() {
             Logger.Log("MainController.DoLoad");
             this.Load();
             this.OnSetRoundCount.Invoke(this, this.RoundDataCollection.Count);
@@ -75,7 +71,7 @@ namespace Leagueinator.GUI.Controllers {
             this.InvokeSetTitle(this.FileName, true);
         }
 
-        internal void DoSave(NamedEventArgs e) {
+        internal void DoSave() {
             Logger.Log("MainController.DoSave");
             if (this.FileName != "Leagueinator") {
                 this.Save(this.FileName);
@@ -86,13 +82,13 @@ namespace Leagueinator.GUI.Controllers {
             this.InvokeSetTitle(this.FileName, true);
         }
 
-        internal void DoSaveAs(NamedEventArgs e) {
+        internal void DoSaveAs() {
             Logger.Log("MainController.DoSaveAs");
             this.SaveAs();
             this.InvokeSetTitle(this.FileName, true);
         }
 
-        internal void DoNew(NamedEventArgs e) {
+        internal void DoNew() {
             Logger.Log("MainController.DoNew");
             this.NewEvent();
             this.OnSetRoundCount.Invoke(this, this.RoundDataCollection.Count);
@@ -101,7 +97,7 @@ namespace Leagueinator.GUI.Controllers {
             this.FileName = "Leagueinator";
         }
 
-        internal void DoSettings(NamedEventArgs e) {
+        internal void DoSettings() {
             Logger.Log("MainController.DoSettings");
             var dialog = new SettingsDialog() {
                 EventData = this.EventData,
@@ -114,13 +110,13 @@ namespace Leagueinator.GUI.Controllers {
             }
         }
 
-        internal void DoPrintTeams(NamedEventArgs e) {
+        internal void DoPrintTeams() {
             Logger.Log("MainController.DoPrintTeams");
             PrintWindow pw = new(this.RoundDataCollection);
             pw.Show();
         }
 
-        internal void DoAssignLanes(NamedEventArgs e) {
+        internal void DoAssignLanes() {
             Logger.Log("MainController.DoAssignLanes");
             AssignLanes assignLanes = new(this.EventData, this.RoundDataCollection, this.RoundData);
             RoundData newRound = assignLanes.DoAssignment();
@@ -129,7 +125,7 @@ namespace Leagueinator.GUI.Controllers {
             this.InvokeRoundEvent("Update");
         }
 
-        internal void DoGenerateRound(NamedEventArgs e) {
+        internal void DoGenerateRound() {
             Logger.Log("MainController.DoGenerateRound");
             var newRound = this.GenerateRound();
             AssignLanes assignLanes = new(this.EventData, this.RoundDataCollection, newRound);
@@ -141,7 +137,7 @@ namespace Leagueinator.GUI.Controllers {
             this.InvokeRoundEvent("Update");
         }
 
-        internal void DoAddRound(NamedEventArgs e) {
+        internal void DoAddRound() {
             Logger.Log("MainController.DoAddRound");
             RoundData newRound = new(this.EventData);
             this.RoundDataCollection.Add(newRound);
@@ -150,7 +146,7 @@ namespace Leagueinator.GUI.Controllers {
             this.InvokeSetTitle(this.FileName, false);
         }
 
-        internal void DoRemoveRound(NamedEventArgs e) {
+        internal void DoRemoveRound() {
             Logger.Log("MainController.DoRemoveRound");
             var previousIndex = this.CurrentRoundIndex;                    
             this.RemoveRound(this.CurrentRoundIndex);
@@ -159,13 +155,8 @@ namespace Leagueinator.GUI.Controllers {
             this.InvokeSetTitle(this.FileName, false);
         }
 
-        internal void DoSelectRound(NamedEventArgs e) {
-            if (e is not NamedEventArgs<int> intEvent) {
-                throw new ArgumentException("NamedEventArgs must contain an integer index for round selection.");
-            }
-
+        internal void DoSelectRound(int index = -1) {
             Logger.Log("MainController.DoSelectRound");
-            int index = intEvent.Data;
 
             if (index == -1) {
                 this.CurrentRoundIndex = this.RoundDataCollection.Count - 1;
@@ -176,7 +167,7 @@ namespace Leagueinator.GUI.Controllers {
             this.InvokeRoundEvent("Update");
         }
 
-        internal void DoCopyRound(NamedEventArgs e) {
+        internal void DoCopyRound() {
             Logger.Log("MainController.DoCopyRound");
             this.RoundDataCollection.Add(this.RoundData.Copy());
             var copiedIndex = this.RoundDataCollection.Count - 1;
@@ -184,14 +175,14 @@ namespace Leagueinator.GUI.Controllers {
             this.InvokeSetTitle(this.FileName, false);
         }
 
-        internal void DoAssignPlayersRandomly(NamedEventArgs e) {
+        internal void DoAssignPlayersRandomly() {
             Logger.Log("MainController.DoAssignPlayersRandomly");
             this.RoundData.AssignPlayersRandomly();
             this.InvokeRoundEvent("Update");
             this.InvokeSetTitle(this.FileName, false);
         }
 
-        internal void DoRoundResults(NamedEventArgs e) {
+        internal void DoRoundResults() {
             Logger.Log("MainController.DoRoundResults");
             RoundResults rr = new(this.RoundData);
             TableViewer tv = new TableViewer();
@@ -213,7 +204,7 @@ namespace Leagueinator.GUI.Controllers {
             tv.Show();
         }
 
-        internal void DoShow(NamedEventArgs e) {
+        internal void DoShow() {
             Logger.Log("MainController.DoShow");
             TableViewer tv = new TableViewer();
             tv.Append("Event Data:");
@@ -232,17 +223,8 @@ namespace Leagueinator.GUI.Controllers {
             tv.Show();
         }
 
-        internal void DoPlayerName(NamedEventArgs e) {
-            if (e is not NamedEventArgs<Dictionary<string, object>> args) {
-                throw new ArgumentException($"Found {e.GetType()} expected {typeof(Dictionary<string, object>)}");
-            }
-
+        internal void DoPlayerName(string name, int lane, int teamIndex, int position) {
             Logger.Log("MainController.DoPlayerName");
-
-            string name = args.Data["value"] as string ?? string.Empty;
-            int lane = args.Data["lane"] as int? ?? throw new ArgumentException("Lane index must be provided for player name changes.");
-            int teamIndex = args.Data["team"] as int? ?? throw new ArgumentException("Team index must be provided for player name changes.");
-            int position = args.Data["pos"] as int? ?? throw new ArgumentException("Position must be provided for player name changes.");
 
             if (this.UpdateName(name, lane, teamIndex, position)) {
                 this.InvokeRoundEvent("Update");
@@ -250,74 +232,39 @@ namespace Leagueinator.GUI.Controllers {
             }
         }
 
-        internal void DoEnds(NamedEventArgs e) {
-            if (e is not NamedEventArgs<Dictionary<string, int>> args) {
-                throw new ArgumentException($"Found {e.GetType()} expected {typeof(Dictionary<string, int>)}");
-            }
+        internal void DoEnds(int lane, int ends) {
             Logger.Log("MainController.DoEnds");
-
-            int lane = args.Data["lane"] as int? ?? throw new ArgumentException("Lane index must be provided for ends changes.");
-            int ends = args.Data["ends"] as int? ?? throw new ArgumentException("Ends value must be provided for ends changes.");
             
             this.RoundData[lane].Ends = ends;
             this.InvokeRoundEvent("Update");
             this.InvokeSetTitle(this.FileName, false);
         }
 
-        internal void DoTieBreaker(NamedEventArgs e) {
-            if (e is not NamedEventArgs<Dictionary<string, object>> args) {
-                throw new ArgumentException($"Found {e.GetType()} expected {typeof(Dictionary<string, object>)}");
-            }
+        internal void DoTieBreaker(int lane, int tieBreaker) {
             Logger.Log("MainController.DoTieBreaker");
-
-            int lane = args.Data["lane"] as int? ?? throw new ArgumentException("Lane index must be provided for tie breaker changes.");
-            int tieBreaker = args.Data["value"] as int? ?? throw new ArgumentException("Tie breaker value must be provided for tie breaker changes.");
-            
             this.RoundData[lane].TieBreaker = tieBreaker;
             this.InvokeRoundEvent("Update");
             this.InvokeSetTitle(this.FileName, false);
         }
 
-        internal void DoBowls(NamedEventArgs e) {
-            if (e is not NamedEventArgs<Dictionary<string, object>> args) {
-                throw new ArgumentException($"Found {e.GetType()} expected {typeof(Dictionary<string, object>)}");
-            }
+        internal void DoBowls(int lane, int teamIndex, int bowls) {
             Logger.Log("MainController.DoBowls");
-
-            int lane = args.Data["lane"] as int? ?? throw new ArgumentException("Lane index must be provided for bowls changes.");
-            int teamIndex = args.Data["team"] as int? ?? throw new ArgumentException("Team index must be provided for bowls changes.");
-            int bowls = args.Data["value"] as int? ?? throw new ArgumentException("Bowls value must be provided for bowls changes.");
-
             this.RoundData[lane].Score[teamIndex] = bowls;
             this.InvokeRoundEvent("Update");
             this.InvokeSetTitle(this.FileName, false);
         }
 
-        internal void DoMatchFormat(NamedEventArgs e) {
-            if (e is not NamedEventArgs<Dictionary<string, object>> args) {
-                throw new ArgumentException($"Found {e.GetType()} expected {typeof(Dictionary<string, object>)}");
-            }
+        internal void DoMatchFormat(int lane, MatchFormat format) {
             Logger.Log("MainController.DoMatchFormat");
-
-            int lane = args.Data["lane"] as int? ?? throw new ArgumentException("Lane index must be provided for match format changes.");
-            MatchFormat format = args.Data["value"] as MatchFormat? ?? throw new ArgumentException("Match format must be provided for match format changes.");
-
             this.RoundData[lane].MatchFormat = format;
             this.InvokeRoundEvent("Update");
             this.InvokeSetTitle(this.FileName, false);
         }
 
-        internal void DoRemoveMatch(NamedEventArgs e) {
-            if (e is not NamedEventArgs<int> args) {
-                throw new ArgumentException($"Found {e.GetType()} expected {typeof(NamedEventArgs<int>)}");
-            }
+        internal void DoRemoveMatch(int lane) {
             Logger.Log("MainController.DoRemoveMatch");
-
-            this.RoundData.RemoveAt(args.Data);
-            if (this.CurrentRoundIndex == args.Data) {
-                this.CurrentRoundIndex = Math.Max(0, this.CurrentRoundIndex - 1);
-            }
-            this.InvokeRoundEvent("RemoveMatch", args.Data);
+            this.RoundData.RemoveAt(lane);
+            this.InvokeRoundEvent("RemoveMatch", lane);
             this.InvokeSetTitle(this.FileName, false);
         }
 

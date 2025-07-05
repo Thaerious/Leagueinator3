@@ -2,11 +2,25 @@
 
 namespace Leagueinator.GUI.Utility {
 public static class Logger {
+
+        public static string GetInvocationLoc() {
+            var stackTrace = new StackTrace(true); // true = capture file info
+            var frame = stackTrace.LastLocal();
+
+            var filepath = frame?.GetFileName();
+            var line = frame?.GetFileLineNumber();
+
+            if (filepath is not null) {
+                filepath = filepath.Split('\\', '/').LastOrDefault(); // Get only the file name, not the full path
+            }
+
+            return $"[{filepath}:{line}]";
+        }
+
         public static void Log(string message) {
             var stackTrace = new StackTrace(true); // true = capture file info
             var frame = stackTrace.LastLocal();
 
-            var method = frame?.GetMethod();
             var filepath = frame?.GetFileName();
             var line = frame?.GetFileLineNumber();
 

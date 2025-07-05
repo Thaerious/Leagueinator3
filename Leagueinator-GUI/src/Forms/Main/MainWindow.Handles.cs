@@ -1,5 +1,6 @@
 ﻿using Leagueinator.GUI.Controllers;
 using Leagueinator.GUI.src.Controllers;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -13,17 +14,17 @@ namespace Leagueinator.GUI.Forms.Main {
         /// <returns></returns>
         public Button AddRoundButton() {
             Button button = new() {
-                Content = $"Round {this.RoundButtonContainer.Children.Count + 1}",
+                Content = $"Round {this.RoundButtonStackPanel.Children.Count + 1}",
                 Margin = new Thickness(3)
             };
 
-            this.RoundButtonContainer.Children.Add(button);
+            this.RoundButtonStackPanel.Children.Add(button);
             button.Click += this.HndClickSelectRound;
             return button;
         }
 
         private void InvokeRoundButton(Button? button = null) {
-            button ??= (Button)this.RoundButtonContainer.Children[^1];
+            button ??= (Button)this.RoundButtonStackPanel.Children[^1];
             button.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
         }
 
@@ -34,11 +35,15 @@ namespace Leagueinator.GUI.Forms.Main {
         /// <param name="sender"></param>
         /// <param name="_"></param>
         /// <exception cref="NotSupportedException"></exception>
-        private void HndClickSelectRound(object? sender, EventArgs? _) {            
+        private void HndClickSelectRound(object? sender, EventArgs? _) {
             if (sender is not Button button) throw new NotSupportedException();
+
             this.ClearFocus();
-            var index = this.RoundButtonContainer.Children.IndexOf(button);
-            this.InvokeNamedEvent(EventName.SelectRound, index);
+            var index = this.RoundButtonStackPanel.Children.IndexOf(button);
+
+            this.InvokeNamedEvent(EventName.SelectRound, new(){
+                ["index"] = index
+            });
         }
 
         private void HndClearFocus(object? sender, EventArgs? _) {

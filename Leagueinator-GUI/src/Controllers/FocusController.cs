@@ -1,10 +1,10 @@
 ﻿using Leagueinator.GUI.Controllers;
+using Leagueinator.GUI.Forms.Main;
 using System.Diagnostics;
 using System.Windows;
-using static Leagueinator.GUI.Forms.Main.MainWindow;
 
 namespace Leagueinator.GUI.src.Controllers {
-    public class FocusController(MainController mainController) {
+    public class FocusController(MainController mainController) : NamedEventController {
         public MainController MainController { get; } = mainController;
 
         private List<TeamID> Focused = [];
@@ -28,6 +28,17 @@ namespace Leagueinator.GUI.src.Controllers {
             this.OnFocusRevoked.Invoke(this, args);
         }
 
+        internal void DoRequestFocus(int lane, int teamIndex, bool append) {
+            TeamID teamId = new(teamIndex, lane);
+
+            if (append == false) this.ClearFocus();
+            if (this.Focused.Contains(teamId)) return;
+            this.InvokeFocusGranted(teamId);
+            this.Focused.Add(teamId);
+        }
+
+        internal void DoClearFocus(NamedEventArgs e) { }
+
         public void RequestFocusHnd(object sender, RoutedEventArgs e) {
             if (e is RequestFocusArgs args) {
                 if (args.Append == false) this.ClearFocus();
@@ -45,10 +56,10 @@ namespace Leagueinator.GUI.src.Controllers {
 
         private void DoSwap(TeamID from, TeamID to) {
             Debug.WriteLine($"Swapping {from} with {to}");
-            var tempFrom = this.MainController.RoundData[from.MatchIndex].Teams[from.TeamIndex];
-            var tempTo = this.MainController.RoundData[to.MatchIndex].Teams[to.TeamIndex];
-            this.MainController.RoundData[from.MatchIndex].Teams[from.TeamIndex] = tempTo;
-            this.MainController.RoundData[to.MatchIndex].Teams[to.TeamIndex] = tempFrom;
+            var tempFrom = this.MainController.RoundData[from.Lane].Teams[from.TeamIndex];
+            var tempTo = this.MainController.RoundData[to.Lane].Teams[to.TeamIndex];
+            this.MainController.RoundData[from.Lane].Teams[from.TeamIndex] = tempTo;
+            this.MainController.RoundData[to.Lane].Teams[to.TeamIndex] = tempFrom;
             this.MainController.InvokeRoundEvent("Update");
         }
 

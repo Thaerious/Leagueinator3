@@ -25,5 +25,6 @@
         PrintTeams,
         GenerateRound,
         AssignLanes,
+        RequestFocus,
     }
 }

@@ -1,7 +1,9 @@
-﻿using Leagueinator.GUI.Forms.Main;
+﻿using Leagueinator.GUI.Controllers;
+using Leagueinator.GUI.Forms.Main;
 using Leagueinator.GUI.Model;
 using Leagueinator.GUI.src.Controllers;
 using Leagueinator.GUI.Utility.Extensions;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -10,7 +12,7 @@ namespace Leagueinator.GUI.Controls {
 
     public abstract partial class MatchCard : UserControl {
         private int? _pendingLane = null;
-        private int? _pendingEnds = null;        
+        private int? _pendingEnds = null;
         private int _lastCheckedTeamIndex = -1;
         public bool SuppressBowlsEvent = false;
 
@@ -18,29 +20,7 @@ namespace Leagueinator.GUI.Controls {
 
         public MatchCard() {
             this.MouseDown += this.MatchCard_MouseDown;
-            this.Loaded += MatchCard_Loaded;               
-        }
-
-        protected void NameTextBoxChange(object sender, RoutedEventArgs e) {             
-            if (sender is not TextBox textBox) return;
-            var parent = (StackPanel)textBox.Parent ?? throw new NullReferenceException("Parent is not a StackPanel.");            
-
-            int teamIndex = textBox.Ancestors<TeamCard>().First().TeamIndex;
-            int position = parent.Children.IndexOf(textBox);
-
-            if (e is KeyEventArgs keyArgs) {
-                this.InvokeNamedEvent(EventName.PlayerName, new Dictionary<string, object> {
-                    ["lane"] = this.Lane,
-                    ["value"] = textBox.Text,
-                    ["team"] = teamIndex,
-                    ["pos"] = position
-                });
-
-                if (keyArgs.Key == Key.Enter) {
-                    TraversalRequest request = new TraversalRequest(FocusNavigationDirection.Next);
-                    textBox.MoveFocus(request);
-                }
-            }
+            this.Loaded += MatchCard_Loaded;
         }
 
         internal void SetTieBreaker(int teamIndex) {
@@ -78,10 +58,6 @@ namespace Leagueinator.GUI.Controls {
                 textBox.GotKeyboardFocus += this.TextBoxSelectAllOnFocus;
             }
 
-            foreach (TextBox textBox in this.FindByTag("PlayerName").Cast<TextBox>()) {
-                textBox.KeyUp += this.NameTextBoxChange;
-                textBox.LostFocus += this.NameTextBoxChange;
-            }
         }
 
         private void TextBoxInvokeEndsEvent(object sender, TextChangedEventArgs e) {
@@ -93,11 +69,11 @@ namespace Leagueinator.GUI.Controls {
                 return;
             }
 
-            this.InvokeNamedEvent(EventName.Ends, new Dictionary<string, int> {
+            this.InvokeNamedEvent(EventName.Ends, new() {
                 ["lane"] = this.Lane,
                 ["ends"] = int.Parse(textBox.Text)
             });
-        }   
+        }
 
         private void TextBoxInvokeBowlsEvent(object sender, TextChangedEventArgs e) {
             if (this.SuppressBowlsEvent) return; // Prevents looping when setting Bowls property
@@ -111,10 +87,10 @@ namespace Leagueinator.GUI.Controls {
 
             int teamIndex = textBox.Ancestors<TeamCard>().First().TeamIndex;
             var textBoxValue = int.Parse(textBox.Text);
-            this.InvokeNamedEvent(EventName.Bowls, new Dictionary<string, object> {
+            this.InvokeNamedEvent(EventName.Bowls, new DataTable {
                 ["lane"] = this.Lane,
-                ["value"] = textBoxValue,
-                ["team"] = teamIndex
+                ["bowls"] = textBoxValue,
+                ["teamIndex"] = teamIndex
             });
         }
 
@@ -148,7 +124,7 @@ namespace Leagueinator.GUI.Controls {
         public int Lane {
             get {
                 var infoCard = this.GetDescendantsOfType<InfoCard>().FirstOrDefault();
-                return infoCard?.Lane ?? this._pendingLane ?? - 1;
+                return infoCard?.Lane ?? this._pendingLane ?? -1;
             }
             set {
                 var infoCard = this.GetDescendantsOfType<InfoCard>().FirstOrDefault();
@@ -180,7 +156,9 @@ namespace Leagueinator.GUI.Controls {
         /// <param name="sender"></param>
         /// <param name="e"></param>
         public void HndRemoveMatch(object _, RoutedEventArgs __) {
-            this.InvokeNamedEvent(EventName.RemoveMatch, this.Lane);
+            this.InvokeNamedEvent(EventName.RemoveMatch, new() {
+                ["Lane"] = this.Lane,
+            });
         }
 
         /// <summary>
@@ -198,10 +176,10 @@ namespace Leagueinator.GUI.Controls {
 
             bool success = Enum.TryParse(customData, out MatchFormat matchFormat);
             if (!success) throw new ArgumentException("Error on tag on context menu item");
-            
-            this.InvokeNamedEvent(EventName.MatchFormat, new Dictionary<string, object> {
+
+            this.InvokeNamedEvent(EventName.MatchFormat, new DataTable {
                 ["lane"] = this.Lane,
-                ["value"] = matchFormat
+                ["format"] = matchFormat
             });
         }
 
@@ -260,9 +238,9 @@ namespace Leagueinator.GUI.Controls {
 
             int lastCheckedTeamIndex = _lastCheckedTeamIndex;
             this._lastCheckedTeamIndex = newCheckedTeamIndex;
-            this.InvokeNamedEvent(EventName.TieBreaker, new Dictionary<string, object> {
+            this.InvokeNamedEvent(EventName.TieBreaker, new DataTable {
                 ["lane"] = this.Lane,
-                ["value"] = newCheckedTeamIndex,
+                ["tieBreaker"] = newCheckedTeamIndex,
             });
         }
 

@@ -1,7 +1,11 @@
 ﻿using Leagueinator.GUI.Controllers;
+using Leagueinator.GUI.Forms.Main;
+using Leagueinator.GUI.src.Controllers;
 using Leagueinator.GUI.Utility.Extensions;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Xml.Linq;
 
 namespace Leagueinator.GUI.Controls {
@@ -50,18 +54,54 @@ namespace Leagueinator.GUI.Controls {
         private void HndLoaded(object sender, RoutedEventArgs e) {
             DragDropController controller = new DragDropController(this);
 
+            this.PreviewMouseDown += this.HndRequestFocus;
             this.PreviewMouseDown += controller.HndPreMouseDown;
             this.DragEnter += controller.HndDragEnter;
             this.Drop += controller.HndDrop;
 
-            this.GetDescendantsOfType<TextBox>()
-                .Where(textBox => textBox.HasTag("PlayerName"))
-                .ToList()
-                .ForEach(textBox => {
-                    textBox.AllowDrop = true;
-                    textBox.DragEnter += controller.HndDragEnter;
-                    textBox.PreviewDragOver += controller.HndPreviewDragOver;
-                });
+            foreach (TextBox textBox in this.FindByTag("PlayerName").Cast<TextBox>()) {
+                textBox.KeyUp += this.NameTextBoxChange;
+                textBox.LostKeyboardFocus += this.NameTextBoxLoseFocus;
+                textBox.AllowDrop = true;
+                textBox.DragEnter += controller.HndDragEnter;
+                textBox.PreviewDragOver += controller.HndPreviewDragOver;
+            }
+        }
+
+        private void HndRequestFocus(object sender, MouseButtonEventArgs e) {
+            this.InvokeNamedEvent(EventName.RequestFocus, new DataTable {
+                ["lane"] = this.MatchCard.Lane,
+                ["team"] = this.TeamIndex,
+                ["append"] = Keyboard.Modifiers.HasFlag(ModifierKeys.Shift)
+            });
+        }
+
+        protected void NameTextBoxLoseFocus(object sender, RoutedEventArgs e) {
+            if (sender is not TextBox textBox) return;
+            var parent = (StackPanel)textBox.Parent ?? throw new NullReferenceException("Parent is not a StackPanel.");
+            int teamIndex = textBox.Ancestors<TeamCard>().First().TeamIndex;
+            int position = parent.Children.IndexOf(textBox);
+
+            Debug.WriteLine($"NameTextBoxLoseFocus {this.MatchCard.Lane} {teamIndex} {position}");
+
+            this.InvokeNamedEvent(EventName.PlayerName, new DataTable {
+                ["lane"] = this.MatchCard.Lane,
+                ["name"] = textBox.Text,
+                ["teamIndex"] = teamIndex,
+                ["position"] = position
+            });
+        }
+
+        protected void NameTextBoxChange(object sender, RoutedEventArgs e) {
+            if (sender is not TextBox textBox) return;
+
+            if (e is KeyEventArgs keyArgs) {
+                if (keyArgs.Key == Key.Enter) {
+                    this.NameTextBoxLoseFocus(sender, e);
+                    TraversalRequest request = new TraversalRequest(FocusNavigationDirection.Next);
+                    textBox.MoveFocus(request);
+                }
+            }
         }
 
         #endregion

@@ -29,15 +29,14 @@ namespace Leagueinator.GUI {
             this.Dispatcher.InvokeAsync(() => {
                 var main = (MainWindow)this.MainWindow;
 
-                main.Loaded += (object s, global::System.Windows.RoutedEventArgs e) => {
-                    Debug.WriteLine("MainWindow Loaded");
+                main.Loaded += (object s, RoutedEventArgs e) => {
                     MainController mainController = new(main);
                     FocusController focusController = new(mainController);
 
                     // Initialize controller listeners for handling UI generated events
                     main.OnDragEnd         += mainController.DragEndHnd;
                     main.OnNamedEvent      += mainController.NamedEventHnd;
-                    main.OnRequestFocus    += focusController.RequestFocusHnd;
+                    //main.OnNamedEvent      += focusController.NamedEventHnd;
 
                     // Initialize UI listeners for handling controller generated events
                     mainController.OnUpdateRound    += this.UpdateRoundHnd;
@@ -54,7 +53,7 @@ namespace Leagueinator.GUI {
         private void GrantFocus(object sender, FocusController.FocusArgs args) {
             TeamCard? card = this.MainWindow
                                 .GetDescendantsOfType<TeamCard>()
-                                .Where(card => card.MatchCard.Lane.Equals(args.TeamId.MatchIndex))
+                                .Where(card => card.MatchCard.Lane.Equals(args.TeamId.Lane))
                                 .FirstOrDefault(card => card.TeamIndex.Equals(args.TeamId.TeamIndex));
 
             if (card is not null) card.Background = Colors.TeamPanelFocused;
@@ -63,7 +62,7 @@ namespace Leagueinator.GUI {
         private void RevokeFocus(object sender, FocusController.FocusArgs args) {
             TeamCard? card = this.MainWindow
                                 .GetDescendantsOfType<TeamCard>()
-                                .Where(card => card.MatchCard.Lane.Equals(args.TeamId.MatchIndex))
+                                .Where(card => card.MatchCard.Lane.Equals(args.TeamId.Lane))
                                 .FirstOrDefault(card => card.TeamIndex.Equals(args.TeamId.TeamIndex));
 
             if (card is not null) card.Background = Colors.TeamPanelDefault;
@@ -103,7 +102,7 @@ namespace Leagueinator.GUI {
         private void SetRoundCountHnd(object sender, int count) {
             Logger.Log($"App.SetRoundCount: {count}");
             var main = (MainWindow)this.MainWindow;
-            main.RoundButtonContainer.Children.Clear();
+            main.RoundButtonStackPanel.Children.Clear();
             for (int i = 0; i < count; i++) {
                 main.AddRoundButton();
             }

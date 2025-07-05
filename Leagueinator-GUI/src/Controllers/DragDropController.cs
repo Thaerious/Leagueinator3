@@ -74,28 +74,11 @@ namespace Leagueinator.GUI.Controllers {
             e.Handled = true;
 
             // If the target element is the same as the source, ignore the drop.
-            if (from == this.TargetElement) {
-                HndRequestFocus(from, Keyboard.Modifiers.HasFlag(ModifierKeys.Shift));
-            }
-            else {
+            if (from != this.TargetElement) {
                 // Raise the DragEnd event with the source element and the target element.
                 DragEndArgs args = new(RegisteredDragEndEvent, from, this.TargetElement);
                 this.TargetElement.RaiseEvent(args);
             }
-        }
-
-        private static void HndRequestFocus(FrameworkElement e, bool append) {
-            if (e is not TeamCard teamCard) {
-                Debug.WriteLine("RequestFocus: Not a TeamCard");
-                return;
-            }
-
-            int teamIndex = teamCard.TeamIndex;
-            int lane = teamCard.MatchCard.Lane;
-            TeamID teamID = new(teamIndex, lane);
-
-            RequestFocusArgs args = new(RequestFocusEvent, teamID, append);
-            teamCard.RaiseEvent(args);
         }
     }
 }
