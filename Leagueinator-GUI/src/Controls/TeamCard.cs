@@ -20,20 +20,15 @@ namespace Leagueinator.GUI.Controls {
 
         public MatchCard MatchCard => this.Ancestors<MatchCard>().First();
 
+        public BowlsPanel BowlsPanel => this.GetDescendantsOfType<BowlsPanel>().First();
+
+
         private static readonly DependencyProperty TeamIndexProperty =
             DependencyProperty.Register(nameof(TeamIndex), typeof(int), typeof(TeamCard));
 
         public int TeamIndex {
             get => (int)GetValue(TeamIndexProperty);
             set => SetValue(TeamIndexProperty, value);
-        }
-
-        private static readonly DependencyProperty BowlsProperty =
-            DependencyProperty.Register(nameof(Bowls), typeof(int), typeof(TeamCard));
-
-        public int Bowls {
-            get => (int)GetValue(BowlsProperty);
-            set => SetValue(BowlsProperty, value);
         }
 
         public string this[int i] {
@@ -71,7 +66,7 @@ namespace Leagueinator.GUI.Controls {
         private void HndRequestFocus(object sender, MouseButtonEventArgs e) {
             this.InvokeNamedEvent(EventName.RequestFocus, new DataTable {
                 ["lane"] = this.MatchCard.Lane,
-                ["team"] = this.TeamIndex,
+                ["teamIndex"] = this.TeamIndex,
                 ["append"] = Keyboard.Modifiers.HasFlag(ModifierKeys.Shift)
             });
         }

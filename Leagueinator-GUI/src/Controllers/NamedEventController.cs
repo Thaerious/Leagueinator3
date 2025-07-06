@@ -9,7 +9,7 @@ namespace Leagueinator.GUI.Controllers {
         public void NamedEventHnd(object? sender, NamedEventArgs args){
             Logger.Log($"{this.GetType().Name}.NamedEventHnd: {args.EventName}");
 
-            Type type = typeof(MainController);
+            Type type = this.GetType();
             MethodInfo? method = type.GetMethod($"Do{args.EventName}", BindingFlags.NonPublic | BindingFlags.Instance);
 
             if (method == null) return;
@@ -31,8 +31,14 @@ namespace Leagueinator.GUI.Controllers {
                 }
             }
 
-            method.Invoke(this, [.. orderedArgs]);
-            args.Handled = true;
+            try {
+                method.Invoke(this, [.. orderedArgs]);
+                args.Handled = true;
+            }
+            catch (Exception ex) {
+                string msg = $"Exception while handling named event '{args.EventName}' on '{this.GetType().Name}'.";
+                throw new Exception(msg, ex);
+            }
         }
     }
 }

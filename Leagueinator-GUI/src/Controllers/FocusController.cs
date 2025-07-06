@@ -1,5 +1,5 @@
 ﻿using Leagueinator.GUI.Controllers;
-using Leagueinator.GUI.Forms.Main;
+using Leagueinator.GUI.Utility.Extensions;
 using System.Diagnostics;
 using System.Windows;
 
@@ -31,36 +31,40 @@ namespace Leagueinator.GUI.src.Controllers {
         internal void DoRequestFocus(int lane, int teamIndex, bool append) {
             TeamID teamId = new(teamIndex, lane);
 
-            if (append == false) this.ClearFocus();
-            if (this.Focused.Contains(teamId)) return;
-            this.InvokeFocusGranted(teamId);
-            this.Focused.Add(teamId);
-        }
-
-        internal void DoClearFocus(NamedEventArgs e) { }
-
-        public void RequestFocusHnd(object sender, RoutedEventArgs e) {
-            if (e is RequestFocusArgs args) {
-                if (args.Append == false) this.ClearFocus();
-                if (this.Focused.Contains(args.Target)) return;
-                this.InvokeFocusGranted(args.Target);
-                this.Focused.Add(args.Target);
-            }
-            else if (e is ClearFocusArgs) {                
-                this.ClearFocus();
+            if (append) {
+                if (this.Focused.Contains(teamId)) {
+                    this.Focused.Remove(teamId);
+                    this.InvokeFocusRevoked(teamId);
+                }
+                else {
+                    this.Focused.Add(teamId);
+                    this.InvokeFocusGranted(teamId);
+                }
             }
             else {
-                throw new NotSupportedException($"Unsupported event type: {e.GetType()}");
+                this.ClearFocus();
+                this.InvokeFocusGranted(teamId);
+                this.Focused.Add(teamId);
             }
         }
 
-        private void DoSwap(TeamID from, TeamID to) {
-            Debug.WriteLine($"Swapping {from} with {to}");
-            var tempFrom = this.MainController.RoundData[from.Lane].Teams[from.TeamIndex];
-            var tempTo = this.MainController.RoundData[to.Lane].Teams[to.TeamIndex];
-            this.MainController.RoundData[from.Lane].Teams[from.TeamIndex] = tempTo;
-            this.MainController.RoundData[to.Lane].Teams[to.TeamIndex] = tempFrom;
-            this.MainController.InvokeRoundEvent("Update");
+        internal void DoSwap() {
+            if (this.Focused.Count <= 1) return;
+            List<TeamID> swapList = [.. this.Focused];
+
+            TeamID from = swapList.Pop();
+
+            while(swapList.Count > 0){
+                TeamID to = swapList.Pop();
+
+                var tempFrom = this.MainController.RoundData[from.Lane].Teams[from.TeamIndex];
+                var tempTo = this.MainController.RoundData[to.Lane].Teams[to.TeamIndex];
+                this.MainController.RoundData[from.Lane].Teams[from.TeamIndex] = tempTo;
+                this.MainController.RoundData[to.Lane].Teams[to.TeamIndex] = tempFrom;
+                this.MainController.InvokeRoundEvent("Update");
+
+                from = to;
+            }
         }
 
         private void ClearFocus() {

@@ -49,7 +49,9 @@ namespace Leagueinator.GUI.Forms.Main {
 
         public void PopulateMatchCards(RoundData roundData) {
             this.Dispatcher.InvokeAsync(new Action(() => {
+                this.PauseEvents();
                 this.DoPopulateMatchCards(roundData);
+                this.ResumeEvents();
             }), DispatcherPriority.Background);
         }
 
@@ -72,8 +74,6 @@ namespace Leagueinator.GUI.Forms.Main {
 
                 if (i >= this.MatchCardStackPanel.Children.Count) {
                     MatchCard mc = MatchCardFactory.GenerateMatchCard(matchData.MatchFormat);
-                    mc.Lane = matchData.Lane;
-                    mc.Ends = matchData.Ends;
                     this.MatchCardStackPanel.Children.Add(mc);
 
                     mc.Loaded += (s, e) => {
@@ -96,9 +96,6 @@ namespace Leagueinator.GUI.Forms.Main {
                     matchCard.Loaded += (s, e) => {
                         matchCard.UpdateData(matchData);
                         cardsLoaded++;
-
-                        Debug.WriteLine($"MatchCard loaded: {cardsLoaded} / {cardsToLoad}");
-
                         if (cardsLoaded == cardsToLoad) {
                             this.AssignTabOrder();
                         }

@@ -47,7 +47,7 @@
                     </StackPanel>
 
                     <!-- Team 1 Bowls  -->
-                    <local:BowlsPanel Grid.Column="1"/>
+                    <local:BowlsPanel x:Name="BowlsPanel" Grid.Column="1"/>
                 </Grid>
             </local:TeamCard>
 

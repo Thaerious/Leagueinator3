@@ -7,9 +7,22 @@ using System.Windows;
 namespace Leagueinator.GUI.Forms.Main {
     public partial class MainWindow : Window {
 
+        private bool EventsPaused = false;
+
+        public void PauseEvents() {
+            Debug.WriteLine("Events are paused on main");
+            EventsPaused = true;
+        }
+
+        public void ResumeEvents() {
+            Debug.WriteLine("Events are resumed on main");
+            EventsPaused = false;
+        }
+
         public event EventHandler<NamedEventArgs> OnNamedEvent = delegate { };
 
         public void InvokeNamedEvent(EventName eventName) {
+            if (this.EventsPaused) return;
             Debug.WriteLine($"InvokeNamedEvent w/o data {eventName}");
             NamedEventArgs args = new(eventName);
             this.OnNamedEvent.Invoke(this, args);
@@ -20,7 +33,8 @@ namespace Leagueinator.GUI.Forms.Main {
         }
 
         public void InvokeNamedEvent(EventName eventName, DataTable data) {
-            Debug.WriteLine($"InvokeNamedEvent w/data {eventName}");
+            if (this.EventsPaused) return;
+            Debug.WriteLine($"InvokeNamedEvent w/ data {eventName}");
             NamedEventArgs args = new(eventName, data);
             this.OnNamedEvent.Invoke(this, args);
 

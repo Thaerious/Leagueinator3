@@ -5,7 +5,6 @@ using Leagueinator.GUI.src.Controllers;
 using Leagueinator.GUI.Utility;
 using Leagueinator.GUI.Utility.Extensions;
 using System.Diagnostics;
-using System.Linq;
 using System.Windows;
 using System.Windows.Threading;
 
@@ -36,7 +35,7 @@ namespace Leagueinator.GUI {
                     // Initialize controller listeners for handling UI generated events
                     main.OnDragEnd         += mainController.DragEndHnd;
                     main.OnNamedEvent      += mainController.NamedEventHnd;
-                    //main.OnNamedEvent      += focusController.NamedEventHnd;
+                    main.OnNamedEvent      += focusController.NamedEventHnd;
 
                     // Initialize UI listeners for handling controller generated events
                     mainController.OnUpdateRound    += this.UpdateRoundHnd;
