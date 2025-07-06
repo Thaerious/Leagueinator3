@@ -41,7 +41,7 @@ namespace Leagueinator.GUI.Forms.Main {
             this.ClearFocus();
             var index = this.RoundButtonStackPanel.Children.IndexOf(button);
 
-            this.InvokeNamedEvent(EventName.SelectRound, new(){
+            this.DispatchNamedEvent(EventName.SelectRound, new(){
                 ["index"] = index
             });
         }

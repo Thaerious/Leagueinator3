@@ -1,7 +1,4 @@
-﻿using Leagueinator.GUI.Controls;
-using Leagueinator.GUI.src.Controllers;
-using Leagueinator.GUI.Utility.Extensions;
-using System.Diagnostics;
+﻿using Leagueinator.GUI.Utility.Extensions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -73,9 +70,9 @@ namespace Leagueinator.GUI.Controllers {
 
             e.Handled = true;
 
-            // If the target element is the same as the source, ignore the drop.
+            // If the Target element is the same as the source, ignore the drop.
             if (from != this.TargetElement) {
-                // Raise the DragEnd event with the source element and the target element.
+                // Raise the DragEnd event with the source element and the Target element.
                 DragEndArgs args = new(RegisteredDragEndEvent, from, this.TargetElement);
                 this.TargetElement.RaiseEvent(args);
             }

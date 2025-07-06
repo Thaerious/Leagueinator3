@@ -50,10 +50,10 @@ namespace Leagueinator.GUI.Controllers.Algorithms {
         }
 
         /// <summary>
-        /// Performs the lane assignment for the target round, ensuring teams are not assigned to the same lanes 
+        /// Performs the lane assignment for the Target round, ensuring teams are not assigned to the same lanes 
         /// as in previous rounds.
         /// Creates a new <see cref="RoundData"/> instance with the assigned lanes using the team assignements
-        /// from the target round.
+        /// from the Target round.
         /// </summary>
         /// <returns>A new <see cref="RoundData"/> instance with updated lane assignments.</returns>
         public RoundData DoAssignment() {
@@ -64,7 +64,7 @@ namespace Leagueinator.GUI.Controllers.Algorithms {
         }
 
         /// <summary>
-        /// Assigns lanes to matches in the target round, avoiding previously used lanes for each match.
+        /// Assigns lanes to matches in the Target round, avoiding previously used lanes for each match.
         /// </summary>
         /// <returns>A new <see cref="RoundData"/> with assigned lanes.</returns>
         private RoundData DoAssignLanes() {
@@ -155,7 +155,7 @@ namespace Leagueinator.GUI.Controllers.Algorithms {
         }
 
         /// <summary>
-        /// Builds the lane usage history for each team, excluding the target round.
+        /// Builds the lane usage history for each team, excluding the Target round.
         /// </summary>
         public Dictionary<TeamData, HashSet<int>> BuildTeamHistory() {
             foreach (TeamData team in this.Rounds.Teams) {

@@ -1,15 +1,18 @@
-﻿using Leagueinator.GUI.Controllers;
-using Leagueinator.GUI.Forms.Main;
+﻿using Leagueinator.GUI.src.Controllers;
 using Leagueinator.GUI.Utility;
-using System.Diagnostics;
 using System.Reflection;
 
-namespace Leagueinator.GUI.Controllers {
-    public abstract class NamedEventController {
-        public void NamedEventHnd(object? sender, NamedEventArgs args){
-            Logger.Log($"{this.GetType().Name}.NamedEventHnd: {args.EventName}");
+namespace Leagueinator.GUI.Controllers.NamedEvents {
+    public class NamedEventReceiver(object Target) {
 
-            Type type = this.GetType();
+        public void Trigger(object? sender, EventName eventName, ArgTable data) {
+            this.NamedEventHnd(sender, new NamedEventArgs(eventName, data));
+        }
+
+        public void NamedEventHnd(object? sender, NamedEventArgs args){
+            Logger.Log($"{Target.GetType().Name}.NamedEventHnd: {args.EventName}");
+
+            Type type = Target.GetType();
             MethodInfo? method = type.GetMethod($"Do{args.EventName}", BindingFlags.NonPublic | BindingFlags.Instance);
 
             if (method == null) return;
@@ -27,16 +30,16 @@ namespace Leagueinator.GUI.Controllers {
                     orderedArgs.Add(p.DefaultValue!);
                 }
                 else {
-                    throw new KeyNotFoundException($"Parameter '{p.Name}' for '{this.GetType().Name}.{method.Name}' not found in event data {args.Trace}.");
+                    throw new KeyNotFoundException($"Parameter '{p.Name}' for '{Target.GetType().Name}.{method.Name}' not found in event data {args.Trace}.");
                 }
             }
 
             try {
-                method.Invoke(this, [.. orderedArgs]);
+                method.Invoke(Target, [.. orderedArgs]);
                 args.Handled = true;
             }
             catch (Exception ex) {
-                string msg = $"Exception while handling named event '{args.EventName}' on '{this.GetType().Name}'.";
+                string msg = $"Exception while handling named event '{args.EventName}' on '{Target.GetType().Name}'.";
                 throw new Exception(msg, ex);
             }
         }

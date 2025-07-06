@@ -24,7 +24,8 @@
         EventResults,
         PrintTeams,
         GenerateRound,
-        AssignLanes,
+        EventManager,
         RequestFocus,
+        RenameEvent,
     }
 }

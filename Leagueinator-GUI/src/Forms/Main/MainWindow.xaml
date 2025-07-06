@@ -11,8 +11,8 @@
     >
 
     <Window.CommandBindings>
-        <CommandBinding Command="Save" Executed="HndSaveClick"/>
-        <CommandBinding Command="SaveAs" Executed="HndSaveAsClick"/>
+        <CommandBinding Command="Save" Executed="HndSaveLeagueClick"/>
+        <CommandBinding Command="SaveAs" Executed="HndSaveAsLeagueClick"/>
         <CommandBinding Command="{x:Static local:CustomCommands.Swap}" Executed="HndSwap"/>
     </Window.CommandBindings>
 
@@ -37,10 +37,11 @@
         <Menu Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3">
             <!-- File Menu -->
             <MenuItem Header="File">
-                <MenuItem Header="New" Click="HndNewClick"/>
-                <MenuItem Header="Load" Click="HndLoadClick"/>
+                <MenuItem Header="New" Click="HndNewLeagueClick"/>
+                <MenuItem Header="Load" Click="HndLoadLeagueClick"/>
                 <MenuItem Header="Save" Command="Save" InputGestureText="Ctrl+S"/>
                 <MenuItem Header="Save As" Command="SaveAs" InputGestureText="Ctrl+Shift+S"/>
+                <MenuItem Header="Event Manager" Click="HndEventManagerClick"/>
                 <MenuItem Header="Exit" Click="HndExitClick"/>
             </MenuItem>
 

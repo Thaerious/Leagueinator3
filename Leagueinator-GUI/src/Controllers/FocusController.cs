@@ -1,13 +1,20 @@
 ﻿using Leagueinator.GUI.Controllers;
+using Leagueinator.GUI.Controllers.NamedEvents;
 using Leagueinator.GUI.Utility.Extensions;
 using System.Diagnostics;
-using System.Windows;
 
 namespace Leagueinator.GUI.src.Controllers {
-    public class FocusController(MainController mainController) : NamedEventController {
-        public MainController MainController { get; } = mainController;
+    public class FocusController {
+        public MainController MainController { get; }
+
+        public NamedEventReceiver NamedEventRcv { get; private set; }
 
         private List<TeamID> Focused = [];
+
+        public FocusController(MainController mainController) {
+            this.MainController = mainController;
+            this.NamedEventRcv = new(this);
+        }
 
         public record FocusArgs(TeamID TeamId, string Action);
 

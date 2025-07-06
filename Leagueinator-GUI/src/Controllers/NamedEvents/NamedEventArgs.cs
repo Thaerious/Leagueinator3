@@ -1,12 +1,12 @@
 ﻿using Leagueinator.GUI.src.Controllers;
 using Leagueinator.GUI.Utility;
 
-namespace Leagueinator.GUI.Forms.Main {
+namespace Leagueinator.GUI.Controllers.NamedEvents { 
 
-    public class DataTable : Dictionary<string, object> { }
+    public class ArgTable : Dictionary<string, object> { }
 
     public class NamedEventArgs : EventArgs {
-        public NamedEventArgs(EventName eventName, DataTable data) {
+        public NamedEventArgs(EventName eventName, ArgTable data) {
             this.EventName = eventName;
             this.Data = data;
             this.Trace = Logger.GetInvocationLoc();
@@ -23,9 +23,9 @@ namespace Leagueinator.GUI.Forms.Main {
 
         public bool Handled { get; set; } = false;
 
-        public DataTable Data { get; }
+        public ArgTable Data { get; }
 
-        public String Trace { get; private set; }   
+        public string Trace { get; private set; }   
 
         #endregion
     }

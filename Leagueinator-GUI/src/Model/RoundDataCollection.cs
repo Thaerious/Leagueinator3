@@ -2,6 +2,8 @@
 namespace Leagueinator.GUI.Model {
     public class RoundDataCollection : List<RoundData> {
 
+        internal RoundDataCollection() { }
+
         /// <summary>
         /// Generate a collection of all unique teams that have played in any match across all rounds.
         /// </summary>
@@ -43,7 +45,7 @@ namespace Leagueinator.GUI.Model {
         }
 
         /// <summary>
-        /// Returns a list of all previous previous opponents for the target team.
+        /// Returns a list of all previous previous opponents for the Target team.
         /// </summary>
         /// <param name="team"></param>
         /// <returns></returns>

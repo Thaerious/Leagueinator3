@@ -64,7 +64,7 @@ namespace Leagueinator.GUI.Controls {
         }
 
         private void HndRequestFocus(object sender, MouseButtonEventArgs e) {
-            this.InvokeNamedEvent(EventName.RequestFocus, new DataTable {
+            this.DispatchNamedEvent(EventName.RequestFocus, new() {
                 ["lane"] = this.MatchCard.Lane,
                 ["teamIndex"] = this.TeamIndex,
                 ["append"] = Keyboard.Modifiers.HasFlag(ModifierKeys.Shift)
@@ -79,7 +79,7 @@ namespace Leagueinator.GUI.Controls {
 
             Debug.WriteLine($"NameTextBoxLoseFocus {this.MatchCard.Lane} {teamIndex} {position}");
 
-            this.InvokeNamedEvent(EventName.PlayerName, new DataTable {
+            this.DispatchNamedEvent(EventName.PlayerName, new() {
                 ["lane"] = this.MatchCard.Lane,
                 ["name"] = textBox.Text,
                 ["teamIndex"] = teamIndex,

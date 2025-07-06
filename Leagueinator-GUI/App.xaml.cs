@@ -26,25 +26,25 @@ namespace Leagueinator.GUI {
 
             // Setup Event Handlers
             this.Dispatcher.InvokeAsync(() => {
-                var main = (MainWindow)this.MainWindow;
+                var mainWindow = (MainWindow)this.MainWindow;
 
-                main.Loaded += (object s, RoutedEventArgs e) => {
-                    MainController mainController = new(main);
+                mainWindow.Loaded += (object s, RoutedEventArgs e) => {
+                    MainController mainController = new(mainWindow);
                     FocusController focusController = new(mainController);
 
-                    // Initialize controller listeners for handling UI generated events
-                    main.OnDragEnd         += mainController.DragEndHnd;
-                    main.OnNamedEvent      += mainController.NamedEventHnd;
-                    main.OnNamedEvent      += focusController.NamedEventHnd;
+                    // Initialize Controller listeners for handling UI generated events
+                    mainWindow.OnDragEnd      += mainController.DragEndHnd;
+                    mainWindow.NamedEventDisp += mainController.NamedEventRcv;
+                    mainWindow.NamedEventDisp += focusController.NamedEventRcv;
 
-                    // Initialize UI listeners for handling controller generated events
+                    // Initialize UI listeners for handling Controller generated events
                     mainController.OnUpdateRound    += this.UpdateRoundHnd;
                     mainController.OnSetRoundCount  += this.SetRoundCountHnd;
                     mainController.OnSetTitle       += this.SetTitleHnd;
                     focusController.OnFocusGranted  += this.GrantFocus;
                     focusController.OnFocusRevoked  += this.RevokeFocus;
 
-                    main.Ready();
+                    mainWindow.Ready();
                 };
             });
         }

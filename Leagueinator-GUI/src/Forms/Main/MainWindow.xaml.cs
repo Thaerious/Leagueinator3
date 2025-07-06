@@ -1,4 +1,5 @@
-﻿using Leagueinator.GUI.Controls;
+﻿using Leagueinator.GUI.Controllers.NamedEvents;
+using Leagueinator.GUI.Controls;
 using Leagueinator.GUI.Model;
 using Leagueinator.GUI.src.Controllers;
 using Leagueinator.GUI.Utility.Extensions;
@@ -14,13 +15,15 @@ namespace Leagueinator.GUI.Forms.Main {
     /// </summary>
     public partial class MainWindow : Window {
 
+        public NamedEventDispatcher NamedEventDisp { get; set; }
+
         public MainWindow() {
             this.InitializeComponent();
             this.Title = "Leagueinator []";
             var button = this.AddRoundButton();
             button.Focus();
 
-            Debug.WriteLine("Adding load handler");
+            this.NamedEventDisp = new NamedEventDispatcher(button);
             this.Loaded += this.OnLoadDo;
         }
 
@@ -34,7 +37,7 @@ namespace Leagueinator.GUI.Forms.Main {
         }
 
         public void Ready() {
-            this.InvokeNamedEvent(EventName.New);
+            this.NamedEventDisp.Dispatch(EventName.New);
             this.InvokeRoundButton();
         }
 
@@ -49,9 +52,9 @@ namespace Leagueinator.GUI.Forms.Main {
 
         public void PopulateMatchCards(RoundData roundData) {
             this.Dispatcher.InvokeAsync(new Action(() => {
-                this.PauseEvents();
+                this.NamedEventDisp.PauseEvents();
                 this.DoPopulateMatchCards(roundData);
-                this.ResumeEvents();
+                this.NamedEventDisp.ResumeEvents();
             }), DispatcherPriority.Background);
         }
 

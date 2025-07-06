@@ -1,13 +1,13 @@
 ﻿using Leagueinator.GUI.src.Controllers;
 using Leagueinator.GUI.Utility;
-using System;
 using System.Diagnostics;
-using System.Windows;
 
-namespace Leagueinator.GUI.Forms.Main {
-    public partial class MainWindow : Window {
+namespace Leagueinator.GUI.Controllers.NamedEvents {
+    public class NamedEventFactory {
 
         private bool EventsPaused = false;
+
+        #region Incoming Events
 
         public void PauseEvents() {
             Debug.WriteLine("Events are paused on main");
@@ -21,6 +21,10 @@ namespace Leagueinator.GUI.Forms.Main {
 
         public event EventHandler<NamedEventArgs> OnNamedEvent = delegate { };
 
+        #endregion
+
+        #region Outgoing Events
+
         public void InvokeNamedEvent(EventName eventName) {
             if (this.EventsPaused) return;
             Debug.WriteLine($"InvokeNamedEvent w/o data {eventName}");
@@ -32,7 +36,7 @@ namespace Leagueinator.GUI.Forms.Main {
             }
         }
 
-        public void InvokeNamedEvent(EventName eventName, DataTable data) {
+        public void InvokeNamedEvent(EventName eventName, ArgTable data) {
             if (this.EventsPaused) return;
             Debug.WriteLine($"InvokeNamedEvent w/ data {eventName}");
             NamedEventArgs args = new(eventName, data);
@@ -42,5 +46,8 @@ namespace Leagueinator.GUI.Forms.Main {
                 Logger.Log($"Warning: Event '{eventName}' not handled.");
             }
         }
+
+        #endregion
+
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Leagueinator.GUI.Controllers;
+using Leagueinator.GUI.Controllers.NamedEvents;
 using Leagueinator.GUI.Forms.Main;
 using Leagueinator.GUI.Model;
 using Leagueinator.GUI.src.Controllers;
@@ -69,7 +70,7 @@ namespace Leagueinator.GUI.Controls {
                 return;
             }
 
-            this.InvokeNamedEvent(EventName.Ends, new() {
+            this.DispatchNamedEvent(EventName.Ends, new() {
                 ["lane"] = this.Lane,
                 ["ends"] = int.Parse(textBox.Text)
             });
@@ -87,7 +88,7 @@ namespace Leagueinator.GUI.Controls {
 
             int teamIndex = textBox.Ancestors<TeamCard>().First().TeamIndex;
             var textBoxValue = int.Parse(textBox.Text);
-            this.InvokeNamedEvent(EventName.Bowls, new DataTable {
+            this.DispatchNamedEvent(EventName.Bowls, new() {
                 ["lane"] = this.Lane,
                 ["bowls"] = textBoxValue,
                 ["teamIndex"] = teamIndex
@@ -156,7 +157,7 @@ namespace Leagueinator.GUI.Controls {
         /// <param name="sender"></param>
         /// <param name="e"></param>
         public void HndRemoveMatch(object _, RoutedEventArgs __) {
-            this.InvokeNamedEvent(EventName.RemoveMatch, new() {
+            this.DispatchNamedEvent(EventName.RemoveMatch, new() {
                 ["Lane"] = this.Lane,
             });
         }
@@ -177,7 +178,7 @@ namespace Leagueinator.GUI.Controls {
             bool success = Enum.TryParse(customData, out MatchFormat matchFormat);
             if (!success) throw new ArgumentException("Error on tag on context menu item");
 
-            this.InvokeNamedEvent(EventName.MatchFormat, new DataTable {
+            this.DispatchNamedEvent(EventName.MatchFormat, new() {
                 ["lane"] = this.Lane,
                 ["format"] = matchFormat
             });
@@ -238,7 +239,7 @@ namespace Leagueinator.GUI.Controls {
 
             int lastCheckedTeamIndex = _lastCheckedTeamIndex;
             this._lastCheckedTeamIndex = newCheckedTeamIndex;
-            this.InvokeNamedEvent(EventName.TieBreaker, new DataTable {
+            this.DispatchNamedEvent(EventName.TieBreaker, new() {
                 ["lane"] = this.Lane,
                 ["tieBreaker"] = newCheckedTeamIndex,
             });
