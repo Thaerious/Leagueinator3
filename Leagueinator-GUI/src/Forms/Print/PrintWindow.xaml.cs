@@ -144,7 +144,7 @@ namespace Leagueinator.GUI.Forms.Print {
             var printDialog = new PrintDialog();
             if (printDialog.ShowDialog() == true) {
                 try {
-                    // Copy the FlowDocument to avoid printing the live one
+                    // CopyRound the FlowDocument to avoid printing the live one
                     FlowDocument clonedDoc = CloneFlowDocument(this.DocViewer);
 
                     IDocumentPaginatorSource docSource = clonedDoc as IDocumentPaginatorSource;

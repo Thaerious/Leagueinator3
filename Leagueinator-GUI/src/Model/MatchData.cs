@@ -74,7 +74,7 @@ namespace Leagueinator.GUI.Model {
         }
 
         /// <summary>
-        /// Copy the team to the specified index in the match.
+        /// CopyRound the team to the specified index in the match.
         /// </summary>
         /// <param name="teamIndex">The index of the team to set.</param>
         /// <param name="team">The team data to assign.</param>
@@ -159,7 +159,7 @@ namespace Leagueinator.GUI.Model {
         }
 
         /// <summary>
-        /// Copy the team to the next empty slot in the match.
+        /// CopyRound the team to the next empty slot in the match.
         /// If there are no empty slots, it throws an exception.
         /// </summary>
         /// <param name="teamData"></param>

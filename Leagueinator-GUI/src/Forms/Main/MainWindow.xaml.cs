@@ -41,7 +41,7 @@ namespace Leagueinator.GUI.Forms.Main {
         }
 
         public void Ready() {
-            this.NamedEventDisp.Dispatch(EventName.New);
+            this.NamedEventDisp.Dispatch(EventName.NewLeague);
             this.InvokeRoundButton();
         }
 

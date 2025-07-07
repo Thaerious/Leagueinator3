@@ -12,7 +12,8 @@ namespace Leagueinator.GUI.Forms.Main {
             this.MainWindow = mainWindow;
         }
 
-        internal void DoGrantFocus(int lane, int teamIndex) {
+        [NamedEventHandler(EventName.FocusGranted)]
+        internal void DoFocusGranted(int lane, int teamIndex) {
             TeamCard? card = this.MainWindow
                                  .GetDescendantsOfType<TeamCard>()
                                  .Where(card => card.MatchCard.Lane.Equals(lane))
@@ -21,7 +22,8 @@ namespace Leagueinator.GUI.Forms.Main {
             if (card is not null) card.Background = Colors.TeamPanelFocused;
         }
 
-        internal void DoRevokeFocus(int lane, int teamIndex) {
+        [NamedEventHandler(EventName.FocusRevoked)]
+        internal void DoFocusRevoked(int lane, int teamIndex) {
             TeamCard? card = this.MainWindow
                                 .GetDescendantsOfType<TeamCard>()
                                 .Where(card => card.MatchCard.Lane.Equals(lane))
@@ -30,6 +32,7 @@ namespace Leagueinator.GUI.Forms.Main {
             if (card is not null) card.Background = Colors.TeamPanelDefault;
         }
 
+        [NamedEventHandler(EventName.SetTitle)]
         internal void DoSetTitle(string title, bool saved) {
 
             if (saved) {
@@ -40,6 +43,7 @@ namespace Leagueinator.GUI.Forms.Main {
             }
         }
 
+        [NamedEventHandler(EventName.UpdateRoundCount)]
         internal void DoUpdateRoundCount(int count) {
             this.MainWindow.RoundButtonStackPanel.Children.Clear();
             for (int i = 0; i < count; i++) {
@@ -47,19 +51,23 @@ namespace Leagueinator.GUI.Forms.Main {
             }
         }
 
+        [NamedEventHandler(EventName.RoundUpdated)]
         internal void DoRoundUpdated(int roundIndex, RoundData roundData) {
             this.MainWindow.HighLightRound(roundIndex);
             this.MainWindow.PopulateMatchCards(roundData);
         }
 
+        [NamedEventHandler(EventName.RoundRemoved)]
         internal void DoRoundRemoved(int roundIndex) {
             this.MainWindow.RemoveRound(roundIndex);
         }
 
-        internal void DoRoundAdded(int roundIndex, RoundData roundData) {
+        [NamedEventHandler(EventName.RoundAdded)]
+        internal void DoRoundAdded() {
             this.MainWindow.AddRoundButton();
         }
 
+        [NamedEventHandler(EventName.MatchRemoved)]
         internal void DoMatchRemoved(int lane) {
             this.MainWindow.RemoveMatch(lane);
         }

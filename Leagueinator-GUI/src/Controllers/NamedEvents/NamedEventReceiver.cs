@@ -20,9 +20,17 @@ namespace Leagueinator.GUI.Controllers.NamedEvents {
 
         public void NamedEventHnd(object? sender, NamedEventArgs args) {
             Type type = MethodSource.GetType();
-            MethodInfo? method = type.GetMethod($"Do{args.EventName}", BindingFlags.NonPublic | BindingFlags.Instance);
+            var methods = type.GetMethods(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.DeclaredOnly);
 
-            if (method == null) return;
+            foreach (MethodInfo method in methods) {
+                var attr = method.GetCustomAttribute<NamedEventHandler> ();
+                if (attr is null) continue;
+                if (attr.EventName != args.EventName) continue;
+                HandleEvent(sender, args, method);
+            }
+        }
+
+        private void HandleEvent(object? sender, NamedEventArgs args, MethodInfo method) {
             ParameterInfo[] parameters = method.GetParameters();
 
             List<object> orderedArgs = [];
@@ -43,7 +51,7 @@ namespace Leagueinator.GUI.Controllers.NamedEvents {
             try {
                 Logger.Log($"Event '{args.EventName}' from '{sender?.GetType().Name}' handled by '{MethodSource.GetType().Name}'.");
                 method.Invoke(MethodSource, [.. orderedArgs]);
-                args.Handled = true;                
+                args.Handled = true;
             }
             catch (Exception ex) {
                 string msg = $"Exception while handling named event '{args.EventName}' on '{MethodSource.GetType().Name}'.";

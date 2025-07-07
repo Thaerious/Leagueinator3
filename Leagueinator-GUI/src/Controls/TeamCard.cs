@@ -77,9 +77,7 @@ namespace Leagueinator.GUI.Controls {
             int teamIndex = textBox.Ancestors<TeamCard>().First().TeamIndex;
             int position = parent.Children.IndexOf(textBox);
 
-            Debug.WriteLine($"NameTextBoxLoseFocus {this.MatchCard.Lane} {teamIndex} {position}");
-
-            this.DispatchNamedEvent(EventName.PlayerName, new() {
+            this.DispatchNamedEvent(EventName.ChangePlayerName, new() {
                 ["lane"] = this.MatchCard.Lane,
                 ["name"] = textBox.Text,
                 ["teamIndex"] = teamIndex,

@@ -11,7 +11,7 @@ namespace Leagueinator.GUI.Model.Results {
             this.Ends = matchData.Ends;
             this.Bowls = matchData.Score[teamIndex];
             this.Against = matchData.Score.Sum() - this.Bowls;
-            this.Rank = -1; // Default rank, this is set by the RoundResults class
+            this.Rank = -1; // Default rank, this is set by the DisplayRoundResults class
         }
 
         public TeamData TeamData { get; }

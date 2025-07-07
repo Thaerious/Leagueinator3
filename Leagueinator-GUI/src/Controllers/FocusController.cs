@@ -25,23 +25,26 @@ namespace Leagueinator.GUI.src.Controllers {
         public event FocusGranted OnFocusGranted = delegate { };
         public event FocusRevoked OnFocusRevoked = delegate { };
 
-        private void InvokeFocusGranted(TeamID target) {
-            FocusArgs args = new(target, "granted");
-            this.OnFocusGranted.Invoke(this, args);
+        private void InvokeFocusGranted(TeamID teamID) {
+            this.NamedEventDisp.Dispatch(EventName.FocusGranted, new () {
+                ["teamIndex"] = teamID.TeamIndex,
+                ["lane"] = teamID.Lane
+            });
         }
 
-        private void InvokeFocusRevoked(TeamID target) {
-            Debug.WriteLine("InvokeFocusRevoked: " + target);
-            FocusArgs args = new(target, "revoked");
-            this.OnFocusRevoked.Invoke(this, args);
+        private void InvokeFocusRevoked(TeamID teamID) {
+            this.NamedEventDisp.Dispatch(EventName.FocusRevoked, new() {
+                ["teamIndex"] = teamID.TeamIndex,
+                ["lane"] = teamID.Lane
+            });
         }
 
+        [NamedEventHandler(EventName.RequestFocus)]
         internal void DoRequestFocus(int lane, int teamIndex, bool append) {
             TeamID teamId = new(teamIndex, lane);
 
             if (append) {
-                if (this.Focused.Contains(teamId)) {
-                    this.Focused.Remove(teamId);
+                if (this.Focused.Remove(teamId)) {                    
                     this.InvokeFocusRevoked(teamId);
                 }
                 else {
@@ -56,6 +59,7 @@ namespace Leagueinator.GUI.src.Controllers {
             }
         }
 
+        [NamedEventHandler(EventName.SwapTeams)]
         internal void DoSwap() {
             if (this.Focused.Count <= 1) return;
             List<TeamID> swapList = [.. this.Focused];

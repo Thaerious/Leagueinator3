@@ -70,14 +70,14 @@ namespace Leagueinator.GUI.Controls {
                 return;
             }
 
-            this.DispatchNamedEvent(EventName.Ends, new() {
+            this.DispatchNamedEvent(EventName.ChangeEnds, new() {
                 ["lane"] = this.Lane,
                 ["ends"] = int.Parse(textBox.Text)
             });
         }
 
         private void TextBoxInvokeBowlsEvent(object sender, TextChangedEventArgs e) {
-            if (this.SuppressBowlsEvent) return; // Prevents looping when setting Bowls property
+            if (this.SuppressBowlsEvent) return; // Prevents looping when setting ChangeBowls property
             if (sender is not TextBox textBox) return;
 
             if (textBox.Text.Trim() == "") {
@@ -88,7 +88,7 @@ namespace Leagueinator.GUI.Controls {
 
             int teamIndex = textBox.Ancestors<TeamCard>().First().TeamIndex;
             var textBoxValue = int.Parse(textBox.Text);
-            this.DispatchNamedEvent(EventName.Bowls, new() {
+            this.DispatchNamedEvent(EventName.ChangeBowls, new() {
                 ["lane"] = this.Lane,
                 ["bowls"] = textBoxValue,
                 ["teamIndex"] = teamIndex
@@ -178,7 +178,7 @@ namespace Leagueinator.GUI.Controls {
             bool success = Enum.TryParse(customData, out MatchFormat matchFormat);
             if (!success) throw new ArgumentException("Error on tag on context menu item");
 
-            this.DispatchNamedEvent(EventName.MatchFormat, new() {
+            this.DispatchNamedEvent(EventName.ChangeMatchFormat, new() {
                 ["lane"] = this.Lane,
                 ["format"] = matchFormat
             });
@@ -239,7 +239,7 @@ namespace Leagueinator.GUI.Controls {
 
             int lastCheckedTeamIndex = _lastCheckedTeamIndex;
             this._lastCheckedTeamIndex = newCheckedTeamIndex;
-            this.DispatchNamedEvent(EventName.TieBreaker, new() {
+            this.DispatchNamedEvent(EventName.ChangeTieBreaker, new() {
                 ["lane"] = this.Lane,
                 ["tieBreaker"] = newCheckedTeamIndex,
             });

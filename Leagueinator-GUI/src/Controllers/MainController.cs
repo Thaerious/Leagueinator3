@@ -82,11 +82,13 @@ namespace Leagueinator.GUI.Controllers {
             });
         }
 
+        [NamedEventHandler(EventName.EventManager)]
         internal void DoEventManager() {
             var form = new EventManagerForm();
             form.ShowDialog(this, this.LeagueData);
         }
 
+        [NamedEventHandler(EventName.LoadLeague)]
         internal void DoLoad() {
             this.Load();
             this.NamedEventDisp.Dispatch(EventName.UpdateRoundCount, new() {
@@ -96,6 +98,7 @@ namespace Leagueinator.GUI.Controllers {
             this.InvokeSetTitle(this.FileName, true);
         }
 
+        [NamedEventHandler(EventName.RenameEvent)]
         internal void DoRenameEvent(string name, int uid) {
             foreach (EventData eventData in this.LeagueData) {
                 if (eventData.UID == uid) {
@@ -105,11 +108,13 @@ namespace Leagueinator.GUI.Controllers {
             }
         }
 
+        [NamedEventHandler(EventName.CreateEvent)]
         internal void DoCreateEvent() {
             this.LeagueData.Add(new EventData() { UID = this.LeagueData.GetNextUID() });
 
         }
 
+        [NamedEventHandler(EventName.SaveLeague)]
         internal void DoSave() {
             if (this.FileName != "Leagueinator") {
                 this.Save(this.FileName);
@@ -120,11 +125,13 @@ namespace Leagueinator.GUI.Controllers {
             this.InvokeSetTitle(this.FileName, true);
         }
 
+        [NamedEventHandler(EventName.SaveLeagueAs)]
         internal void DoSaveAs() {
             this.SaveAs();
             this.InvokeSetTitle(this.FileName, true);
         }
 
+        [NamedEventHandler(EventName.NewLeague)]
         internal void DoNew() {
             this.NewLeague();
 
@@ -137,11 +144,13 @@ namespace Leagueinator.GUI.Controllers {
             this.FileName = "Leagueinator";
         }
 
+        [NamedEventHandler(EventName.PrintTeams)]
         internal void DoPrintTeams() {
             PrintWindow pw = new(this.EventData.Rounds);
             pw.Show();
         }
 
+        [NamedEventHandler(EventName.AssignLanes)]
         internal void DoAssignLanes() {
             AssignLanes assignLanes = new(this.EventData, EventData.Rounds, this.RoundData); // TODO can just pass this.EventData
             RoundData newRound = assignLanes.DoAssignment();
@@ -150,6 +159,7 @@ namespace Leagueinator.GUI.Controllers {
             this.InvokeRoundUpdate();
         }
 
+        [NamedEventHandler(EventName.GenerateRound)]
         internal void DoGenerateRound() {
             var newRound = this.GenerateRound();
             AssignLanes assignLanes = new(this.EventData, this.EventData.Rounds, newRound); // TODO can just pass this.EventData
@@ -161,14 +171,17 @@ namespace Leagueinator.GUI.Controllers {
             this.InvokeRoundUpdate();
         }
 
+        [NamedEventHandler(EventName.AddRound)]
         internal void DoAddRound() {
             RoundData newRound = new(this.EventData);
             this.EventData.Rounds.Add(newRound);
             this.CurrentRoundIndex = this.EventData.Rounds.Count - 1;
             this.InvokeAddRound(newRound);
             this.InvokeSetTitle(this.FileName, false);
+            this.InvokeRoundUpdate();
         }
 
+        [NamedEventHandler(EventName.RemoveRound)]
         internal void DoRemoveRound() {
             var previousIndex = this.CurrentRoundIndex;
             this.RemoveRound(this.CurrentRoundIndex);
@@ -177,6 +190,7 @@ namespace Leagueinator.GUI.Controllers {
             this.InvokeSetTitle(this.FileName, false);
         }
 
+        [NamedEventHandler(EventName.SelectRound)]
         internal void DoSelectRound(int index = -1) {
 
             if (index == -1) {
@@ -188,6 +202,7 @@ namespace Leagueinator.GUI.Controllers {
             this.InvokeRoundUpdate();
         }
 
+        [NamedEventHandler(EventName.CopyRound)]
         internal void DoCopyRound() {
             RoundData newRound = this.RoundData.Copy();
             this.EventData.Rounds.Add(newRound);
@@ -196,12 +211,14 @@ namespace Leagueinator.GUI.Controllers {
             this.InvokeSetTitle(this.FileName, false);
         }
 
+        [NamedEventHandler(EventName.AssignPlayersRandomly)]
         internal void DoAssignPlayersRandomly() {
             this.RoundData.AssignPlayersRandomly();
             this.InvokeRoundUpdate();
             this.InvokeSetTitle(this.FileName, false);
         }
 
+        [NamedEventHandler(EventName.DisplayRoundResults)]
         internal void DoRoundResults() {
             RoundResults rr = new(this.RoundData);
             TableViewer tv = new TableViewer();
@@ -213,6 +230,7 @@ namespace Leagueinator.GUI.Controllers {
             tv.Show();
         }
 
+        [NamedEventHandler(EventName.DisplayEventResults)]
         internal void DoEventResults(object? sender, NamedEventArgs e) {
             EventResults er = new(this.EventData.Rounds);
             TableViewer tv = new TableViewer();
@@ -222,6 +240,7 @@ namespace Leagueinator.GUI.Controllers {
             tv.Show();
         }
 
+        [NamedEventHandler(EventName.ShowData)]
         internal void DoShow() {
             TableViewer tv = new TableViewer();
             tv.Append("Event Data:");
@@ -240,6 +259,7 @@ namespace Leagueinator.GUI.Controllers {
             tv.Show();
         }
 
+        [NamedEventHandler(EventName.ChangePlayerName)]
         internal void DoPlayerName(string name, int lane, int teamIndex, int position) {
 
             if (this.UpdateName(name, lane, teamIndex, position)) {
@@ -248,6 +268,7 @@ namespace Leagueinator.GUI.Controllers {
             }
         }
 
+        [NamedEventHandler(EventName.ChangeEnds)]
         internal void DoEnds(int lane, int ends) {
 
             this.RoundData[lane].Ends = ends;
@@ -255,24 +276,28 @@ namespace Leagueinator.GUI.Controllers {
             this.InvokeSetTitle(this.FileName, false);
         }
 
+        [NamedEventHandler(EventName.ChangeTieBreaker)]
         internal void DoTieBreaker(int lane, int tieBreaker) {
             this.RoundData[lane].TieBreaker = tieBreaker;
             this.InvokeRoundUpdate();
             this.InvokeSetTitle(this.FileName, false);
         }
 
+        [NamedEventHandler(EventName.ChangeBowls)]
         internal void DoBowls(int lane, int teamIndex, int bowls) {
             this.RoundData[lane].Score[teamIndex] = bowls;
             this.InvokeRoundUpdate();
             this.InvokeSetTitle(this.FileName, false);
         }
 
+        [NamedEventHandler(EventName.ChangeMatchFormat)]
         internal void DoMatchFormat(int lane, MatchFormat format) {
             this.RoundData[lane].MatchFormat = format;
             this.InvokeRoundUpdate();
             this.InvokeSetTitle(this.FileName, false);
         }
 
+        [NamedEventHandler(EventName.RemoveMatch)]
         internal void DoRemoveMatch(int lane) {
             this.RoundData.RemoveAt(lane);
             this.NamedEventDisp.Dispatch(EventName.MatchRemoved, new() {
