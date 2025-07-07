@@ -28,7 +28,7 @@ namespace Leagueinator.GUI.Controls {
             "UpdateText",                 // Event name
             RoutingStrategy.Bubble,       // Routing strategy (Bubble, Tunnel, or Direct)
             typeof(MemoryEventHandler),   // Delegate type
-            typeof(MemoryTextBox)         // Owner type
+            typeof(MemoryTextBox)         // MethodSource type
         );
 
         public event MemoryEventHandler UpdateText {

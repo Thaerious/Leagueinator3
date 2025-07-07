@@ -8,9 +8,7 @@ using Leagueinator.GUI.Forms.Main;
 using Leagueinator.GUI.Forms.Print;
 using Leagueinator.GUI.Model;
 using Leagueinator.GUI.Model.Results;
-using Leagueinator.GUI.Utility;
 using Microsoft.Win32;
-using System;
 using System.Diagnostics;
 using System.IO;
 using System.Text.Json;
@@ -22,14 +20,6 @@ namespace Leagueinator.GUI.Controllers {
     /// This glues the MainWindow window to the model and handles events from the MainWindow window.
     /// </summary>
     public class MainController {
-        //public delegate void SetFilename(object sender, string title, bool saved);
-        //public delegate void SetRoundCount(object sender, int count);
-        //public delegate void UpdateRound(object sender, RoundEventData roundData);
-
-        //public event SetFilename OnSetTitle = delegate { };
-        //public event SetRoundCount OnSetRoundCount = delegate { };
-        //public event UpdateRound OnUpdateRound = delegate { };
-
         public NamedEventReceiver NamedEventRcv { get; private set; }
 
         public NamedEventDispatcher NamedEventDisp { get; set; }
@@ -93,13 +83,11 @@ namespace Leagueinator.GUI.Controllers {
         }
 
         internal void DoEventManager() {
-            Logger.Log("MainController.DoEventManager");
             var form = new EventManagerForm();
             form.ShowDialog(this, this.LeagueData);
         }
 
         internal void DoLoad() {
-            Logger.Log("MainController.DoLoad");
             this.Load();
             this.NamedEventDisp.Dispatch(EventName.UpdateRoundCount, new() {
                 ["count"] = this.EventData.Rounds.Count
@@ -109,7 +97,6 @@ namespace Leagueinator.GUI.Controllers {
         }
 
         internal void DoRenameEvent(string name, int uid) {
-            Logger.Log("MainController.DoRenameEvent");
             foreach (EventData eventData in this.LeagueData) {
                 if (eventData.UID == uid) {
                     eventData.EventName = name;
@@ -124,7 +111,6 @@ namespace Leagueinator.GUI.Controllers {
         }
 
         internal void DoSave() {
-            Logger.Log("MainController.DoSave");
             if (this.FileName != "Leagueinator") {
                 this.Save(this.FileName);
             }
@@ -135,13 +121,11 @@ namespace Leagueinator.GUI.Controllers {
         }
 
         internal void DoSaveAs() {
-            Logger.Log("MainController.DoSaveAs");
             this.SaveAs();
             this.InvokeSetTitle(this.FileName, true);
         }
 
         internal void DoNew() {
-            Logger.Log("MainController.DoNew");
             this.NewLeague();
 
             this.NamedEventDisp.Dispatch(EventName.UpdateRoundCount, new() {
@@ -154,13 +138,11 @@ namespace Leagueinator.GUI.Controllers {
         }
 
         internal void DoPrintTeams() {
-            Logger.Log("MainController.DoPrintTeams");
             PrintWindow pw = new(this.EventData.Rounds);
             pw.Show();
         }
 
         internal void DoAssignLanes() {
-            Logger.Log("MainController.DoAssignLanes");
             AssignLanes assignLanes = new(this.EventData, EventData.Rounds, this.RoundData); // TODO can just pass this.EventData
             RoundData newRound = assignLanes.DoAssignment();
             this.EventData.Rounds.Add(newRound);
@@ -169,7 +151,6 @@ namespace Leagueinator.GUI.Controllers {
         }
 
         internal void DoGenerateRound() {
-            Logger.Log("MainController.DoGenerateRound");
             var newRound = this.GenerateRound();
             AssignLanes assignLanes = new(this.EventData, this.EventData.Rounds, newRound); // TODO can just pass this.EventData
             newRound = assignLanes.DoAssignment();
@@ -181,7 +162,6 @@ namespace Leagueinator.GUI.Controllers {
         }
 
         internal void DoAddRound() {
-            Logger.Log("MainController.DoAddRound");
             RoundData newRound = new(this.EventData);
             this.EventData.Rounds.Add(newRound);
             this.CurrentRoundIndex = this.EventData.Rounds.Count - 1;
@@ -190,7 +170,6 @@ namespace Leagueinator.GUI.Controllers {
         }
 
         internal void DoRemoveRound() {
-            Logger.Log("MainController.DoRemoveRound");
             var previousIndex = this.CurrentRoundIndex;
             this.RemoveRound(this.CurrentRoundIndex);
             this.InvokeRoundUpdate();
@@ -199,7 +178,6 @@ namespace Leagueinator.GUI.Controllers {
         }
 
         internal void DoSelectRound(int index = -1) {
-            Logger.Log("MainController.DoSelectRound");
 
             if (index == -1) {
                 this.CurrentRoundIndex = this.EventData.Rounds.Count - 1;
@@ -211,7 +189,6 @@ namespace Leagueinator.GUI.Controllers {
         }
 
         internal void DoCopyRound() {
-            Logger.Log("MainController.DoCopyRound");
             RoundData newRound = this.RoundData.Copy();
             this.EventData.Rounds.Add(newRound);
             var copiedIndex = this.EventData.Rounds.Count - 1;
@@ -220,14 +197,12 @@ namespace Leagueinator.GUI.Controllers {
         }
 
         internal void DoAssignPlayersRandomly() {
-            Logger.Log("MainController.DoAssignPlayersRandomly");
             this.RoundData.AssignPlayersRandomly();
             this.InvokeRoundUpdate();
             this.InvokeSetTitle(this.FileName, false);
         }
 
         internal void DoRoundResults() {
-            Logger.Log("MainController.DoRoundResults");
             RoundResults rr = new(this.RoundData);
             TableViewer tv = new TableViewer();
 
@@ -239,7 +214,6 @@ namespace Leagueinator.GUI.Controllers {
         }
 
         internal void DoEventResults(object? sender, NamedEventArgs e) {
-            Logger.Log("MainController.DoEventResults");
             EventResults er = new(this.EventData.Rounds);
             TableViewer tv = new TableViewer();
             foreach (TeamResult result in er.ResultsByTeam) {
@@ -249,7 +223,6 @@ namespace Leagueinator.GUI.Controllers {
         }
 
         internal void DoShow() {
-            Logger.Log("MainController.DoShow");
             TableViewer tv = new TableViewer();
             tv.Append("Event Data:");
             tv.Append($"File Name: {this.FileName}");
@@ -268,7 +241,6 @@ namespace Leagueinator.GUI.Controllers {
         }
 
         internal void DoPlayerName(string name, int lane, int teamIndex, int position) {
-            Logger.Log("MainController.DoPlayerName");
 
             if (this.UpdateName(name, lane, teamIndex, position)) {
                 this.InvokeRoundUpdate();
@@ -277,7 +249,6 @@ namespace Leagueinator.GUI.Controllers {
         }
 
         internal void DoEnds(int lane, int ends) {
-            Logger.Log("MainController.DoEnds");
 
             this.RoundData[lane].Ends = ends;
             this.InvokeRoundUpdate();
@@ -285,28 +256,24 @@ namespace Leagueinator.GUI.Controllers {
         }
 
         internal void DoTieBreaker(int lane, int tieBreaker) {
-            Logger.Log("MainController.DoTieBreaker");
             this.RoundData[lane].TieBreaker = tieBreaker;
             this.InvokeRoundUpdate();
             this.InvokeSetTitle(this.FileName, false);
         }
 
         internal void DoBowls(int lane, int teamIndex, int bowls) {
-            Logger.Log("MainController.DoBowls");
             this.RoundData[lane].Score[teamIndex] = bowls;
             this.InvokeRoundUpdate();
             this.InvokeSetTitle(this.FileName, false);
         }
 
         internal void DoMatchFormat(int lane, MatchFormat format) {
-            Logger.Log("MainController.DoMatchFormat");
             this.RoundData[lane].MatchFormat = format;
             this.InvokeRoundUpdate();
             this.InvokeSetTitle(this.FileName, false);
         }
 
         internal void DoRemoveMatch(int lane) {
-            Logger.Log("MainController.DoRemoveMatch");
             this.RoundData.RemoveAt(lane);
             this.NamedEventDisp.Dispatch(EventName.MatchRemoved, new() {
                 ["lane"] = lane

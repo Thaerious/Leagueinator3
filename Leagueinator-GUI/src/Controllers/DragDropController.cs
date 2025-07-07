@@ -15,21 +15,21 @@ namespace Leagueinator.GUI.Controllers {
             "RequestFocus",                       // Event name
             RoutingStrategy.Bubble,               // Routing strategy (Bubble, Tunnel, or Direct)
             typeof(RequestFocus),                 // Delegate type
-            typeof(FrameworkElement)              // Owner type
+            typeof(FrameworkElement)              // MethodSource type
         );
 
         public static readonly RoutedEvent RegisteredDragBeginEvent = EventManager.RegisterRoutedEvent(
             "DragBegin",                          // Event name
             RoutingStrategy.Bubble,               // Routing strategy (Bubble, Tunnel, or Direct)
             typeof(DragBegin),                    // Delegate type
-            typeof(FrameworkElement)              // Owner type
+            typeof(FrameworkElement)              // MethodSource type
         );
 
         public static readonly RoutedEvent RegisteredDragEndEvent = EventManager.RegisterRoutedEvent(
             "DragEnd",                            // Event name
             RoutingStrategy.Bubble,               // Routing strategy (Bubble, Tunnel, or Direct)
             typeof(DragEnd),                      // Delegate type
-            typeof(FrameworkElement)              // Owner type
+            typeof(FrameworkElement)              // MethodSource type
         );
 
         public FrameworkElement TargetElement { get; private set; }

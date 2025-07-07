@@ -32,7 +32,7 @@ namespace Leagueinator.GUI.Controls {
             "MatchCardUpdate",           // Event name
             RoutingStrategy.Bubble,      // Bubble, Tunnel, or Direct
             typeof(RoutedEventHandler),  // Delegate type
-            typeof(MatchCard)            // Owner type
+            typeof(MatchCard)            // MethodSource type
         );
 
         public delegate void MatchCardUpdateHnd(object sender, MatchCardUpdateArgs e);

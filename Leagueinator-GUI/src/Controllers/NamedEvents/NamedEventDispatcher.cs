@@ -1,6 +1,4 @@
-﻿using Leagueinator.GUI.src.Controllers;
-using Leagueinator.GUI.Utility;
-using System.Diagnostics;
+﻿using Leagueinator.GUI.Utility;
 
 namespace Leagueinator.GUI.Controllers.NamedEvents {
     /// <summary>
@@ -35,7 +33,7 @@ namespace Leagueinator.GUI.Controllers.NamedEvents {
         /// </summary>
         public event EventHandler<NamedEventArgs> OnNamedEvent = delegate { };
 
-        public static NamedEventDispatcher operator + (NamedEventDispatcher disp, NamedEventReceiver rcv) {
+        public static NamedEventDispatcher operator +(NamedEventDispatcher disp, NamedEventReceiver rcv) {
             disp.OnNamedEvent += rcv.NamedEventHnd;
             return disp;
         }
@@ -51,12 +49,13 @@ namespace Leagueinator.GUI.Controllers.NamedEvents {
         /// </summary>
         public void Dispatch(EventName eventName) {
             if (this.EventsPaused) return;
+            Logger.Log($"Event '{eventName}' dispatched by '{this.Owner.GetType().Name}'.");
 
             NamedEventArgs args = new(eventName);
             this.OnNamedEvent.Invoke(this.Owner, args);
 
             if (args.Handled == false) {
-                Logger.Log($"Warning: Event '{eventName}' not handled.");
+                Logger.Log($"Warning: Event not handled '{eventName}' from '{this.Owner.GetType().Name}'.");
             }
         }
 
@@ -66,12 +65,13 @@ namespace Leagueinator.GUI.Controllers.NamedEvents {
         /// </summary>
         public void Dispatch(EventName eventName, ArgTable data) {
             if (this.EventsPaused) return;
+            Logger.Log($"Event '{eventName}' dispatched by '{this.Owner.GetType().Name}'.");
 
             NamedEventArgs args = new(eventName, data);
             this.OnNamedEvent.Invoke(this.Owner, args);
 
             if (args.Handled == false) {
-                Logger.Log($"Warning: Event '{eventName}' not handled.");
+                Logger.Log($"Warning: Event not handled '{eventName}' from '{this.Owner.GetType().Name}'.");
             }
         }
     }

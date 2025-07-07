@@ -1,5 +1,4 @@
-﻿using Leagueinator.GUI.src.Controllers;
-using Leagueinator.GUI.Utility;
+﻿using Leagueinator.GUI.Utility;
 
 namespace Leagueinator.GUI.Controllers.NamedEvents { 
 

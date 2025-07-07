@@ -4,9 +4,13 @@ using Leagueinator.GUI.Model;
 using Leagueinator.GUI.Utility.Extensions;
 
 namespace Leagueinator.GUI.Forms.Main {
-    public class MainWindowReceiver(MainWindow owner) : NamedEventReceiver(owner) {
+    public class MainWindowReceiver : NamedEventReceiver {
 
-        private MainWindow MainWindow => (MainWindow)this.Owner;
+        private MainWindow MainWindow { get; set; }
+
+        public MainWindowReceiver(MainWindow mainWindow) : base() {
+            this.MainWindow = mainWindow;
+        }
 
         internal void DoGrantFocus(int lane, int teamIndex) {
             TeamCard? card = this.MainWindow
