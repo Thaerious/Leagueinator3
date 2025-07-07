@@ -1,4 +1,4 @@
-﻿namespace Leagueinator.GUI.src.Controllers {
+﻿namespace Leagueinator.GUI.Controllers.NamedEvents {
     public enum EventName {
         Update,
         AddRound,
@@ -27,5 +27,11 @@
         EventManager,
         RequestFocus,
         RenameEvent,
+        RoundUpdated,
+        RoundAdded,
+        RoundRemoved,
+        MatchRemoved,
+        SetTitle,
+        UpdateRoundCount,
     }
 }

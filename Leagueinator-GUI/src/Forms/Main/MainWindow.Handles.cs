@@ -1,6 +1,5 @@
 ﻿using Leagueinator.GUI.Controllers;
-using Leagueinator.GUI.src.Controllers;
-using System.Diagnostics;
+using Leagueinator.GUI.Controllers.NamedEvents;
 using System.Windows;
 using System.Windows.Controls;
 

@@ -1,4 +1,5 @@
 ﻿using Leagueinator.GUI.Controllers;
+using Leagueinator.GUI.Controllers.NamedEvents;
 using Leagueinator.GUI.Controls;
 using Leagueinator.GUI.Forms.Main;
 using Leagueinator.GUI.src.Controllers;
@@ -26,46 +27,24 @@ namespace Leagueinator.GUI {
 
             // Setup Event Handlers
             this.Dispatcher.InvokeAsync(() => {
-                var mainWindow = (MainWindow)this.MainWindow;
+                var mainWindow = (MainWindow)this.MainWindow;                
 
                 mainWindow.Loaded += (object s, RoutedEventArgs e) => {
                     MainController mainController = new(mainWindow);
                     FocusController focusController = new(mainController);
 
                     // Initialize Controller listeners for handling UI generated events
-                    mainWindow.OnDragEnd      += mainController.DragEndHnd;
+                    mainWindow.OnDragEnd += mainController.DragEndHnd;
                     mainWindow.NamedEventDisp += mainController.NamedEventRcv;
                     mainWindow.NamedEventDisp += focusController.NamedEventRcv;
 
                     // Initialize UI listeners for handling Controller generated events
-                    mainController.OnUpdateRound    += this.UpdateRoundHnd;
-                    mainController.OnSetRoundCount  += this.SetRoundCountHnd;
-                    mainController.OnSetTitle       += this.SetTitleHnd;
-                    focusController.OnFocusGranted  += this.GrantFocus;
-                    focusController.OnFocusRevoked  += this.RevokeFocus;
+                    mainController.NamedEventDisp += mainWindow.NamedEventRcv;
+                    focusController.NamedEventDisp += mainWindow.NamedEventRcv;
 
                     mainWindow.Ready();
                 };
             });
-        }
-
-        private void GrantFocus(object sender, FocusController.FocusArgs args) {
-            TeamCard? card = this.MainWindow
-                                .GetDescendantsOfType<TeamCard>()
-                                .Where(card => card.MatchCard.Lane.Equals(args.TeamId.Lane))
-                                .FirstOrDefault(card => card.TeamIndex.Equals(args.TeamId.TeamIndex));
-
-            if (card is not null) card.Background = Colors.TeamPanelFocused;
-        }
-
-        private void RevokeFocus(object sender, FocusController.FocusArgs args) {
-            TeamCard? card = this.MainWindow
-                                .GetDescendantsOfType<TeamCard>()
-                                .Where(card => card.MatchCard.Lane.Equals(args.TeamId.Lane))
-                                .FirstOrDefault(card => card.TeamIndex.Equals(args.TeamId.TeamIndex));
-
-            if (card is not null) card.Background = Colors.TeamPanelDefault;
-
         }
 
         private void App_DispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e) {
@@ -86,56 +65,6 @@ namespace Leagueinator.GUI {
             MessageBox.Show($"Unobserved Task Exception:\n\n{e.Exception}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             e.SetObserved();
         }
-
-        private void SetTitleHnd(object sender, string filename, bool saved) {
-            var main = (MainWindow)this.MainWindow;
-
-            if (saved) {
-                main.Title = $"{filename} [✔]";
-            }
-            else {
-                main.Title = $"{filename} [✘]";
-            }
-        }
-
-        private void SetRoundCountHnd(object sender, int count) {
-            Logger.Log($"App.SetRoundCount: {count}");
-            var main = (MainWindow)this.MainWindow;
-            main.RoundButtonStackPanel.Children.Clear();
-            for (int i = 0; i < count; i++) {
-                main.AddRoundButton();
-            }
-        }
-
-        private void UpdateRoundHnd(object sender, RoundEventData args) {
-            var main = (MainWindow)this.MainWindow;
-
-            switch (args.Action) {
-                case "Update":
-                    if (args.RoundData == null) {
-                        throw new ArgumentNullException(
-                            nameof(args.RoundData),
-                            "Round data cannot be null for update action."
-                        );
-                    }
-                    main.HighLightRound(args.Index);
-                    main.PopulateMatchCards(args.RoundData);
-                    break;
-                case "RemoveMatch":
-                    main.RemoveMatch(args.Index);
-                    break;
-                case "RemoveRound":
-                    main.RemoveRound(args.Index);
-                    break;
-                case "AddRound":
-                    main.AddRoundButton();
-                    break;
-                default:
-                    throw new NotSupportedException($"Action '{args.Action}' is not supported.");
-            }
-        }
-
-
 
         protected override void OnExit(ExitEventArgs e) {
             // Cleanup logic

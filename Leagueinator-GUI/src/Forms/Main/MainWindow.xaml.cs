@@ -17,13 +17,17 @@ namespace Leagueinator.GUI.Forms.Main {
 
         public NamedEventDispatcher NamedEventDisp { get; set; }
 
+        public MainWindowReceiver NamedEventRcv { get; private set; }
+
         public MainWindow() {
             this.InitializeComponent();
             this.Title = "Leagueinator []";
             var button = this.AddRoundButton();
             button.Focus();
 
-            this.NamedEventDisp = new NamedEventDispatcher(button);
+            this.NamedEventDisp = new(this);
+            this.NamedEventRcv = new(this);
+
             this.Loaded += this.OnLoadDo;
         }
 

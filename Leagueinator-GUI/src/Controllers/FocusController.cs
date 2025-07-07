@@ -6,14 +6,15 @@ using System.Diagnostics;
 namespace Leagueinator.GUI.src.Controllers {
     public class FocusController {
         public MainController MainController { get; }
-
         public NamedEventReceiver NamedEventRcv { get; private set; }
+        public NamedEventDispatcher NamedEventDisp { get; set; }
 
         private List<TeamID> Focused = [];
 
         public FocusController(MainController mainController) {
             this.MainController = mainController;
             this.NamedEventRcv = new(this);
+            this.NamedEventDisp = new(this);
         }
 
         public record FocusArgs(TeamID TeamId, string Action);
@@ -68,7 +69,7 @@ namespace Leagueinator.GUI.src.Controllers {
                 var tempTo = this.MainController.RoundData[to.Lane].Teams[to.TeamIndex];
                 this.MainController.RoundData[from.Lane].Teams[from.TeamIndex] = tempTo;
                 this.MainController.RoundData[to.Lane].Teams[to.TeamIndex] = tempFrom;
-                this.MainController.InvokeRoundEvent("Update");
+                this.MainController.InvokeRoundUpdate();
 
                 from = to;
             }

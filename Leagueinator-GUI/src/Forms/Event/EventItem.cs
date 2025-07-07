@@ -1,13 +1,6 @@
 ﻿using Leagueinator.GUI.Controllers;
-using Leagueinator.GUI.src.Controllers;
-using System;
-using System.Collections.Generic;
+using Leagueinator.GUI.Controllers.NamedEvents;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Controls;
-using System.Xml.Linq;
 
 namespace Leagueinator.GUI.Forms.Event
 {

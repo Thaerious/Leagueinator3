@@ -1,4 +1,5 @@
-﻿using Leagueinator.GUI.Forms.Print;
+﻿using Leagueinator.GUI.Controllers.NamedEvents;
+using Leagueinator.GUI.Forms.Print;
 using Leagueinator.GUI.src.Controllers;
 using Microsoft.Win32;
 using System.Diagnostics;
