@@ -100,11 +100,12 @@ namespace Leagueinator.GUI.Controllers {
         [NamedEventHandler(EventName.LoadLeague)]
         internal void DoLoad() {
             this.Load();
-            this.NamedEventDisp.Dispatch(EventName.UpdateRoundCount, new() {
-                ["count"] = this.EventData.Rounds.Count
-            });
-            this.InvokeRoundUpdate();
-            this.InvokeSetTitle(this.FileName, true);
+
+            //this.NamedEventDisp.Dispatch(EventName.UpdateRoundCount, new() {
+            //    ["count"] = this.EventData.Rounds.Count
+            //});
+            //this.InvokeRoundUpdate();
+            //this.InvokeSetTitle(this.FileName, true);
         }
 
         [NamedEventHandler(EventName.RenameEvent)]
@@ -258,22 +259,28 @@ namespace Leagueinator.GUI.Controllers {
         [NamedEventHandler(EventName.ShowData)]
         internal void DoShow() {
             TableViewer tv = new TableViewer();
-            tv.Append("Event Data:");
-            tv.Append($"File Name: {this.FileName}");
-            tv.Append($"Is Saved: {this.IsSaved}");
-            tv.Append($"Number of Lanes: {this.EventData.LaneCount}");
-            tv.Append($"Default Ends: {this.EventData.DefaultEnds}");
-            tv.Append($"Match Format: {this.EventData.MatchFormat}");
-            tv.Append($"Event Type: {this.EventData.EventType}");
-            tv.Append("");
-            tv.Append($"Current Round: {this.CurrentRoundIndex}");
+            tv.Append(this.GetShow());
+            tv.Show();
+        }
+
+        internal string GetShow() {
+            string sb = string.Empty;
+            sb += "Event Data:\n";
+            sb += $"File Name: {this.FileName}\n";
+            sb += $"Is Saved: {this.IsSaved}\n";
+            sb += $"Number of Lanes: {this.EventData.LaneCount}\n";
+            sb += $"Default Ends: {this.EventData.DefaultEnds}\n";
+            sb += $"Match Format: {this.EventData.MatchFormat}\n";
+            sb += $"Event Type: {this.EventData.EventType}\n";
+            sb += "";
+            sb += $"Current Round: {this.CurrentRoundIndex}\n";
 
             foreach (RoundData round in this.EventData.Rounds) {
-                tv.Append($"Round {this.EventData.Rounds.IndexOf(round) + 1}:");
-                tv.Append(round);
+                sb += $"Round {this.EventData.Rounds.IndexOf(round) + 1}:\n";
+                sb += round;
+                sb += "\n";
             }
-
-            tv.Show();
+            return sb;
         }
 
         [NamedEventHandler(EventName.ChangePlayerName)]
@@ -371,12 +378,15 @@ namespace Leagueinator.GUI.Controllers {
             if (dialog.ShowDialog() == true) {
                 string contents = File.ReadAllText(dialog.FileName);
                 LeagueData leagueData = JsonSerializer.Deserialize<LeagueData>(contents, this.GetOptions())
-                    ?? throw new InvalidDataException("Failed to deserialize the file contents.");
+                    ?? throw new InvalidDataException("Failed to deserialize the file contents.");               
 
                 this.EventData = leagueData.Last();
                 this.CurrentRoundIndex = 0;
                 this.FileName = dialog.FileName;
                 this.IsSaved = true;
+
+                Debug.WriteLine(this.GetShow());
+                Debug.WriteLine($"DoLoad {leagueData.Count()} {leagueData[0].Rounds.Count}");
             }
         }
 

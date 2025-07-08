@@ -78,7 +78,7 @@ namespace Leagueinator.GUI.Controllers.Algorithms {
             foreach (KeyValuePair<MatchData, HashSet<int>> kvp in sorted) {
                 MatchData match = kvp.Key;
                 HashSet<int> lanes = kvp.Value;
-                Debug.WriteLine($"{string.Join(", ", match.Players)}, {string.Join(", ", lanes)}");
+                Debug.WriteLine($"{string.Join(", ", match.GetPlayers())}, {string.Join(", ", lanes)}");
             }
 
             while (sorted.Count > 0) {
@@ -89,7 +89,7 @@ namespace Leagueinator.GUI.Controllers.Algorithms {
                 HashSet<int> lanes = kvp.Value;
 
                 if (lanes.Count == 0) {
-                    throw new AlgoLogicException($"No available lanes for players: {string.Join(", ", match.Players)}");
+                    throw new AlgoLogicException($"No available lanes for players: {string.Join(", ", match.GetPlayers())}");
                 }
 
                 int lane = lanes.First();

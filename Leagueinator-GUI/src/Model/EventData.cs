@@ -33,7 +33,7 @@
         public int DefaultEnds { get; set; } = 10;
         public EventType EventType { get; set; } = EventType.RankedLadder;
 
-        public RoundDataCollection Rounds { get; } = [];
+        public RoundDataCollection Rounds { get; set; } = [];
 
         required public int UID { get; set; }
 

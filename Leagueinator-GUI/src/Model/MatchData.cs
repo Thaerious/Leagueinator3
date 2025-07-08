@@ -16,7 +16,7 @@ namespace Leagueinator.GUI.Model {
 
         public int TieBreaker => MatchData.TieBreaker;
 
-        public IReadOnlyList<string> Players => MatchData.Players;
+        public IReadOnlyList<string> Players => MatchData.GetPlayers();
 
         public int CountPlayers() => MatchData.CountPlayers();
 
@@ -76,8 +76,9 @@ namespace Leagueinator.GUI.Model {
         /// Gets or sets the tiebreaker value for the match. Default is -1 (no tiebreaker).
         /// </summary>
         public int TieBreaker { get; set; } = -1;
-        public List<string> Players { 
-            get => this.Teams.SelectMany(team => team.Names).ToList();
+
+        public List<string> GetPlayers() {
+            return this.Teams.SelectMany(team => team.Names).ToList();
         }
 
         /// <summary>

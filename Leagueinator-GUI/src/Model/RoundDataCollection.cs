@@ -2,7 +2,7 @@
 namespace Leagueinator.GUI.Model {
     public class RoundDataCollection : List<RoundData> {
 
-        internal RoundDataCollection() { }
+        public RoundDataCollection() { }
 
         /// <summary>
         /// Generate a collection of all unique teams that have played in any match across all rounds.
