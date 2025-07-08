@@ -37,5 +37,14 @@
         FocusRevoked,
         CreateEvent,
         AssignLanes,
+        AddMatch,
+        SelectEvent,
+        DeleteMatch,
+        AddEvent,
+        DeleteEvent,
+        EventAdded,
+        BowlsUpdated,
+        EndsUpdated,
+        TieBreakerUpdated,
     }
 }

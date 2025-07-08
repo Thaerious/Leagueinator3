@@ -1,6 +1,30 @@
 ﻿using System.Text;
 
 namespace Leagueinator.GUI.Model {
+    public class ReadOnlyMatchData(MatchData matchData) {
+        private readonly MatchData MatchData = matchData.Copy();
+
+        public MatchFormat MatchFormat => MatchData.MatchFormat;
+
+        public int Lane => MatchData.Lane;
+
+        public int Ends => MatchData.Ends;
+
+        public IReadOnlyList<int> Score => MatchData.Score;
+
+        public ReadOnlyTeamData GetTeam(int i) => this.MatchData.Teams[i].AsReadOnly();
+
+        public int TieBreaker => MatchData.TieBreaker;
+
+        public IReadOnlyList<string> Players => MatchData.Players;
+
+        public int CountPlayers() => MatchData.CountPlayers();
+
+        public int CountTeams() => MatchData.CountTeams();
+
+        public override string ToString() => MatchData.ToString();
+    }
+
     /// <summary>
     /// Represents a match, including its format, teams, scores, and related metadata.
     /// </summary>
@@ -172,6 +196,10 @@ namespace Leagueinator.GUI.Model {
                 }
             }
             throw new ModelConstraintException("No empty team slot available in the match.");
+        }
+
+        public ReadOnlyMatchData AsReadOnly() {
+            return new(this);
         }
     }
 }

@@ -9,10 +9,13 @@ using Leagueinator.GUI.Forms.Print;
 using Leagueinator.GUI.Model;
 using Leagueinator.GUI.Model.Results;
 using Microsoft.Win32;
+using System;
 using System.Diagnostics;
 using System.IO;
+using System.Reflection.Metadata.Ecma335;
 using System.Text.Json;
 using System.Windows;
+using System.Windows.Documents;
 
 namespace Leagueinator.GUI.Controllers {
 
@@ -58,19 +61,13 @@ namespace Leagueinator.GUI.Controllers {
         public void InvokeRoundUpdate() {
             this.NamedEventDisp.Dispatch(EventName.RoundUpdated, new() {
                 ["roundIndex"] = this.CurrentRoundIndex,
-                ["roundData"] = this.RoundData
-            });
-        }
-
-        public void InvokeRemoveRound(int index) {
-            this.NamedEventDisp.Dispatch(EventName.RoundRemoved, new() {
-                ["roundIndex"] = index
+                ["roundData"] = this.RoundData.AsReadOnly()
             });
         }
 
         public void InvokeAddRound(RoundData roundData) {
             this.NamedEventDisp.Dispatch(EventName.RoundAdded, new() {
-                ["roundData"] = roundData
+                ["roundData"] = roundData.AsReadOnly()
             });
         }
 
@@ -82,10 +79,22 @@ namespace Leagueinator.GUI.Controllers {
             });
         }
 
+        [NamedEventHandler(EventName.SelectEvent)]
+        internal void DoSelectEvent(int eventUID) {
+            EventData eventData = this.LeagueData.GetEvent(eventUID);
+        }
+
+        [NamedEventHandler(EventName.AddEvent)]
+        internal void DoAddEvent() {
+            this.LeagueData.AddEvent();
+        }
+
         [NamedEventHandler(EventName.EventManager)]
         internal void DoEventManager() {
             var form = new EventManagerForm();
-            form.ShowDialog(this, this.LeagueData);
+            form.NamedEventDisp += this.NamedEventRcv;
+            this.NamedEventDisp += form.NamedEventRcv;
+            form.ShowDialog(this, this.LeagueData.AsReadOnly());
         }
 
         [NamedEventHandler(EventName.LoadLeague)]
@@ -110,8 +119,11 @@ namespace Leagueinator.GUI.Controllers {
 
         [NamedEventHandler(EventName.CreateEvent)]
         internal void DoCreateEvent() {
-            this.LeagueData.Add(new EventData() { UID = this.LeagueData.GetNextUID() });
+            EventData eventData = this.LeagueData.AddEvent();
+            this.NamedEventDisp.Dispatch(EventName.EventAdded, new() {
+                ["uid"] = eventData.UID,
 
+            });
         }
 
         [NamedEventHandler(EventName.SaveLeague)]
@@ -183,11 +195,14 @@ namespace Leagueinator.GUI.Controllers {
 
         [NamedEventHandler(EventName.RemoveRound)]
         internal void DoRemoveRound() {
-            var previousIndex = this.CurrentRoundIndex;
+            var removedIndex = this.CurrentRoundIndex;
             this.RemoveRound(this.CurrentRoundIndex);
             this.InvokeRoundUpdate();
-            this.InvokeRemoveRound(previousIndex);
             this.InvokeSetTitle(this.FileName, false);
+
+            this.NamedEventDisp.Dispatch(EventName.RoundRemoved, new() {
+                ["roundIndex"] = removedIndex
+            });
         }
 
         [NamedEventHandler(EventName.SelectRound)]
@@ -252,10 +267,12 @@ namespace Leagueinator.GUI.Controllers {
             tv.Append($"Event Type: {this.EventData.EventType}");
             tv.Append("");
             tv.Append($"Current Round: {this.CurrentRoundIndex}");
+
             foreach (RoundData round in this.EventData.Rounds) {
                 tv.Append($"Round {this.EventData.Rounds.IndexOf(round) + 1}:");
                 tv.Append(round);
             }
+
             tv.Show();
         }
 
@@ -272,22 +289,33 @@ namespace Leagueinator.GUI.Controllers {
         internal void DoEnds(int lane, int ends) {
 
             this.RoundData[lane].Ends = ends;
-            this.InvokeRoundUpdate();
             this.InvokeSetTitle(this.FileName, false);
+            this.NamedEventDisp.Dispatch(EventName.EndsUpdated, new() {
+                ["lane"] = lane,
+                ["ends"]= ends,
+            });
         }
 
         [NamedEventHandler(EventName.ChangeTieBreaker)]
         internal void DoTieBreaker(int lane, int tieBreaker) {
             this.RoundData[lane].TieBreaker = tieBreaker;
-            this.InvokeRoundUpdate();
             this.InvokeSetTitle(this.FileName, false);
+            this.NamedEventDisp.Dispatch(EventName.TieBreakerUpdated, new() {
+                ["lane"] = lane,
+                ["tieBreaker"] = tieBreaker,
+            });
         }
 
         [NamedEventHandler(EventName.ChangeBowls)]
         internal void DoBowls(int lane, int teamIndex, int bowls) {
-            this.RoundData[lane].Score[teamIndex] = bowls;
-            this.InvokeRoundUpdate();
+            this.RoundData[lane].Score[teamIndex] = bowls;            
             this.InvokeSetTitle(this.FileName, false);
+
+            this.NamedEventDisp.Dispatch(EventName.BowlsUpdated, new() {
+                ["lane"] = lane,
+                ["teamIndex"] = teamIndex,
+                ["bowls"] = bowls
+            });
         }
 
         [NamedEventHandler(EventName.ChangeMatchFormat)]
@@ -318,7 +346,7 @@ namespace Leagueinator.GUI.Controllers {
             }
 
             this.LeagueData = [];
-            this.LeagueData.Add(new EventData() { UID = this.LeagueData.GetNextUID() });
+            this.LeagueData.AddEvent();
             this.EventData = this.LeagueData[0];
             RoundData newRound = new(this.EventData);
             this.EventData.Rounds.Add(newRound);

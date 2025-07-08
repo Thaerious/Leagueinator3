@@ -23,7 +23,7 @@ namespace Leagueinator.GUI.Model.Results {
             foreach (MatchData matchData in RoundData) {
                 if (matchData.CountPlayers() == 0) continue;
 
-                for (int team = 0; team < matchData.Teams.Length; team++) {
+                for (int team = 0; team < matchData.Teams.Count(); team++) {
                     SingleResult result = new(matchData, team);
                     results.Add(result);
                 }

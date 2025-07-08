@@ -2,6 +2,7 @@
 using Leagueinator.GUI.Controls;
 using Leagueinator.GUI.Model;
 using Leagueinator.GUI.Utility.Extensions;
+using System.Diagnostics;
 
 namespace Leagueinator.GUI.Forms.Main {
     public class MainWindowReceiver : NamedEventReceiver {
@@ -52,7 +53,7 @@ namespace Leagueinator.GUI.Forms.Main {
         }
 
         [NamedEventHandler(EventName.RoundUpdated)]
-        internal void DoRoundUpdated(int roundIndex, RoundData roundData) {
+        internal void DoRoundUpdated(int roundIndex, ReadOnlyRoundData roundData) {
             this.MainWindow.HighLightRound(roundIndex);
             this.MainWindow.PopulateMatchCards(roundData);
         }
@@ -70,6 +71,25 @@ namespace Leagueinator.GUI.Forms.Main {
         [NamedEventHandler(EventName.MatchRemoved)]
         internal void DoMatchRemoved(int lane) {
             this.MainWindow.RemoveMatch(lane);
+        }
+
+        [NamedEventHandler(EventName.BowlsUpdated)]
+        internal void DoBowlsUpdated(int lane, int teamIndex, int bowls) {
+            MatchCard matchCard = this.MainWindow.GetMatchCard(lane);
+            TeamCard teamCard = matchCard.GetTeamCard(teamIndex) ?? throw new KeyNotFoundException($"TeamIndex {teamIndex} not found.");
+            teamCard.BowlsPanel.SetBowls(bowls);
+        }
+
+        [NamedEventHandler(EventName.EndsUpdated)]
+        internal void DoEndsUpdated(int lane, int ends) {
+            MatchCard matchCard = this.MainWindow.GetMatchCard(lane);
+            matchCard.SetEnds(ends);
+        }
+
+        [NamedEventHandler(EventName.TieBreakerUpdated)]
+        internal void DoTieBreakerUpdated(int lane, int tieBreaker) {
+            MatchCard matchCard = this.MainWindow.GetMatchCard(lane);
+            matchCard.SetTieBreaker(tieBreaker);
         }
     }
 }

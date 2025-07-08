@@ -17,6 +17,10 @@ namespace Leagueinator.GUI.Controls {
             };
         }
 
+        public void SetBowls(int value) {
+            this.Bowls.Text = value.ToString();
+        }
+
         public MatchCard MatchCard => this.Ancestors<MatchCard>().First();
     }
 }

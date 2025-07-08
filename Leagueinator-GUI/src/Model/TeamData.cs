@@ -3,6 +3,24 @@ using System.Collections;
 using System.Text.Json.Serialization;
 
 namespace Leagueinator.GUI.Model {
+
+    public class ReadOnlyTeamData {       
+
+        public ReadOnlyTeamData(TeamData teamData) {
+            this.TeamData = teamData.Copy();
+            this.Names = (string[])teamData.Names.Clone();
+        }
+
+        private readonly TeamData TeamData;
+
+        public string[] Names { get; }
+
+        public int IndexOf(string name) {
+            return Array.IndexOf(this.Names, name);
+        }
+    }
+
+
     public class TeamData : IEquatable<TeamData> {
 
         public string[] Names { get; }
@@ -23,7 +41,7 @@ namespace Leagueinator.GUI.Model {
 
         public void Clear() {
             Array.Fill(this.Names, string.Empty);
-        }   
+        }
 
         public string this[int index] {
             get {
@@ -119,6 +137,10 @@ namespace Leagueinator.GUI.Model {
 
         internal void CopyFrom(TeamData teamData) {
             teamData.Names.CopyTo(this.Names, 0);
+        }
+
+        public ReadOnlyTeamData AsReadOnly() {
+            return new(this);
         }
     }
 }

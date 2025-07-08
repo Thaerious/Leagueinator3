@@ -1,7 +1,6 @@
 ﻿using Leagueinator.GUI.Controllers.NamedEvents;
 using Leagueinator.GUI.Controls;
 using Leagueinator.GUI.Model;
-using Leagueinator.GUI.src.Controllers;
 using Leagueinator.GUI.Utility.Extensions;
 using System.Diagnostics;
 using System.Windows;
@@ -54,7 +53,7 @@ namespace Leagueinator.GUI.Forms.Main {
             return this.GetDescendantsOfType<MatchCard>().First(MatchCard => MatchCard.Lane == lane);
         }
 
-        public void PopulateMatchCards(RoundData roundData) {
+        public void PopulateMatchCards(ReadOnlyRoundData roundData) {
             this.Dispatcher.InvokeAsync(new Action(() => {
                 this.NamedEventDisp.PauseEvents();
                 this.DoPopulateMatchCards(roundData);
@@ -67,7 +66,7 @@ namespace Leagueinator.GUI.Forms.Main {
         /// Clears all matchRow cards that does not have a value in "roundRow".
         /// </summary>
         /// <param name="roundRow"></param>
-        private void DoPopulateMatchCards(RoundData roundData) {
+        private void DoPopulateMatchCards(ReadOnlyRoundData roundData) {
             int cardsToLoad = 0;
             int cardsLoaded = 0;
 
@@ -77,7 +76,7 @@ namespace Leagueinator.GUI.Forms.Main {
             }
 
             for (int i = 0; i < roundData.Count; i++) {
-                MatchData matchData = roundData[i];
+                ReadOnlyMatchData matchData = roundData.GetMatch(i);
 
                 if (i >= this.MatchCardStackPanel.Children.Count) {
                     MatchCard mc = MatchCardFactory.GenerateMatchCard(matchData.MatchFormat);
@@ -91,12 +90,12 @@ namespace Leagueinator.GUI.Forms.Main {
 
                 MatchCard matchCard = (MatchCard)this.MatchCardStackPanel.Children[i];
 
-                // If the matchCard format does not match the matchData format, replace it.
+                // If the matchCard format does not match the MatchData format, replace it.
                 if (matchCard.MatchFormat != matchData.MatchFormat) {
                     this.MatchCardStackPanel.Children.Remove(matchCard);
                     matchCard = MatchCardFactory.GenerateMatchCard(matchData.MatchFormat);
                     matchCard.Lane = matchData.Lane;
-                    matchCard.Ends = matchData.Ends;
+                    matchCard.SetEnds(matchData.Ends);
                     this.MatchCardStackPanel.Children.Insert(i, matchCard);
                     cardsToLoad++;
 

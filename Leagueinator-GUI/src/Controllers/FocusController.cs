@@ -1,7 +1,6 @@
 ﻿using Leagueinator.GUI.Controllers;
 using Leagueinator.GUI.Controllers.NamedEvents;
 using Leagueinator.GUI.Utility.Extensions;
-using System.Diagnostics;
 
 namespace Leagueinator.GUI.src.Controllers {
     public class FocusController {

@@ -106,20 +106,9 @@ namespace Leagueinator.GUI.Controls {
             (sender as TextBox)?.SelectAll();
         }
 
-        public int Ends {
-            get {
-                var infoCard = this.GetDescendantsOfType<InfoCard>().FirstOrDefault();
-                return infoCard?.Lane ?? this._pendingEnds ?? 0;
-            }
-            set {
-                var infoCard = this.GetDescendantsOfType<InfoCard>().FirstOrDefault();
-                if (infoCard != null) {
-                    infoCard.TxtEnds.Text = value.ToString();
-                }
-                else {
-                    this._pendingEnds = value;
-                }
-            }
+        public void SetEnds(int ends) {
+            var infoCard = this.GetDescendantsOfType<InfoCard>().First();
+            infoCard.TxtEnds.Text = ends.ToString();
         }
 
         public int Lane {
@@ -184,17 +173,19 @@ namespace Leagueinator.GUI.Controls {
             });
         }
 
-        public void UpdateData(MatchData matchData) {
+        public void UpdateData(ReadOnlyMatchData matchData) {
             this.Lane = matchData.Lane;
-            this.Ends = matchData.Ends;
+            this.SetEnds(matchData.Ends);
             this.SetTieBreaker(matchData.TieBreaker);
 
             this.SuppressBowlsEvent = true;
 
-            for (int team = 0; team < matchData.Teams.Length; team++) {
-                for (int position = 0; position < matchData.Teams[team].Length; position++) {
+            for (int team = 0; team < matchData.CountTeams(); team++) {
+                var nameCount = matchData.GetTeam(team).Names.Count();
+
+                for (int position = 0; position < nameCount; position++) {
                     TeamCard teamCard = this.GetTeamCard(team)!;
-                    var name = matchData.Teams[team][position];
+                    var name = matchData.GetTeam(team).Names[position];
                     teamCard[position] = name;
                     teamCard.BowlsPanel.Bowls.Text = matchData.Score[team].ToString();
                 }

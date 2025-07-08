@@ -1,8 +1,22 @@
 ﻿using Leagueinator.GUI.Utility.Extensions;
 using System.Diagnostics;
+using System.Formats.Asn1;
 using System.Text;
 
 namespace Leagueinator.GUI.Model {
+
+    public class ReadOnlyRoundData{
+        public ReadOnlyRoundData(RoundData roundData) {
+            this.RoundData = roundData.Copy();
+        }
+
+        private readonly RoundData RoundData;
+
+        public int Count => this.RoundData.Count;
+
+        public ReadOnlyMatchData GetMatch(int i) => this.RoundData[i].AsReadOnly();
+    }
+
     public class RoundData : List<MatchData> {
         
         public RoundData() : base() {}
@@ -32,6 +46,10 @@ namespace Leagueinator.GUI.Model {
             }
 
             return roundCopy;
+        }
+
+        public new ReadOnlyRoundData AsReadOnly() {
+            return new(this);
         }
 
         public override string ToString() {

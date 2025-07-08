@@ -69,6 +69,7 @@
                     <DataGrid Name="EventData" GridLinesVisibility="None" AutoGenerateColumns="False" 
                               SelectionMode="Single" SelectionUnit="FullRow"
                                SelectionChanged="SelectionChanged"
+                               CurrentCellChanged="CellChanged"
                               >
                         <DataGrid.Columns>
                             <DataGridTextColumn Width="150" Header="Name" Binding="{Binding Name}" />
@@ -96,10 +97,10 @@
                 
                 <!-- Buttons -->
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,5,0,0">
-                    <Button x:Name="ButNew" Width="75" Margin="0 0 5 0" Content="New"/>
-                    <Button x:Name="ButDelete" Width="75" Margin="0 0 5 0" Content="Delete"/>
-                    <Button x:Name="ButSelect" Width="75" Margin="0 0 5 0" Content="Select"/>
-                    <Button x:Name="ButExit" Width="75" Content="Exit"/>
+                    <Button x:Name="ButNew"    Click="HndNew"    Width="75" Content="New" Margin="0 0 5 0"/>
+                    <Button x:Name="ButDelete" Click="HndDelete" Width="75" Content="Delete" Margin="0 0 5 0" IsEnabled="False"/>
+                    <Button x:Name="ButSelect" Click="HndSelect" Width="75" Content="Select" Margin="0 0 5 0" IsEnabled="False"/>
+                    <Button x:Name="ButExit"   Click="HndExit"   Width="75" Content="Exit"/>
                 </StackPanel>
             </StackPanel>
         </Border>
