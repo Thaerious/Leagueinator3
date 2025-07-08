@@ -1,10 +1,7 @@
-﻿using Leagueinator.GUI.Controllers;
-using Leagueinator.GUI.Controllers.NamedEvents;
+﻿using Leagueinator.GUI.Controllers.NamedEvents;
 using Leagueinator.GUI.Forms.Main;
 using Leagueinator.GUI.Model;
-using Leagueinator.GUI.src.Controllers;
 using Leagueinator.GUI.Utility.Extensions;
-using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -13,7 +10,7 @@ namespace Leagueinator.GUI.Controls {
 
     public abstract partial class MatchCard : UserControl {
         private int? _pendingLane = null;
-        private int? _pendingEnds = null;
+        private int? _pendingEnds = null; // TODO GET RID OF THIS
         private int _lastCheckedTeamIndex = -1;
         public bool SuppressBowlsEvent = false;
 

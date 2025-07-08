@@ -1,26 +1,4 @@
 ﻿namespace Leagueinator.GUI.Model {
-    public class ReadOnlyEventData {
-
-        private readonly EventData EventData;
-
-        public List<ReadOnlyRoundData> Rounds { get; } = [];
-
-        public ReadOnlyEventData(EventData eventData) {
-            this.EventData = eventData.Copy();
-
-            foreach (RoundData roundData in eventData.Rounds) {
-                this.Rounds.Add(roundData.AsReadOnly());
-            }
-        }
-
-        public string EventName => EventData.EventName;
-        public DateTime Date => EventData.Date;
-        public MatchFormat MatchFormat => EventData.MatchFormat;
-        public int LaneCount => EventData.LaneCount;
-        public int DefaultEnds => EventData.DefaultEnds;
-        public EventType EventType => EventData.EventType;
-        public int UID => EventData.UID;
-    }
 
     public class EventData {
 
@@ -53,10 +31,6 @@
             }
 
             return copy;
-        }
-
-        public ReadOnlyEventData AsReadOnly() {
-            return new(this);
         }
     }
 }

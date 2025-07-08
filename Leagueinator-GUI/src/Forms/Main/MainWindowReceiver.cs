@@ -53,9 +53,9 @@ namespace Leagueinator.GUI.Forms.Main {
         }
 
         [NamedEventHandler(EventName.RoundUpdated)]
-        internal void DoRoundUpdated(int roundIndex, ReadOnlyRoundData roundData) {
+        internal void DoRoundUpdated(int roundIndex, RoundRecordList roundRecords) {
             this.MainWindow.HighLightRound(roundIndex);
-            this.MainWindow.PopulateMatchCards(roundData);
+            this.MainWindow.PopulateMatchCards(roundRecords);
         }
 
         [NamedEventHandler(EventName.RoundRemoved)]

@@ -9,13 +9,10 @@ using Leagueinator.GUI.Forms.Print;
 using Leagueinator.GUI.Model;
 using Leagueinator.GUI.Model.Results;
 using Microsoft.Win32;
-using System;
 using System.Diagnostics;
 using System.IO;
-using System.Reflection.Metadata.Ecma335;
 using System.Text.Json;
 using System.Windows;
-using System.Windows.Documents;
 
 namespace Leagueinator.GUI.Controllers {
 
@@ -61,13 +58,13 @@ namespace Leagueinator.GUI.Controllers {
         public void InvokeRoundUpdate() {
             this.NamedEventDisp.Dispatch(EventName.RoundUpdated, new() {
                 ["roundIndex"] = this.CurrentRoundIndex,
-                ["roundData"] = this.RoundData.AsReadOnly()
+                ["roundRecords"] = new RoundRecordList(this.EventData, this.RoundData)
             });
         }
 
         public void InvokeAddRound(RoundData roundData) {
             this.NamedEventDisp.Dispatch(EventName.RoundAdded, new() {
-                ["roundData"] = roundData.AsReadOnly()
+                ["roundRecords"] = new RoundRecordList(this.EventData, this.RoundData)
             });
         }
 
@@ -101,11 +98,12 @@ namespace Leagueinator.GUI.Controllers {
         internal void DoLoad() {
             this.Load();
 
-            //this.NamedEventDisp.Dispatch(EventName.UpdateRoundCount, new() {
-            //    ["count"] = this.EventData.Rounds.Count
-            //});
-            //this.InvokeRoundUpdate();
-            //this.InvokeSetTitle(this.FileName, true);
+            this.NamedEventDisp.Dispatch(EventName.UpdateRoundCount, new() {
+                ["count"] = this.EventData.Rounds.Count
+            });
+
+            this.InvokeRoundUpdate();
+            this.InvokeSetTitle(this.FileName, true);
         }
 
         [NamedEventHandler(EventName.RenameEvent)]
@@ -384,9 +382,6 @@ namespace Leagueinator.GUI.Controllers {
                 this.CurrentRoundIndex = 0;
                 this.FileName = dialog.FileName;
                 this.IsSaved = true;
-
-                Debug.WriteLine(this.GetShow());
-                Debug.WriteLine($"DoLoad {leagueData.Count()} {leagueData[0].Rounds.Count}");
             }
         }
 
@@ -425,7 +420,6 @@ namespace Leagueinator.GUI.Controllers {
             else if (this.CurrentRoundIndex >= this.EventData.Rounds.Count) {
                 this.CurrentRoundIndex = this.EventData.Rounds.Count - 1;
             }
-            Debug.WriteLine($"Removed round at index {index}. Current round index is now {this.CurrentRoundIndex}.");
         }
 
         private bool UpdateName(string name, int lane, int team, int pos) {
@@ -457,7 +451,7 @@ namespace Leagueinator.GUI.Controllers {
         }
 
         /// <summary>
-        /// Synchronizes the provided <paramref name="roundData"/> with the current event settings.
+        /// Synchronizes the provided <paramref name="roundRecords"/> with the current event settings.
         /// <para>
         /// - Removes empty lanes if there are more lanes than specified in <see cref="EventData.LaneCount"/>.
         /// - Adds new empty lanes if there are fewer lanes than <see cref="EventData.LaneCount"/>.
@@ -466,7 +460,7 @@ namespace Leagueinator.GUI.Controllers {
         /// - Updates the match format for empty matches to match <see cref="EventData.MatchFormat"/>.
         /// </para>
         /// </summary>
-        /// <param name="roundData">The round leagueData to update, representing a collection of matches for a round.</param>        
+        /// <param name="roundRecords">The round leagueData to update, representing a collection of matches for a round.</param>        
         private void SyncRoundData(RoundData roundData, EventData eventData) {
             // RoundUpdated leagueData by removing empty lanes until the number of lanes matches the event leagueData's lane count.
             for (int i = roundData.Count - 1; i >= 0; i--) {
@@ -515,8 +509,6 @@ namespace Leagueinator.GUI.Controllers {
         }
         internal void DragEndHnd(object sender, RoutedEventArgs e) {
             if (e is not DragEndArgs args) return;
-            Debug.WriteLine("MainController.DragEndHnd called.");
-            Debug.WriteLine($"From: {args.From.Name}, To: {args.To.Name}");
 
             switch (args.From) {
                 case TeamCard teamCard: {

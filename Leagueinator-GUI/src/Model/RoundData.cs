@@ -1,20 +1,50 @@
 ﻿using Leagueinator.GUI.Utility.Extensions;
 using System.Diagnostics;
-using System.Formats.Asn1;
 using System.Text;
 
 namespace Leagueinator.GUI.Model {
 
-    public class ReadOnlyRoundData{
-        public ReadOnlyRoundData(RoundData roundData) {
-            this.RoundData = roundData.Copy();
+    public record RoundRecord{
+        public required int Round;
+        public required int Lane;
+        public required int Team;
+        public required int Pos;
+        public required string Name;
+    }
+
+    public record MatchRecord {
+        public required MatchFormat MatchFormat;
+        public required int Ends;
+        public required int TieBreaker;
+    }
+
+    public class RoundRecordList {
+        public List<RoundRecord> Players { get; } = [];
+        public Dictionary<int, MatchRecord> Matches { get; } = [];
+
+        public RoundRecordList(EventData @event, RoundData round) {
+            foreach (MatchData match in round) {
+                this.Matches[round.IndexOf(match)] = new() {
+                    MatchFormat = match.MatchFormat,
+                    Ends = match.Ends,
+                    TieBreaker = match.TieBreaker,
+                };
+
+                foreach (TeamData team in match.Teams) {
+                    foreach (string player in team) {
+                        if (player == string.Empty) continue;   
+                        RoundRecord record = new() {
+                            Round = @event.Rounds.IndexOf(round),
+                            Lane = round.IndexOf(match),
+                            Team = Array.IndexOf(match.Teams, team),
+                            Pos = Array.IndexOf(team.Names, player),
+                            Name = player
+                        };
+                        Players.Add(record);
+                    }
+                }
+            }
         }
-
-        private readonly RoundData RoundData;
-
-        public int Count => this.RoundData.Count;
-
-        public ReadOnlyMatchData GetMatch(int i) => this.RoundData[i].AsReadOnly();
     }
 
     public class RoundData : List<MatchData> {
@@ -46,10 +76,6 @@ namespace Leagueinator.GUI.Model {
             }
 
             return roundCopy;
-        }
-
-        public new ReadOnlyRoundData AsReadOnly() {
-            return new(this);
         }
 
         public override string ToString() {
