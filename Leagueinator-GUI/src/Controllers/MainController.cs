@@ -94,7 +94,7 @@ namespace Leagueinator.GUI.Controllers {
             var form = new EventManagerForm();
             form.NamedEventDisp += this.NamedEventRcv;
             this.NamedEventDisp += form.NamedEventRcv;
-            form.ShowDialog(this, this.LeagueData.AsReadOnly());
+            form.ShowDialog(this, this.LeagueData);
         }
 
         [NamedEventHandler(EventName.LoadLeague)]

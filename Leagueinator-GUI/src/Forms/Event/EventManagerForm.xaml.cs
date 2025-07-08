@@ -23,10 +23,10 @@ namespace Leagueinator.GUI.Forms.Event {
             InitializeComponent();
         }
 
-        public void ShowDialog(MainController mainController, IReadOnlyCollection<ReadOnlyEventData> data) {
+        public void ShowDialog(MainController mainController, LeagueData data) {
             List<EventItem> list = [];
 
-            foreach (ReadOnlyEventData item in data) {
+            foreach (EventData item in data) {
                 list.Add(new EventItem(mainController) {
                     EventUID = item.UID,
                     Name = item.EventName,
