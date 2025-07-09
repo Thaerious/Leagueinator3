@@ -13,11 +13,6 @@ namespace Leagueinator.GUI.Controllers.Algorithms {
         private EventData EventData { get; }
 
         /// <summary>
-        /// Gets the collection of all rounds in the event.
-        /// </summary>
-        private RoundDataCollection Rounds { get; }
-
-        /// <summary>
         /// Gets the round for which lanes are being assigned.
         /// </summary>
         private RoundData TargetRound { get; }
@@ -43,9 +38,8 @@ namespace Leagueinator.GUI.Controllers.Algorithms {
         /// <param name="eventData">The event configuration data.</param>
         /// <param name="rounds">The collection of all rounds in the event.</param>
         /// <param name="target">The round to assign lanes for.</param>
-        public AssignLanes(EventData eventData, RoundDataCollection rounds, RoundData target) {
+        public AssignLanes(EventData eventData, RoundData target) {
             this.EventData = eventData;
-            this.Rounds = rounds;
             this.TargetRound = target;
         }
 
@@ -158,11 +152,11 @@ namespace Leagueinator.GUI.Controllers.Algorithms {
         /// Builds the lane usage history for each team, excluding the Target round.
         /// </summary>
         public Dictionary<TeamData, HashSet<int>> BuildTeamHistory() {
-            foreach (TeamData team in this.Rounds.Teams) {
+            foreach (TeamData team in this.EventData.Teams) {
                 this.TeamHistory[team] = [];
             }
 
-            foreach (RoundData round in this.Rounds) {
+            foreach (RoundData round in this.EventData) {
                 if (round == this.TargetRound) continue; // Skip the current round
 
                 foreach (MatchData match in round) {

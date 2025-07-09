@@ -3,11 +3,9 @@ using Leagueinator.GUI.Model.Results;
 
 namespace Leagueinator.GUI.Controllers.Algorithms {
     internal class RankedLadder {
-        public RoundDataCollection RoundDataCollection { get; }
         public EventData EventData { get; }
 
-        public RankedLadder(RoundDataCollection roundDataCollection, EventData eventData) {
-            this.RoundDataCollection = roundDataCollection;
+        public RankedLadder(EventData eventData) {
             this.EventData = eventData;
         }
 
@@ -18,7 +16,7 @@ namespace Leagueinator.GUI.Controllers.Algorithms {
         /// <returns></returns>
         public RoundData GenerateRound() {
             RoundData newRound = new RoundData();
-            List<TeamResult> results = new EventResults(this.RoundDataCollection).ResultsByTeam;
+            List<TeamResult> results = new EventResults(this.EventData).ResultsByTeam;
 
             while (results.Count > 0) {
                 TeamData bestTeam = results[0].Team;
@@ -47,7 +45,7 @@ namespace Leagueinator.GUI.Controllers.Algorithms {
         /// <returns></returns>
         private TeamResult GetNextTeam(TeamData team, List<TeamResult> results) {
             foreach (TeamResult result in results) {
-                if (this.RoundDataCollection.HasPlayed(team, result.Team)) continue;
+                if (this.EventData.HasPlayed(team, result.Team)) continue;
                 return result; 
             }
 

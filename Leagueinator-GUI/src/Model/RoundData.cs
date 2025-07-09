@@ -35,7 +35,7 @@ namespace Leagueinator.GUI.Model {
                     foreach (string player in team) {
                         if (player == string.Empty) continue;   
                         RoundRecord record = new() {
-                            Round = @event.Rounds.IndexOf(round),
+                            Round = @event.IndexOf(round),
                             Lane = round.IndexOf(match),
                             Team = Array.IndexOf(match.Teams, team),
                             Pos = Array.IndexOf(team.Names, player),

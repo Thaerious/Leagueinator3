@@ -12,13 +12,11 @@ namespace Leagueinator.GUI.Forms.Print {
     /// Interaction logic for PrintWindow.xaml
     /// </summary>
     public partial class PrintWindow : Window {
-        private readonly RoundDataCollection RoundDataCollection;
-
-        public PrintWindow(RoundDataCollection roundDataCollection) {
-            this.RoundDataCollection = roundDataCollection;
+        public PrintWindow(EventData eventData) {
+            
             InitializeComponent();
 
-            EventResults eventResults = new EventResults(roundDataCollection);
+            EventResults eventResults = new EventResults(eventData);
             Debug.WriteLine($"Event Results: {eventResults.ResultsByTeam.Count} teams, {eventResults.ResultsByRound.Count} rounds");
 
             this.Loaded += (s, e) => {

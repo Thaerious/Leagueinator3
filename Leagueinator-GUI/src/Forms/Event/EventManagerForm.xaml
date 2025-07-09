@@ -12,7 +12,7 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
-            <RowDefinition Height="61" />
+            <RowDefinition Height="40" />
         </Grid.RowDefinitions>
 
         <!-- Top Pane -->
@@ -25,9 +25,14 @@
                     <ColumnDefinition Width="*" MinWidth="100"/>
                 </Grid.ColumnDefinitions>
 
-                <!-- Settings -->
+                <!-- Settings Pane -->
                 <Border Grid.Column="0" Background="LightGray">
                     <StackPanel Margin="0">
+
+                        <StackPanel Margin="5" Orientation="Horizontal">
+                            <Label Grid.Column="0" Grid.Row="0" Content="Name" VerticalAlignment="Center" Margin="0" Width="100"/>
+                            <TextBox x:Name="TxtName" Grid.Column="1" Grid.Row="0" VerticalAlignment="Center" Margin="0" Width="125"/>
+                        </StackPanel>
 
                         <StackPanel Margin="5" Orientation="Horizontal">
                             <Label Grid.Column="0" Grid.Row="0" Content="Available Lanes" VerticalAlignment="Center" Margin="0" Width="100"/>
@@ -64,13 +69,13 @@
                 <GridSplitter Grid.Column="1" Width="5" HorizontalAlignment="Stretch"
                   VerticalAlignment="Stretch" Background="DarkGray" />
 
-                <!-- List of events (datagrid) -->
+                <!-- Event List Pane (datagrid) -->
                 <Border Grid.Column="2" Background="LightBlue">
-                    <DataGrid Name="EventData" GridLinesVisibility="None" AutoGenerateColumns="False" 
+                    <DataGrid Name="EventData" ItemsSource="{Binding EventRecords}" 
+                              GridLinesVisibility="None" AutoGenerateColumns="False" 
                               SelectionMode="Single" SelectionUnit="FullRow"
-                               SelectionChanged="SelectionChanged"
-                               CurrentCellChanged="CellChanged"
-                              >
+                              SelectionChanged="SelectionChanged"
+                              CurrentCellChanged="CellChanged">
                         <DataGrid.Columns>
                             <DataGridTextColumn Width="150" Header="Name" Binding="{Binding Name}" />
                             <DataGridTextColumn Width="150" Header="Date Created" Binding="{Binding Date}" IsReadOnly="True" />
@@ -90,11 +95,8 @@
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
-
-                    <Label Grid.Column="0" Content="Name:" VerticalAlignment="Center" />
-                    <TextBox x:Name="TxtEventName" Grid.Column="1" Margin="5 0 0 0" />
                 </Grid>
-                
+
                 <!-- Buttons -->
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,5,0,0">
                     <Button x:Name="ButNew"    Click="HndNew"    Width="75" Content="New" Margin="0 0 5 0"/>
@@ -104,6 +106,5 @@
                 </StackPanel>
             </StackPanel>
         </Border>
-
     </Grid>
 </Window>

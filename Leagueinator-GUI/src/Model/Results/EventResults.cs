@@ -8,13 +8,13 @@ namespace Leagueinator.GUI.Model.Results {
         /// Constructs event-level results from a collection of round data.
         /// </summary>
         /// <param name="roundDataCollection">The collection of rounds to analyze.</param>
-        public EventResults(RoundDataCollection roundDataCollection) {
+        public EventResults(IEnumerable<RoundData> rounds) {
             // Compute round-level results
-            foreach (var round in roundDataCollection) {
+            foreach (var round in rounds) {
                 ResultsByRound.Add(new RoundResults(round));                
             }
 
-            var teamResultsMap = this.AggregateResultsByTeam(roundDataCollection);
+            var teamResultsMap = this.AggregateResultsByTeam(rounds);
 
             // Sort teams by performance and assign ranks
             var results = teamResultsMap.Values.ToList();
@@ -35,7 +35,7 @@ namespace Leagueinator.GUI.Model.Results {
         /// </summary>
         /// <param name="roundDataCollection"></param>
         /// <returns></returns>
-        private Dictionary<TeamData, TeamResult> AggregateResultsByTeam(RoundDataCollection roundDataCollection) {
+        private Dictionary<TeamData, TeamResult> AggregateResultsByTeam(IEnumerable<RoundData> rounds) {
             Dictionary<TeamData, TeamResult> teamResultsMap = [];
 
             foreach (RoundResults roundResults in this.ResultsByRound) {

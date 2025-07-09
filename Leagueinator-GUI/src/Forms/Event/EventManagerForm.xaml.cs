@@ -1,6 +1,7 @@
 ﻿using Leagueinator.GUI.Controllers;
 using Leagueinator.GUI.Controllers.NamedEvents;
 using Leagueinator.GUI.Model;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
@@ -10,6 +11,8 @@ namespace Leagueinator.GUI.Forms.Event {
     /// Interaction logic for EventManagerForm.xaml
     /// </summary>
     public partial class EventManagerForm : Window {
+
+        public ObservableCollection<EventRecord> EventRecords { get; set; } = [];
 
         public NamedEventDispatcher NamedEventDisp { get; set; }
 
@@ -23,24 +26,19 @@ namespace Leagueinator.GUI.Forms.Event {
             InitializeComponent();
         }
 
-        public void ShowDialog(MainController mainController, LeagueData data) {
-            List<EventItem> list = [];
-
-            foreach (EventData item in data) {
-                list.Add(new EventItem(mainController) {
-                    EventUID = item.UID,
-                    Name = item.EventName,
-                    Date = item.Date,
-                    Rounds = item.Rounds.Count
-                });
-            }
-
-            this.EventData.ItemsSource = list;
+        public void ShowDialog(MainController mainController, List<EventRecord> eventRecords) {
+            foreach (var record in eventRecords) this.EventRecords.Add(record);
+            this.DataContext = this;
             this.ShowDialog();
         }
 
         private void HndNew(object sender, EventArgs e) {
             this.NamedEventDisp.Dispatch(EventName.AddEvent);
+        }
+
+        [NamedEventHandler(EventName.EventAdded)]
+        internal void DoEventAdded(EventRecord eventRecord) {
+            this.EventRecords.Add(eventRecord);
         }
 
         private void HndSelect(object sender, EventArgs e) {
@@ -68,7 +66,6 @@ namespace Leagueinator.GUI.Forms.Event {
 
             if (this.EventData.SelectedItem is EventItem item) {
                 this.SelectedEvent = (EventItem)EventData.SelectedItem;
-                this.TxtEventName.Text = item.Name;
                 this.ButDelete.IsEnabled = true;
                 this.ButSelect.IsEnabled = true;
             }
@@ -79,7 +76,6 @@ namespace Leagueinator.GUI.Forms.Event {
 
             if (this.EventData.SelectedItem is EventItem item) {
                 this.SelectedEvent = (EventItem)EventData.SelectedItem;
-                this.TxtEventName.Text = item.Name;
                 this.ButDelete.IsEnabled = true;
                 this.ButSelect.IsEnabled = true;
             }
