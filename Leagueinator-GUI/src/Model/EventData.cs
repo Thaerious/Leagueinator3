@@ -1,18 +1,8 @@
 ﻿using Leagueinator.GUI.Controllers.Algorithms;
 using System.Collections;
+using System.Diagnostics.Eventing.Reader;
 
 namespace Leagueinator.GUI.Model {
-
-    public record EventRecord(
-        string Name,
-        DateTime Created,
-        MatchFormat MatchFormat,
-        int LaneCount,
-        int DefaultEnds,
-        EventType EventType,
-        int RoundCount,
-        int UID
-    ) { }
 
     public class EventData : IEnumerable<RoundData> {
         public string EventName { get; set; } = "Name Not Set";
@@ -60,9 +50,9 @@ namespace Leagueinator.GUI.Model {
             return copy;
         }
 
-        public RoundData AddRound() {
+        public RoundData AddRound(bool fill = true) {
             RoundData newRound = new();
-            newRound.Fill(this);
+            if (fill) newRound.Fill(this);
             this.Rounds.Add(newRound);
             return newRound;
         }
@@ -166,6 +156,18 @@ namespace Leagueinator.GUI.Model {
                 }
             }
             return false;
+        }
+
+        public static EventData FromRecord(EventRecord record) {
+            return new() {
+                UID = record.UID,
+                EventName = record.Name,
+                Date = record.Created,
+                MatchFormat = record.MatchFormat,
+                DefaultEnds = record.DefaultEnds,
+                LaneCount = record.LaneCount,
+                EventType = record.EventType,
+            };
         }
     }
 }

@@ -5,49 +5,6 @@ using System.Text;
 namespace Leagueinator.GUI.Model {
     public record PlayerLocation(int Lane, int TeamIndex, int Position);
 
-    public record RoundRecord{
-        public required int Round;
-        public required int Lane;
-        public required int Team;
-        public required int Pos;
-        public required string Name;
-    }
-
-    public record MatchRecord {
-        public required MatchFormat MatchFormat;
-        public required int Ends;
-        public required int TieBreaker;
-    }
-
-    public class RoundRecordList {
-        public List<RoundRecord> Players { get; } = [];
-        public Dictionary<int, MatchRecord> Matches { get; } = [];
-
-        public RoundRecordList(EventData @event, RoundData round) {
-            foreach (MatchData match in round) {
-                this.Matches[round.IndexOf(match)] = new() {
-                    MatchFormat = match.MatchFormat,
-                    Ends = match.Ends,
-                    TieBreaker = match.TieBreaker,
-                };
-
-                foreach (TeamData team in match.Teams) {
-                    foreach (string player in team) {
-                        if (player == string.Empty) continue;   
-                        RoundRecord record = new() {
-                            Round = @event.IndexOf(round),
-                            Lane = round.IndexOf(match),
-                            Team = Array.IndexOf(match.Teams, team),
-                            Pos = Array.IndexOf(team.Names, player),
-                            Name = player
-                        };
-                        Players.Add(record);
-                    }
-                }
-            }
-        }
-    }
-
     public class RoundData : List<MatchData> {
         
         public RoundData() : base() {}

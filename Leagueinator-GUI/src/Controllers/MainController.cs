@@ -9,9 +9,7 @@ using Leagueinator.GUI.Forms.Print;
 using Leagueinator.GUI.Model;
 using Leagueinator.GUI.Model.Results;
 using Microsoft.Win32;
-using System.Diagnostics;
 using System.IO;
-using System.Reflection.Metadata.Ecma335;
 using System.Text.Json;
 using System.Windows;
 
@@ -386,10 +384,8 @@ namespace Leagueinator.GUI.Controllers {
 
             if (dialog.ShowDialog() == true) {
                 string contents = File.ReadAllText(dialog.FileName);
-                LeagueData leagueData = JsonSerializer.Deserialize<LeagueData>(contents, this.GetOptions())
-                    ?? throw new InvalidDataException("Failed to deserialize the file contents.");               
-
-                this.EventData = leagueData.Last();
+                this.LeagueData = LeagueData.FromString(contents);
+                this.EventData = this.LeagueData.Last();
                 this.CurrentRoundIndex = 0;
                 this.FileName = dialog.FileName;
                 this.IsSaved = true;
@@ -413,8 +409,8 @@ namespace Leagueinator.GUI.Controllers {
         private void Save(string filename) {
             // Serialize the EventData and RoundCollection to JSON and write to the file.
             StreamWriter writer = new(filename);
-            string json = JsonSerializer.Serialize(this.LeagueData, this.GetOptions());
-            writer.WriteLine(json);
+            //string json = JsonSerializer.Serialize(this.LeagueData, this.GetOptions());
+            writer.Write(this.LeagueData.ToString());
             writer.Close();
 
             this.FileName = filename;

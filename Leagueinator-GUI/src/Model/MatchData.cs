@@ -35,7 +35,7 @@ namespace Leagueinator.GUI.Model {
         /// Gets or sets the match format, which determines the number of teams and team size.
         /// Changing the format resets the teams and scores.
         /// </summary>
-        public MatchFormat MatchFormat { 
+        public MatchFormat MatchFormat {
             get => this._matchFormat;
             set {
                 var teamCount = MatchFormatMeta.Info[value].TeamCount;
@@ -70,8 +70,13 @@ namespace Leagueinator.GUI.Model {
         /// <summary>
         /// Gets or sets the collection of teams participating in the match.
         /// </summary>
-        public TeamData[] Teams { get; set; } = [];
+        public TeamData[] Teams { get; set; } = [];  // TODO use index accessor, remove this line
 
+        public TeamData this[int i] {
+            get => this.Teams[i];
+            set => this.Teams[i]  = value;
+        }
+        
         /// <summary>
         /// Gets or sets the tiebreaker value for the match. Default is -1 (no tiebreaker).
         /// </summary>
@@ -109,7 +114,7 @@ namespace Leagueinator.GUI.Model {
                 throw new ArgumentOutOfRangeException(nameof(teamIndex), "Team index is out of range.");
             }
             this.Teams[teamIndex] = team.Copy();
-        }   
+        }
 
         /// <summary>
         /// Creates a deep copy of this <see cref="MatchData"/> instance, including teams and scores.
@@ -148,11 +153,11 @@ namespace Leagueinator.GUI.Model {
         public int CountTeams() {
             int count = 0;
 
-            foreach(TeamData team in this.Teams) {
+            foreach (TeamData team in this.Teams) {
                 if (team.CountPlayers() > 0) {
                     count++;
                 }
-            }   
+            }
 
             return count;
         }
@@ -201,6 +206,15 @@ namespace Leagueinator.GUI.Model {
 
         public ReadOnlyMatchData AsReadOnly() {
             return new(this);
+        }
+
+        public static MatchData FromRecord(MatchRecord record) {
+            return new MatchData(record.MatchFormat) {
+                Ends = record.Ends,
+                TieBreaker = record.TieBreaker,
+                Lane = record.Lane,
+                Score = record.Score
+            };
         }
     }
 }

@@ -2,6 +2,7 @@
 using Leagueinator.GUI.Forms.Main;
 using Leagueinator.GUI.src.Controllers;
 using System.Diagnostics;
+using System.IO;
 using System.Windows;
 using System.Windows.Threading;
 
@@ -23,7 +24,7 @@ namespace Leagueinator.GUI {
 
             // Setup Event Handlers
             this.Dispatcher.InvokeAsync(() => {
-                var mainWindow = (MainWindow)this.MainWindow;                
+                var mainWindow = (MainWindow)this.MainWindow;
 
                 mainWindow.Loaded += (object s, RoutedEventArgs e) => {
                     MainController mainController = new(mainWindow);
@@ -44,21 +45,27 @@ namespace Leagueinator.GUI {
         }
 
         private void App_DispatcherUnhandledException(object sender, DispatcherUnhandledExceptionEventArgs e) {
-            Debug.WriteLine($"UI Thread Exception:\n{e.Exception}");
-            MessageBox.Show($"UI Thread Exception:\n\n{e.Exception}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            var trace = ExceptionPrinter.ToString(e.Exception);
+            Debug.WriteLine($"UI Thread Exception:\n");
+            Debug.WriteLine(trace);
+            MessageBox.Show($"UI Thread Exception:\n\n{trace}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             e.Handled = true;
         }
 
         private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e) {
             if (e.ExceptionObject is Exception ex) {
-                Debug.WriteLine($"Background Thread Exception:\n{ex}");
-                MessageBox.Show($"Background Thread Exception:\n\n{ex}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                var trace = ExceptionPrinter.ToString(ex);
+                Debug.WriteLine($"Background Thread Exception:\n");
+                Debug.WriteLine(trace);
+                MessageBox.Show($"Background Thread Exception:\n\n{trace}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
         private void TaskScheduler_UnobservedTaskException(object sender, UnobservedTaskExceptionEventArgs e) {
-            Debug.WriteLine($"Unobserved Task Exception:\n{e.Exception}");
-            MessageBox.Show($"Unobserved Task Exception:\n\n{e.Exception}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            var trace = ExceptionPrinter.ToString(e.Exception);
+            Debug.WriteLine($"Unobserved Task Exception:\n");
+            Debug.WriteLine(trace);
+            MessageBox.Show($"Unobserved Task Exception:\n\n{trace}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             e.SetObserved();
         }
 
@@ -69,4 +76,55 @@ namespace Leagueinator.GUI {
         }
     }
 
+    public static class ExceptionPrinter {
+        public static string ToString(Exception? ex) {
+            string sb = "";
+            int depth = 0;
+
+            while (ex != null) {
+                sb += $"[{depth}] {ex.GetType().Name}: {ex.Message}\n";
+
+                var trace = new StackTrace(ex, true);
+                var frames = trace.GetFrames()?.Where(f => f.GetFileLineNumber() > 0);
+
+                if (frames != null) {
+                    foreach (var frame in frames) {
+                        string method = frame.GetMethod()?.Name ?? "UnknownMethod";
+                        string file = Path.GetFileName(frame.GetFileName()) ?? "UnknownFile";
+                        int line = frame.GetFileLineNumber();
+
+                        sb += $" |-- {method}() in {file}:{line}\n";
+                    }
+                }
+
+                ex = ex.InnerException;
+                depth++;
+            }
+            return sb;
+        }
+
+        public static void Print(Exception? ex) {
+            int depth = 0;
+
+            while (ex != null) {
+                Debug.WriteLine($"[{depth}] {ex.GetType().Name}: {ex.Message}");
+
+                var trace = new StackTrace(ex, true);
+                var frames = trace.GetFrames()?.Where(f => f.GetFileLineNumber() > 0);
+
+                if (frames != null) {
+                    foreach (var frame in frames) {
+                        string method = frame.GetMethod()?.Name ?? "UnknownMethod";
+                        string file = Path.GetFileName(frame.GetFileName()) ?? "UnknownFile";
+                        int line = frame.GetFileLineNumber();
+
+                        Debug.WriteLine($" |-- {method}() in {file}:{line}");
+                    }
+                }
+
+                ex = ex.InnerException;
+                depth++;
+            }
+        }
+    }
 }
