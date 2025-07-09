@@ -108,6 +108,13 @@ namespace Leagueinator.GUI.Controls {
             infoCard.TxtEnds.Text = ends.ToString();
         }
 
+        public void SetBowls(int[] bowls) {
+            int i = 0;
+            foreach (TextBox textBox in this.FindByTag("Bowls").Cast<TextBox>()) {
+                textBox.Text = bowls[i++].ToString();
+            }
+        }
+
         public int Lane {
             get {
                 var infoCard = this.GetDescendantsOfType<InfoCard>().FirstOrDefault();

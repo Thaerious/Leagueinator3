@@ -190,7 +190,6 @@ namespace Leagueinator.GUI.Controllers {
         [NamedEventHandler(EventName.AddRound)]
         internal void DoAddRound() {
             RoundData newRound = this.EventData.AddRound();
-            this.EventData.AddRound(newRound);
             this.CurrentRoundIndex = this.EventData.CountRounds() - 1;
             this.InvokeAddRound(newRound);
             this.InvokeSetTitle(this.FileName, false);

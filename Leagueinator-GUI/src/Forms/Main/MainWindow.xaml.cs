@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
 using System.Windows.Threading;
 
 namespace Leagueinator.GUI.Forms.Main {
@@ -86,6 +87,7 @@ namespace Leagueinator.GUI.Forms.Main {
                     matchCard.Lane = Lane;
                     matchCard.SetEnds(matchRecord.Ends);
                     matchCard.SetTieBreaker(matchRecord.TieBreaker);
+                    matchCard.SetBowls(matchRecord.Score);
                     cardsLoaded++;
 
                     if (cardsLoaded == cardsToLoad) {
@@ -124,6 +126,15 @@ namespace Leagueinator.GUI.Forms.Main {
 
         public void RemoveMatch(int index) {
             this.MatchCardStackPanel.Children.RemoveAt(index);
+        }
+
+        internal void HighLightRound(int index) {
+            foreach (Button button in this.RoundButtonStackPanel.Children) {
+                button.Background = Brushes.LightGray;
+            }
+
+            Button selected = (Button)this.RoundButtonStackPanel.Children[index];
+            selected.Background = Brushes.Green;
         }
     }
 }
