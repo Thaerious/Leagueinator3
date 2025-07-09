@@ -151,7 +151,7 @@ namespace Leagueinator.GUI.Controls {
         /// <param name="e"></param>
         public void HndRemoveMatch(object _, RoutedEventArgs __) {
             this.DispatchNamedEvent(EventName.RemoveMatch, new() {
-                ["Lane"] = this.Lane,
+                ["lane"] = this.Lane,
             });
         }
 

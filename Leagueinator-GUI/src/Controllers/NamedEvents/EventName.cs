@@ -14,7 +14,6 @@
         CopyRound,
         CreateEvent,
         DeleteEvent,
-        DeleteMatch,
         DisplayEventResults,
         DisplayRoundResults,
         EndsUpdated,
