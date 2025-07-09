@@ -9,8 +9,8 @@ using Leagueinator.GUI.Forms.Print;
 using Leagueinator.GUI.Model;
 using Leagueinator.GUI.Model.Results;
 using Microsoft.Win32;
-using System.Diagnostics;
 using System.IO;
+using System.Reflection.Metadata.Ecma335;
 using System.Text.Json;
 using System.Windows;
 
@@ -285,8 +285,13 @@ namespace Leagueinator.GUI.Controllers {
         internal void DoPlayerName(string name, int lane, int teamIndex, int position) {
 
             if (this.UpdateName(name, lane, teamIndex, position)) {
-                this.InvokeRoundUpdate();
                 this.InvokeSetTitle(this.FileName, false);
+                this.NamedEventDisp.Dispatch(EventName.NameUpdated, new() {
+                    ["lane"] = lane,
+                    ["teamIndex"] = teamIndex,
+                    ["position"] = position,
+                    ["name"] = name
+                });
             }
         }
 
@@ -422,14 +427,14 @@ namespace Leagueinator.GUI.Controllers {
             }
         }
 
-        private bool UpdateName(string name, int lane, int team, int pos) {
-            if (name == string.Empty && this.RoundData[lane].Teams[team][pos] == string.Empty) {
+        private bool UpdateName(string name, int lane, int teamIndex, int position) {
+            if (name == string.Empty && this.RoundData[lane].Teams[teamIndex][position] == string.Empty) {
                 // If the name is empty and the player is already empty, do nothing.
                 return false;
             }
 
-            var poll = this.RoundData.PollPlayer(name);
-            if (poll == (lane, team, pos)) {
+            PlayerLocation poll = this.RoundData.PollPlayer(name);
+            if (poll == new PlayerLocation(lane, teamIndex, position)) {
                 return false;
             }
 
@@ -438,9 +443,16 @@ namespace Leagueinator.GUI.Controllers {
             if (this.RoundData.HasPlayer(name)) {
                 var existing = this.RoundData.PollPlayer(name);
                 this.RoundData.RemovePlayer(name);
+
+                this.NamedEventDisp.Dispatch(EventName.NameUpdated, new() {
+                    ["lane"] = existing.Lane,
+                    ["teamIndex"] = existing.TeamIndex,
+                    ["position"] = existing.Position,
+                    ["name"] = ""
+                });
             }
 
-            this.RoundData.SetPlayer(name, lane, team, pos);
+            this.RoundData.SetPlayer(name, lane, teamIndex, position);
             return true;
         }
 

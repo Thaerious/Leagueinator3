@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Text;
 
 namespace Leagueinator.GUI.Model {
+    public record PlayerLocation(int Lane, int TeamIndex, int Position);
 
     public record RoundRecord{
         public required int Round;
@@ -121,15 +122,15 @@ namespace Leagueinator.GUI.Model {
             return false;
         }
 
-        public (int, int, int) PollPlayer(string name) {
+        public PlayerLocation PollPlayer(string name) {
             foreach (MatchData match in this) {
                 foreach (TeamData team in match.Teams) {
                     if (team.Names.Contains(name)) {
-                        return (match.Lane, Array.IndexOf(match.Teams, team), team.IndexOf(name));
+                        return new(match.Lane, Array.IndexOf(match.Teams, team), team.IndexOf(name));
                     }
                 }
             }
-            return (-1, -1, -1);
+            return new(-1, -1, -1);
         }
 
         internal void AssignPlayersRandomly() {

@@ -40,21 +40,22 @@ namespace Leagueinator.GUI.src.Controllers {
 
         [NamedEventHandler(EventName.RequestFocus)]
         internal void DoRequestFocus(int lane, int teamIndex, bool append) {
-            TeamID teamId = new(teamIndex, lane);
+            TeamID teamID = new(teamIndex, lane);
 
             if (append) {
-                if (this.Focused.Remove(teamId)) {                    
-                    this.InvokeFocusRevoked(teamId);
+                if (this.Focused.Remove(teamID)) {                    
+                    this.InvokeFocusRevoked(teamID);
                 }
                 else {
-                    this.Focused.Add(teamId);
-                    this.InvokeFocusGranted(teamId);
+                    this.Focused.Add(teamID);
+                    this.InvokeFocusGranted(teamID);
                 }
             }
             else {
+                if (this.Focused.Contains(teamID)) return;
                 this.ClearFocus();
-                this.InvokeFocusGranted(teamId);
-                this.Focused.Add(teamId);
+                this.InvokeFocusGranted(teamID);
+                this.Focused.Add(teamID);
             }
         }
 

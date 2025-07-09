@@ -91,5 +91,13 @@ namespace Leagueinator.GUI.Forms.Main {
             MatchCard matchCard = this.MainWindow.GetMatchCard(lane);
             matchCard.SetTieBreaker(tieBreaker);
         }
+
+
+        [NamedEventHandler(EventName.NameUpdated)]
+        internal void DoTieBreakerUpdated(int lane, int teamIndex, int position, string name) {
+            MatchCard matchCard = this.MainWindow.GetMatchCard(lane);
+            TeamCard teamCard = matchCard.GetTeamCard(teamIndex) ?? throw new KeyNotFoundException();
+            teamCard[position] = name;
+        }
     }
 }
