@@ -9,6 +9,31 @@
         Height="450" Width="800"
         MinWidth="600" MinHeight="300"
         >
+
+    <Window.Resources>
+        <Style TargetType="DataGridRow">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="Foreground" Value="Black"/>
+            <Style.Triggers>
+                <Trigger Property="IsSelected" Value="True">
+                    <Setter Property="Background" Value="LightGreen"/>
+                    <Setter Property="Foreground" Value="Black"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        <Style TargetType="DataGridCell">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="Black"/>
+            <Style.Triggers>
+                <Trigger Property="IsSelected" Value="True">
+                    <Setter Property="Background" Value="Transparent"/>
+                    <!-- Let the row shine through -->
+                    <Setter Property="Foreground" Value="Black"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
@@ -104,7 +129,6 @@
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,5,0,0">
                     <Button x:Name="ButNew"    Click="HndNew"    Width="75" Content="New" Margin="0 0 5 0"/>
                     <Button x:Name="ButDelete" Click="HndDelete" Width="75" Content="Delete" Margin="0 0 5 0" IsEnabled="False"/>
-                    <Button x:Name="ButSelect" Click="HndSelect" Width="75" Content="Select" Margin="0 0 5 0" IsEnabled="False"/>
                     <Button x:Name="ButExit"   Click="HndExit"   Width="75" Content="Exit"/>
                 </StackPanel>
             </StackPanel>

@@ -77,8 +77,8 @@ namespace Leagueinator.GUI.Controllers {
         }
 
         [NamedEventHandler(EventName.SelectEvent)]
-        internal void DoSelectEvent(int eventUID) {
-            this.EventData = this.LeagueData.GetEvent(eventUID);            
+        internal void DoSelectEvent(int uid) {
+            this.EventData = this.LeagueData.GetEvent(uid);            
             this.CurrentRoundIndex = this.EventData.Count() - 1;
 
             this.NamedEventDisp.Dispatch(EventName.EventChanged, new() {
@@ -101,9 +101,13 @@ namespace Leagueinator.GUI.Controllers {
         }
         [NamedEventHandler(EventName.ChangeEventArg)]
         internal void DoChangeEventArg(string name, int ends, int laneCount) {
-            this.EventData.EventName = name;
+            this.EventData.EventName   = name;
             this.EventData.DefaultEnds = ends;
-            this.EventData.LaneCount = laneCount;
+            this.EventData.LaneCount   = laneCount;
+
+            this.NamedEventDisp.Dispatch(EventName.EventRecordChanged, new() {
+                ["eventRecord"] = EventData.ToRecord(this.EventData)
+            });
         }
 
         [NamedEventHandler(EventName.EventManager)]
@@ -114,6 +118,15 @@ namespace Leagueinator.GUI.Controllers {
 
             List<EventRecord> records = [.. this.LeagueData.Select(data => EventData.ToRecord(data))];
             form.ShowDialog(this, records, EventData.ToRecord(this.EventData));
+
+            this.CurrentRoundIndex = this.EventData.CountRounds() - 1;
+
+            this.NamedEventDisp.Dispatch(EventName.UpdateRoundCount, new() {
+                ["count"] = this.EventData.CountRounds()
+            });
+
+            this.InvokeRoundUpdate();
+            this.InvokeSetTitle(this.FileName, true);
         }
 
         [NamedEventHandler(EventName.LoadLeague)]
@@ -143,7 +156,6 @@ namespace Leagueinator.GUI.Controllers {
             EventData eventData = this.LeagueData.AddEvent();
             this.NamedEventDisp.Dispatch(EventName.EventAdded, new() {
                 ["uid"] = eventData.UID,
-
             });
         }
 

@@ -47,5 +47,6 @@
         NameUpdated,
         EventChanged,
         ChangeEventArg,
+        EventRecordChanged,
     }
 }

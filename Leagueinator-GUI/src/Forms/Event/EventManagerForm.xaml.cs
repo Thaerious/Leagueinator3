@@ -19,8 +19,6 @@ namespace Leagueinator.GUI.Forms.Event {
 
         public NamedEventReceiver NamedEventRcv { get; private set; }
 
-        private EventItem? SelectedEvent = null;
-
         public EventManagerForm() {
             this.NamedEventDisp = new(this);
             this.NamedEventRcv = new(this);
@@ -57,36 +55,21 @@ namespace Leagueinator.GUI.Forms.Event {
         internal void DoEventChanged(EventRecord eventRecord) {
             this.NamedEventDisp.PauseEvents();
             this.EventData.SelectedItem = eventRecord;
-            this.EventData.ScrollIntoView(eventRecord);
-
-            this.Dispatcher.InvokeAsync(() => {
-                var row = (DataGridRow)this.EventData.ItemContainerGenerator.ContainerFromItem(eventRecord);
-                Debug.WriteLine("Row", row);
-                if (row != null) {
-                    row.IsSelected = true;
-                    row.Focus();
-                }
-            }, System.Windows.Threading.DispatcherPriority.ApplicationIdle);
-
             this.TxtName.Text = eventRecord.Name;
             this.TxtEnds.Text = eventRecord.DefaultEnds.ToString();
             this.TxtLanes.Text = eventRecord.LaneCount.ToString();
             this.NamedEventDisp.ResumeEvents();
         }
 
-        private void HndSelect(object sender, EventArgs e) {
-            if (this.SelectedEvent is null) return;
-
-            this.NamedEventDisp.Dispatch(EventName.SelectEvent, new() {
-                ["eventUID"] = this.SelectedEvent.EventUID,
-            });
+        [NamedEventHandler(EventName.EventRecordChanged)]
+        internal void DoEventNameChanged(EventRecord eventRecord) {
+            var index = EventRecords.ToList().FindIndex(r => r.UID == eventRecord.UID);
+            if (index >= 0) EventRecords[index] = eventRecord;
         }
 
         private void HndDelete(object sender, EventArgs e) {
-            if (this.SelectedEvent is null) return;
-
             this.NamedEventDisp.Dispatch(EventName.DeleteEvent, new() {
-                ["eventUID"] = this.SelectedEvent.EventUID,
+                ["eventUID"] = (this.EventData.SelectedItem as EventRecord)!.UID,
             });
         }
 
@@ -97,18 +80,18 @@ namespace Leagueinator.GUI.Forms.Event {
         private void CellChanged(object sender, EventArgs e) {
             Debug.WriteLine($"Cell Event '{EventData.SelectedItem}'");
 
-            if (this.EventData.SelectedItem is EventItem item) {
-                this.SelectedEvent = (EventItem)EventData.SelectedItem;
-                this.ButDelete.IsEnabled = true;
-                this.ButSelect.IsEnabled = true;
-            }
+            //if (this.EventData.SelectedItem is EventItem item) {
+            //    this.SelectedEvent = (EventItem)EventData.SelectedItem;
+            //    this.ButDelete.IsEnabled = true;
+            //}
         }
 
         private void SelectionChanged(object sender, SelectionChangedEventArgs e) {
-            if (this.EventData.SelectedItem is EventItem item) {
-                this.SelectedEvent = (EventItem)EventData.SelectedItem;
+            if (this.EventData.SelectedItem is EventRecord record) {
                 this.ButDelete.IsEnabled = true;
-                this.ButSelect.IsEnabled = true;
+                this.NamedEventDisp.Dispatch(EventName.SelectEvent, new() {
+                    ["uid"] = record.UID,
+                });
             }
         }
 
