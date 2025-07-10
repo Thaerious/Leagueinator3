@@ -1,5 +1,6 @@
 ﻿using Leagueinator.GUI.Controllers;
 using Leagueinator.GUI.Controllers.NamedEvents;
+using Leagueinator.GUI.Controls;
 using Leagueinator.GUI.Model;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -24,12 +25,22 @@ namespace Leagueinator.GUI.Forms.Event {
             this.NamedEventDisp = new(this);
             this.NamedEventRcv = new(this);
             InitializeComponent();
+
+            this.Loaded += (s, e) => {
+                this.TxtEnds.PreviewTextInput += InputHandlers.OnlyNumbers;
+                this.TxtLanes.PreviewTextInput += InputHandlers.OnlyNumbers;
+            };
         }
 
-        public void ShowDialog(MainController mainController, List<EventRecord> eventRecords) {
+        private void EventManagerForm_Loaded(object sender, RoutedEventArgs e) {
+            throw new NotImplementedException();
+        }
+
+        public void ShowDialog(MainController mainController, List<EventRecord> eventRecords, EventRecord selected) {
             foreach (var record in eventRecords) this.EventRecords.Add(record);
             this.DataContext = this;
-            this.ShowDialog();
+            this.DoEventChanged(selected);
+            this.ShowDialog();           
         }
 
         private void HndNew(object sender, EventArgs e) {
@@ -39,6 +50,28 @@ namespace Leagueinator.GUI.Forms.Event {
         [NamedEventHandler(EventName.EventAdded)]
         internal void DoEventAdded(EventRecord eventRecord) {
             this.EventRecords.Add(eventRecord);
+        }
+
+
+        [NamedEventHandler(EventName.EventChanged)]
+        internal void DoEventChanged(EventRecord eventRecord) {
+            this.NamedEventDisp.PauseEvents();
+            this.EventData.SelectedItem = eventRecord;
+            this.EventData.ScrollIntoView(eventRecord);
+
+            this.Dispatcher.InvokeAsync(() => {
+                var row = (DataGridRow)this.EventData.ItemContainerGenerator.ContainerFromItem(eventRecord);
+                Debug.WriteLine("Row", row);
+                if (row != null) {
+                    row.IsSelected = true;
+                    row.Focus();
+                }
+            }, System.Windows.Threading.DispatcherPriority.ApplicationIdle);
+
+            this.TxtName.Text = eventRecord.Name;
+            this.TxtEnds.Text = eventRecord.DefaultEnds.ToString();
+            this.TxtLanes.Text = eventRecord.LaneCount.ToString();
+            this.NamedEventDisp.ResumeEvents();
         }
 
         private void HndSelect(object sender, EventArgs e) {
@@ -72,13 +105,27 @@ namespace Leagueinator.GUI.Forms.Event {
         }
 
         private void SelectionChanged(object sender, SelectionChangedEventArgs e) {
-            Debug.WriteLine($"Selection Event '{EventData.SelectedItem}'");
-
             if (this.EventData.SelectedItem is EventItem item) {
                 this.SelectedEvent = (EventItem)EventData.SelectedItem;
                 this.ButDelete.IsEnabled = true;
                 this.ButSelect.IsEnabled = true;
             }
+        }
+
+        private void TxtChanged(object sender, TextChangedEventArgs args) {
+            if (this.IsLoaded == false) return;
+
+            this.NamedEventDisp.Dispatch(EventName.ChangeEventArg, new() {
+                ["name"] = this.TxtName.Text,
+                ["laneCount"] = int.Parse(this.TxtLanes.Text),
+                ["ends"] = int.Parse(this.TxtEnds.Text),
+            });
+        }
+
+        private void EventTypeChanged(object sender, SelectionChangedEventArgs e) {
+        }
+
+        private void MatchFormatChanged(object sender, SelectionChangedEventArgs e) {
         }
 
         private void ClickRename(object sender, RoutedEventArgs e) {

@@ -45,5 +45,7 @@
         Update,
         UpdateRoundCount,
         NameUpdated,
+        EventChanged,
+        ChangeEventArg,
     }
 }

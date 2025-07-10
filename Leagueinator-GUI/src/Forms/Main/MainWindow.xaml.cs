@@ -73,18 +73,15 @@ namespace Leagueinator.GUI.Forms.Main {
 
             this.MatchCardStackPanel.Children.Clear();
 
-            foreach (var kvp in roundRecords.Matches) {
-                MatchRecord matchRecord = kvp.Value;
-
-                int Lane = kvp.Key;
+            foreach (MatchRecord matchRecord in roundRecords.Matches) {
                 var matchCard = MatchCardFactory.GenerateMatchCard(matchRecord.MatchFormat);
 
-                this.MatchCardStackPanel.Children.Insert(Lane, matchCard);
+                this.MatchCardStackPanel.Children.Add(matchCard);
                 cardsToLoad++;
 
                 // Assign tab order & set data when loaded
                 matchCard.Loaded += (s, e) => {
-                    matchCard.Lane = Lane;
+                    matchCard.Lane = matchRecord.Lane;
                     matchCard.SetEnds(matchRecord.Ends);
                     matchCard.SetTieBreaker(matchRecord.TieBreaker);
                     matchCard.SetBowls(matchRecord.Score);

@@ -81,8 +81,8 @@ namespace Leagueinator.GUI.Model {
                     RoundRecordList roundRecordList = new RoundRecordList(@event, round);
 
                     sb += $"{roundRecordList.Matches.Count}\n";
-                    foreach (var kvp in roundRecordList.Matches) {
-                        sb += kvp.Value.ToString() + "\n";   
+                    foreach (MatchRecord matchRecord in roundRecordList.Matches) {
+                        sb += matchRecord.ToString() + "\n";   
                     }
 
                     sb += $"{roundRecordList.Players.Count}\n";

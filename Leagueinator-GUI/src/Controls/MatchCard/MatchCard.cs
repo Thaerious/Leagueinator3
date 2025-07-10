@@ -2,6 +2,7 @@
 using Leagueinator.GUI.Forms.Main;
 using Leagueinator.GUI.Model;
 using Leagueinator.GUI.Utility.Extensions;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -115,7 +116,7 @@ namespace Leagueinator.GUI.Controls {
             }
         }
 
-        public int Lane {
+        public int Lane { // TODO REWORK
             get {
                 var infoCard = this.GetDescendantsOfType<InfoCard>().FirstOrDefault();
                 return infoCard?.Lane ?? this._pendingLane ?? -1;
@@ -150,6 +151,7 @@ namespace Leagueinator.GUI.Controls {
         /// <param name="sender"></param>
         /// <param name="e"></param>
         public void HndRemoveMatch(object _, RoutedEventArgs __) {
+            Debug.WriteLine($"HndRemoveMatch({this.Lane})");
             this.DispatchNamedEvent(EventName.RemoveMatch, new() {
                 ["lane"] = this.Lane,
             });

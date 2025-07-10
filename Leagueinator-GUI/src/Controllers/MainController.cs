@@ -9,6 +9,7 @@ using Leagueinator.GUI.Forms.Print;
 using Leagueinator.GUI.Model;
 using Leagueinator.GUI.Model.Results;
 using Microsoft.Win32;
+using System.Diagnostics;
 using System.IO;
 using System.Text.Json;
 using System.Windows;
@@ -77,7 +78,12 @@ namespace Leagueinator.GUI.Controllers {
 
         [NamedEventHandler(EventName.SelectEvent)]
         internal void DoSelectEvent(int eventUID) {
-            EventData eventData = this.LeagueData.GetEvent(eventUID);
+            this.EventData = this.LeagueData.GetEvent(eventUID);            
+            this.CurrentRoundIndex = this.EventData.Count() - 1;
+
+            this.NamedEventDisp.Dispatch(EventName.EventChanged, new() {
+                ["eventRecord"] = EventData.ToRecord(this.EventData)
+            });
         }
 
         [NamedEventHandler(EventName.AddEvent)]
@@ -88,6 +94,16 @@ namespace Leagueinator.GUI.Controllers {
             this.NamedEventDisp.Dispatch(EventName.EventAdded, new() {
                 ["eventRecord"] = EventData.ToRecord(eventData)
             });
+
+            this.NamedEventDisp.Dispatch(EventName.EventChanged, new() {
+                ["eventRecord"] = EventData.ToRecord(this.EventData)
+            });
+        }
+        [NamedEventHandler(EventName.ChangeEventArg)]
+        internal void DoChangeEventArg(string name, int ends, int laneCount) {
+            this.EventData.EventName = name;
+            this.EventData.DefaultEnds = ends;
+            this.EventData.LaneCount = laneCount;
         }
 
         [NamedEventHandler(EventName.EventManager)]
@@ -97,7 +113,7 @@ namespace Leagueinator.GUI.Controllers {
             this.NamedEventDisp += form.NamedEventRcv;
 
             List<EventRecord> records = [.. this.LeagueData.Select(data => EventData.ToRecord(data))];
-            form.ShowDialog(this, records);
+            form.ShowDialog(this, records, EventData.ToRecord(this.EventData));
         }
 
         [NamedEventHandler(EventName.LoadLeague)]
@@ -270,6 +286,7 @@ namespace Leagueinator.GUI.Controllers {
             sb += "Event Data:\n";
             sb += $"File Name: {this.FileName}\n";
             sb += $"Is Saved: {this.IsSaved}\n";
+            sb += $"Event Name: {this.EventData.EventName}\n";
             sb += $"Number of Lanes: {this.EventData.LaneCount}\n";
             sb += $"Default Ends: {this.EventData.DefaultEnds}\n";
             sb += $"Match Format: {this.EventData.MatchFormat}\n";
