@@ -10,8 +10,6 @@ using System.Windows.Input;
 namespace Leagueinator.GUI.Controls {
 
     public abstract partial class MatchCard : UserControl {
-        public bool SuppressBowlsEvent = false;
-
         public abstract MatchFormat MatchFormat { get; }
 
         public MatchCard() {
@@ -62,7 +60,6 @@ namespace Leagueinator.GUI.Controls {
 
         private void BowlsTextChanged(object sender, TextChangedEventArgs e) {
             if (sender is not TextBox textBox) return;
-            if (this.SuppressBowlsEvent) return; // Prevents looping when setting ChangeBowls property            
 
             if (textBox.Text.Trim() == "") {
                 textBox.Text = "0"; 

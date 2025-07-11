@@ -2,7 +2,6 @@
 
 using Leagueinator.GUI.Utility.Extensions;
 using System.Diagnostics;
-using System.Diagnostics.Tracing;
 
 namespace Leagueinator.GUI.Model {
     public class LeagueData : List<EventData> {

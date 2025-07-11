@@ -1,5 +1,4 @@
 ﻿using Leagueinator.GUI.Controllers.NamedEvents;
-using Leagueinator.GUI.src.Controllers;
 using Leagueinator.GUI.Utility.Extensions;
 using System.Windows;
 using System.Xml.Linq;

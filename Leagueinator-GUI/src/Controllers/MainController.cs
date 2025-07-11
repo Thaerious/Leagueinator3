@@ -10,7 +10,6 @@ using Leagueinator.GUI.Model;
 using Leagueinator.GUI.Model.Results;
 using Microsoft.Win32;
 using System.IO;
-using System.Text.Json;
 using System.Windows;
 
 namespace Leagueinator.GUI.Controllers {
