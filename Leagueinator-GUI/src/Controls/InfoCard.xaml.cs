@@ -10,8 +10,8 @@ namespace Leagueinator.GUI.Controls {
     public partial class InfoCard : UserControl {
         public InfoCard() {
             this.AllowDrop = true;
-            this.Loaded += this.HndLoaded;
             this.InitializeComponent();
+            this.Loaded += this.HndLoaded;
         }
 
         public int Lane {

@@ -14,11 +14,6 @@ namespace Leagueinator.GUI.Controls {
     /// </summary>
     public abstract partial class MatchCard : UserControl {
         /// <summary>
-        /// Gets the format of the match, to be defined by subclasses.
-        /// </summary>
-        public abstract MatchFormat MatchFormat { get; }
-
-        /// <summary>
         /// Initializes a new instance of the <see cref="MatchCard"/> class.
         /// Sets up event handlers for text boxes and match UI elements.
         /// </summary>
@@ -66,7 +61,7 @@ namespace Leagueinator.GUI.Controls {
         /// </summary>
         private void EndsTextChanged(object sender, TextChangedEventArgs e) {
             if (sender is not TextBox textBox) return;
-            if (PreventEmptyTextBox(textBox)) return;
+            if (textBox.PreventEmpty()) return;
 
             this.DispatchNamedEvent(EventName.ChangeEnds, new() {
                 ["lane"] = this.Lane,
@@ -80,7 +75,7 @@ namespace Leagueinator.GUI.Controls {
         /// </summary>
         private void BowlsTextChanged(object sender, TextChangedEventArgs e) {
             if (sender is not TextBox textBox) return;
-            if (PreventEmptyTextBox(textBox)) return;
+            if (textBox.PreventEmpty()) return;
 
             this.DispatchNamedEvent(EventName.ChangeBowls, new() {
                 ["lane"] = this.Lane,
@@ -201,25 +196,6 @@ namespace Leagueinator.GUI.Controls {
                 ["lane"] = this.Lane,
                 ["teamIndex"] = checkTie.FindIndex(cb => cb.IsChecked == true)
             });
-        }
-
-        ///// <summary>
-        ///// Filters out non-numeric input in TextBoxes.
-        ///// </summary>
-        //public void OnlyNumbers(object sender, TextCompositionEventArgs e) {
-        //    e.Handled = !e.Text.All(char.IsDigit);
-        //}
-
-        /// <summary>
-        /// Replaces empty textboxes with "0" and selects the text.
-        /// </summary>
-        private static bool PreventEmptyTextBox(TextBox textBox) {
-            if (textBox.Text.Trim() == "") {
-                textBox.Text = "0";
-                textBox.SelectAll();
-                return true;
-            }
-            return false;
         }
     }
 }

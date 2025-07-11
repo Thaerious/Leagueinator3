@@ -22,5 +22,17 @@ namespace Leagueinator.GUI.Controls {
                 }
             }
         }
+
+        /// <summary>
+        /// Replaces empty textboxes with "0" and selects the text.
+        /// </summary>
+        public static bool PreventEmpty(this TextBox textBox) {
+            if (textBox.Text.Trim() == "") {
+                textBox.Text = "0";
+                textBox.SelectAll();
+                return true;
+            }
+            return false;
+        }
     }
 }
