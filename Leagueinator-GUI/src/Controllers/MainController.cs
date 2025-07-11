@@ -385,8 +385,7 @@ namespace Leagueinator.GUI.Controllers {
 
             this.NamedEventDisp.Dispatch(EventName.BowlsUpdated, new() {
                 ["lane"] = lane,
-                ["teamIndex"] = teamIndex,
-                ["bowls"] = bowls
+                ["bowls"] = (int[])this.RoundData[lane].Score.Clone()
             });
         }
 

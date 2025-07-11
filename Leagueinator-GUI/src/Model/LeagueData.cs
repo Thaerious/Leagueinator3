@@ -33,8 +33,9 @@ namespace Leagueinator.GUI.Model {
             List<string> lines = [.. s.Split('\n')];
 
             string line = lines.Dequeue();
-            var parts = s.Split('|');
-            if (parts.Length != 8) throw new FormatException("Invalid EventRecord string format");
+            var parts = line.Split('|');
+            if (parts.Length != 2) throw new FormatException($"Invalid LeagueData string format: {line}.'");
+
             int eventCount = int.Parse(parts[0]);
             leagueData.NextUID = int.Parse(parts[1]);
 

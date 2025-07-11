@@ -52,7 +52,7 @@ namespace Leagueinator.GUI.Controls {
             infoCard.TxtEnds.GotKeyboardFocus += this.TextBoxSelectAllOnFocus;
 
             foreach (TextBox textBox in this.FindByTag("Bowls").Cast<TextBox>()) {
-                textBox.TextChanged += this.TextBoxInvokeBowlsEvent;
+                textBox.TextChanged += this.TextBoxChanged;
                 textBox.PreviewMouseLeftButtonDown += this.TextBoxPreventDefaultCaretBehaviour;
                 textBox.GotKeyboardFocus += this.TextBoxSelectAllOnFocus;
             }
@@ -73,7 +73,7 @@ namespace Leagueinator.GUI.Controls {
             });
         }
 
-        private void TextBoxInvokeBowlsEvent(object sender, TextChangedEventArgs e) {
+        private void TextBoxChanged(object sender, TextChangedEventArgs e) {
             if (this.SuppressBowlsEvent) return; // Prevents looping when setting ChangeBowls property
             if (sender is not TextBox textBox) return;
 
@@ -108,27 +108,25 @@ namespace Leagueinator.GUI.Controls {
             infoCard.TxtEnds.Text = ends.ToString();
         }
 
-        public void SetBowls(int[] bowls) {
+        public void SetBowls(int[] bowlsScored) {
             int i = 0;
-            foreach (TextBox textBox in this.FindByTag("Bowls").Cast<TextBox>()) {
-                textBox.Text = bowls[i++].ToString();
+            TextBox[] bowlsTextBoxes = this.FindByTag("Bowls").Cast<TextBox>().ToArray();
+            if (bowlsTextBoxes.Length != bowlsScored.Length) throw new Exception("Array length mismatch between score and textboxes.");
+
+            foreach (TextBox textBox in bowlsTextBoxes) {
+                textBox.Text = bowlsScored[i++].ToString();
             }
         }
 
-        public int Lane { // TODO REWORK
+        public int Lane {
             get {
                 var infoCard = this.GetDescendantsOfType<InfoCard>().FirstOrDefault();
                 return infoCard?.Lane ?? this._pendingLane ?? -1;
             }
             set {
                 var infoCard = this.GetDescendantsOfType<InfoCard>().FirstOrDefault();
-
-                if (infoCard != null) {
-                    infoCard.Lane = value;
-                }
-                else {
-                    this._pendingLane = value;
-                }
+                if (infoCard is null) throw new NullReferenceException("InfoCard not found.");
+                infoCard.Lane = value;
             }
         }
 

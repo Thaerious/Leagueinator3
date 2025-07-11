@@ -74,10 +74,9 @@ namespace Leagueinator.GUI.Forms.Main {
         }
 
         [NamedEventHandler(EventName.BowlsUpdated)]
-        internal void DoBowlsUpdated(int lane, int teamIndex, int bowls) {
+        internal void DoBowlsUpdated(int lane, int[] bowls) {
             MatchCard matchCard = this.MainWindow.GetMatchCard(lane);
-            TeamCard teamCard = matchCard.GetTeamCard(teamIndex) ?? throw new KeyNotFoundException($"TeamIndex {teamIndex} not found.");
-            teamCard.BowlsPanel.SetBowls(bowls);
+            matchCard.SetBowls(bowls);
         }
 
         [NamedEventHandler(EventName.EndsUpdated)]
