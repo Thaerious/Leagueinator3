@@ -1,5 +1,6 @@
 ﻿using Leagueinator.GUI.Model;
 using Leagueinator.GUI.Model.Results;
+using Leagueinator.GUI.Utility.Extensions;
 using System.Diagnostics;
 
 namespace Leagueinator.GUI.Controllers.Algorithms {
@@ -52,6 +53,10 @@ namespace Leagueinator.GUI.Controllers.Algorithms {
         /// <returns>A new <see cref="RoundData"/> instance with updated lane assignments.</returns>
         public RoundData DoAssignment() {
             this.BuildTeamHistory();
+            //foreach (var kvp in this.TeamHistory) {
+            //    Debug.WriteLine($"{kvp.Key.Names.JoinString()} : {kvp.Value.JoinString()}");
+            //}
+
             this.BuildMatchHistory();
             this.InvertMatchHistory();
             return this.DoAssignLanes();
@@ -72,7 +77,6 @@ namespace Leagueinator.GUI.Controllers.Algorithms {
             foreach (KeyValuePair<MatchData, HashSet<int>> kvp in sorted) {
                 MatchData match = kvp.Key;
                 HashSet<int> lanes = kvp.Value;
-                Debug.WriteLine($"{string.Join(", ", match.GetPlayers())}, {string.Join(", ", lanes)}");
             }
 
             while (sorted.Count > 0) {
@@ -153,6 +157,7 @@ namespace Leagueinator.GUI.Controllers.Algorithms {
         /// </summary>
         public Dictionary<TeamData, HashSet<int>> BuildTeamHistory() {
             foreach (TeamData team in this.EventData.Teams) {
+                if (team.CountPlayers() == 0) continue;
                 this.TeamHistory[team] = [];
             }
 
@@ -161,6 +166,7 @@ namespace Leagueinator.GUI.Controllers.Algorithms {
 
                 foreach (MatchData match in round) {
                     foreach (TeamData team in match.Teams) {
+                        if (team.CountPlayers() == 0) continue;
                         this.TeamHistory[team].Add(match.Lane);
                     }
                 }

@@ -2,7 +2,7 @@
 using Leagueinator.GUI.Controls;
 using Leagueinator.GUI.Model;
 using Leagueinator.GUI.Utility.Extensions;
-using System.Diagnostics;
+using System.Windows;
 
 namespace Leagueinator.GUI.Forms.Main {
     public class MainWindowReceiver : NamedEventReceiver {
@@ -74,10 +74,9 @@ namespace Leagueinator.GUI.Forms.Main {
         }
 
         [NamedEventHandler(EventName.BowlsUpdated)]
-        internal void DoBowlsUpdated(int lane, int teamIndex, int bowls) {
+        internal void DoBowlsUpdated(int lane, int[] bowls) {
             MatchCard matchCard = this.MainWindow.GetMatchCard(lane);
-            TeamCard teamCard = matchCard.GetTeamCard(teamIndex) ?? throw new KeyNotFoundException($"TeamIndex {teamIndex} not found.");
-            teamCard.BowlsPanel.SetBowls(bowls);
+            matchCard.SetBowls(bowls);
         }
 
         [NamedEventHandler(EventName.EndsUpdated)]
@@ -87,17 +86,22 @@ namespace Leagueinator.GUI.Forms.Main {
         }
 
         [NamedEventHandler(EventName.TieBreakerUpdated)]
-        internal void DoTieBreakerUpdated(int lane, int tieBreaker) {
+        internal void DoTieBreakerUpdated(int lane, int teamIndex) {
             MatchCard matchCard = this.MainWindow.GetMatchCard(lane);
-            matchCard.SetTieBreaker(tieBreaker);
+            matchCard.SetTieBreaker(teamIndex);
         }
 
 
         [NamedEventHandler(EventName.NameUpdated)]
         internal void DoTieBreakerUpdated(int lane, int teamIndex, int position, string name) {
             MatchCard matchCard = this.MainWindow.GetMatchCard(lane);
-            TeamCard teamCard = matchCard.GetTeamCard(teamIndex) ?? throw new KeyNotFoundException();
+            TeamCard teamCard = matchCard.GetTeamCard(teamIndex);
             teamCard[position] = name;
+        }
+
+        [NamedEventHandler(EventName.Notification)]
+        internal void DoNotification(string message) {
+            MessageBox.Show(message, "Notification", MessageBoxButton.OK, MessageBoxImage.Information);
         }
     }
 }

@@ -1,14 +1,13 @@
 ﻿
 namespace Leagueinator.GUI.Utility.Extensions {
     public static class CollectionExtensions {
-        public static List<T> SubList<T>(this List<T> list, int start, int end) {
-            List<T> newList = [];
-            for (int i = start; i < end; i++) {
-                newList.Add(list[i]);
-            }
-            return newList;
-        }
 
+        public static string JoinString<T>(this IEnumerable<T> collection, string delim = ",") {
+            if (!collection.Any()) return "";
+            string[] array = collection.Select(item => item.ToString()).ToArray();
+            return string.Join(delim, array);
+        }
+        
         public static T Dequeue<T>(this List<T> list) {
             T t = list.First();
             list.RemoveAt(0);

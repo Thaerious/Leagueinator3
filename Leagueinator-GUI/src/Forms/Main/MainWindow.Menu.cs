@@ -1,20 +1,11 @@
 ﻿using Leagueinator.GUI.Controllers.NamedEvents;
-using Leagueinator.GUI.Forms.Print;
-using Leagueinator.GUI.src.Controllers;
-using Microsoft.Win32;
-using System.Diagnostics;
 using System.Reflection;
 using System.Windows;
-using System.Windows.Controls;
 
 namespace Leagueinator.GUI.Forms.Main {
 
     [System.Runtime.Versioning.SupportedOSPlatform("windows")] // get rid of CA1416 warning
     public partial class MainWindow : Window {
-
-        public void HndMenuClick(object sender, RoutedEventArgs e) {
-            this.ClearFocus();
-        }
 
         public void HndSettings(object sender, RoutedEventArgs e) {
             this.ClearFocus();
@@ -80,16 +71,6 @@ namespace Leagueinator.GUI.Forms.Main {
             this.NamedEventDisp.Dispatch(EventName.ShowData);
         }
 
-        private void HndShowRoundResultsClick(object sender, RoutedEventArgs e) {
-            this.ClearFocus();
-            this.NamedEventDisp.Dispatch(EventName.DisplayRoundResults);
-        }
-
-        private void HndShowEventResultsClick(object sender, RoutedEventArgs e) {
-            this.ClearFocus();
-            this.NamedEventDisp.Dispatch(EventName.DisplayEventResults);
-        }
-
         private void HndViewTeamResults(object sender, RoutedEventArgs e) {
             this.ClearFocus();
             this.NamedEventDisp.Dispatch(EventName.PrintTeams);
@@ -102,7 +83,7 @@ namespace Leagueinator.GUI.Forms.Main {
 
         private void HndAssignLanes(object sender, RoutedEventArgs args) {
             this.ClearFocus();
-            this.NamedEventDisp.Dispatch(EventName.EventManager);
+            this.NamedEventDisp.Dispatch(EventName.AssignLanes);
         }
 
         private void HndViewPlayerResults(object sender, RoutedEventArgs e) {

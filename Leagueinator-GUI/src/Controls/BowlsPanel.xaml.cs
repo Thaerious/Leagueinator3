@@ -10,15 +10,11 @@ namespace Leagueinator.GUI.Controls {
         public BowlsPanel() {
             InitializeComponent();
             this.Loaded += (s, e) => {
-                this.CheckTie.Checked += this.MatchCard.HndTieValueChanged;
-                this.CheckTie.Unchecked += this.MatchCard.HndTieValueChanged;
+                this.CheckTie.Checked       += this.MatchCard.HndTieValueChanged;
+                this.CheckTie.Unchecked     += this.MatchCard.HndTieValueChanged;
                 this.Bowls.PreviewTextInput += InputHandlers.OnlyNumbers;
-                this.Bowls.KeyDown += InputHandlers.TxtNextOnEnter;
+                this.Bowls.KeyDown          += InputHandlers.NextControlOnEnter;
             };
-        }
-
-        public void SetBowls(int value) {
-            this.Bowls.Text = value.ToString();
         }
 
         public MatchCard MatchCard => this.Ancestors<MatchCard>().First();

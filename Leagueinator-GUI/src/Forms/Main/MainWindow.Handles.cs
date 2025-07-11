@@ -6,6 +6,11 @@ using System.Windows.Controls;
 namespace Leagueinator.GUI.Forms.Main {
     public partial class MainWindow : Window {
 
+        public event RoutedEventHandler OnDragEnd {
+            add => AddHandler(DragDropController.RegisteredDragEndEvent, value);
+            remove => RemoveHandler(DragDropController.RegisteredDragEndEvent, value);
+        }
+
         /// <summary>
         /// Set a new select-round button.
         /// </summary>

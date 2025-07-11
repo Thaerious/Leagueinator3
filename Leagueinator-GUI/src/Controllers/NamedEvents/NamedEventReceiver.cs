@@ -1,5 +1,4 @@
 ﻿using Leagueinator.GUI.Utility;
-using System.Diagnostics;
 using System.Reflection;
 
 namespace Leagueinator.GUI.Controllers.NamedEvents {
@@ -49,7 +48,8 @@ namespace Leagueinator.GUI.Controllers.NamedEvents {
             }
 
             try {
-                Logger.Log($"Event '{args.EventName}' from '{sender?.GetType().Name}' handled by '{MethodSource.GetType().Name}'.");
+                string argstring = string.Join(", ", args.Data.Select(kv => $"{kv.Key}={kv.Value}"));
+                Logger.Log($"Event '{args.EventName}'({argstring}) from '{sender?.GetType().Name}' handled by '{MethodSource.GetType().Name}'.");
                 method.Invoke(MethodSource, [.. orderedArgs]);
                 args.Handled = true;
             }

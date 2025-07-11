@@ -13,7 +13,7 @@ namespace Leagueinator.GUI.Controls {
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        public static void TxtNextOnEnter(object sender, KeyEventArgs e) {
+        public static void NextControlOnEnter(object sender, KeyEventArgs e) {
             if (e.Key == Key.Enter) {
                 if (sender is TextBox textBox) {
                     // Move focus To the next control in the tab order
@@ -21,6 +21,18 @@ namespace Leagueinator.GUI.Controls {
                     textBox.MoveFocus(request);
                 }
             }
+        }
+
+        /// <summary>
+        /// Replaces empty textboxes with "0" and selects the text.
+        /// </summary>
+        public static bool PreventEmpty(this TextBox textBox) {
+            if (textBox.Text.Trim() == "") {
+                textBox.Text = "0";
+                textBox.SelectAll();
+                return true;
+            }
+            return false;
         }
     }
 }

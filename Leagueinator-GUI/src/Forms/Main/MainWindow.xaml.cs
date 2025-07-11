@@ -2,17 +2,17 @@
 using Leagueinator.GUI.Controls;
 using Leagueinator.GUI.Model;
 using Leagueinator.GUI.Utility.Extensions;
-using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
 using System.Windows.Threading;
 
 namespace Leagueinator.GUI.Forms.Main {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window {
+    public partial class MainWindow : Window, IHasNamedEventDispatcher {
 
         public NamedEventDispatcher NamedEventDisp { get; set; }
 
@@ -55,9 +55,7 @@ namespace Leagueinator.GUI.Forms.Main {
 
         public void PopulateMatchCards(RoundRecordList roundRecords) {
             this.Dispatcher.InvokeAsync(new Action(() => {
-                this.NamedEventDisp.PauseEvents();
                 this.DoPopulateMatchCards(roundRecords);
-                this.NamedEventDisp.ResumeEvents();
             }), DispatcherPriority.Background);
         }
 
@@ -72,36 +70,36 @@ namespace Leagueinator.GUI.Forms.Main {
 
             this.MatchCardStackPanel.Children.Clear();
 
-            foreach (var kvp in roundRecords.Matches) {
-                MatchRecord matchRecord = kvp.Value;
-
-                int Lane = kvp.Key;
+            foreach (MatchRecord matchRecord in roundRecords.Matches) {
                 var matchCard = MatchCardFactory.GenerateMatchCard(matchRecord.MatchFormat);
 
-                this.MatchCardStackPanel.Children.Insert(Lane, matchCard);
+                this.MatchCardStackPanel.Children.Add(matchCard);
                 cardsToLoad++;
 
                 // Assign tab order & set data when loaded
                 matchCard.Loaded += (s, e) => {
-                    matchCard.Lane = Lane;
+                    this.NamedEventDisp.PauseEvents();
+                    matchCard.Lane = matchRecord.Lane;
                     matchCard.SetEnds(matchRecord.Ends);
                     matchCard.SetTieBreaker(matchRecord.TieBreaker);
+                    matchCard.SetBowls(matchRecord.Score);
                     cardsLoaded++;
 
                     if (cardsLoaded == cardsToLoad) {
                         this.AssignTabOrder();
-                        this.SetPlayerData(roundRecords);
+                        this.SetPlayerNames(roundRecords);
+                        this.NamedEventDisp.ResumeEvents();
                     }
                 };
             }
         }
 
-        private void SetPlayerData(RoundRecordList roundRecords) {
+        private void SetPlayerNames(RoundRecordList roundRecords) {
             for (int i = 0; i < roundRecords.Players.Count; i++) {
-                RoundRecord rr = roundRecords.Players[i];
-                MatchCard matchCard = (MatchCard)this.MatchCardStackPanel.Children[rr.Lane];
-                TeamCard teamCard = matchCard.GetTeamCard(rr.Team) ?? throw new KeyNotFoundException();
-                teamCard[rr.Pos] = rr.Name;
+                RoundRecord roundRecord = roundRecords.Players[i];
+                MatchCard matchCard = (MatchCard)this.MatchCardStackPanel.Children[roundRecord.Lane];
+                TeamCard teamCard = matchCard.GetTeamCard(roundRecord.Team);
+                teamCard[roundRecord.Pos] = roundRecord.Name;
             }
         }
 
@@ -124,6 +122,15 @@ namespace Leagueinator.GUI.Forms.Main {
 
         public void RemoveMatch(int index) {
             this.MatchCardStackPanel.Children.RemoveAt(index);
+        }
+
+        internal void HighLightRound(int index) {
+            foreach (Button button in this.RoundButtonStackPanel.Children) {
+                button.Background = Brushes.LightGray;
+            }
+
+            Button selected = (Button)this.RoundButtonStackPanel.Children[index];
+            selected.Background = Brushes.Green;
         }
     }
 }

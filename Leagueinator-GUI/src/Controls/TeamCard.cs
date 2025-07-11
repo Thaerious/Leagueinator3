@@ -2,7 +2,6 @@
 using Leagueinator.GUI.Controllers.NamedEvents;
 using Leagueinator.GUI.Forms.Main;
 using Leagueinator.GUI.Utility.Extensions;
-using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -19,9 +18,6 @@ namespace Leagueinator.GUI.Controls {
         #region Properties
 
         public MatchCard MatchCard => this.Ancestors<MatchCard>().First();
-
-        public BowlsPanel BowlsPanel => this.GetDescendantsOfType<BowlsPanel>().First();
-
 
         private static readonly DependencyProperty TeamIndexProperty =
             DependencyProperty.Register(nameof(TeamIndex), typeof(int), typeof(TeamCard));
@@ -51,37 +47,35 @@ namespace Leagueinator.GUI.Controls {
 
             this.PreviewMouseDown += this.HndRequestFocus;
             this.PreviewMouseDown += controller.HndPreMouseDown;
-            this.DragEnter += controller.HndDragEnter;
-            this.Drop += controller.HndDrop;
+            this.DragEnter        += controller.HndDragEnter;
+            this.Drop             += controller.HndDrop;
 
             foreach (TextBox textBox in this.FindByTag("PlayerName").Cast<TextBox>()) {
-                textBox.KeyUp += this.NameTextBoxChange;
-                textBox.LostKeyboardFocus += this.NameTextBoxLoseFocus;
+                textBox.KeyUp             += this.NameTextBoxChange;
+                textBox.LostKeyboardFocus += this.DispatchChangeName;
+                textBox.DragEnter         += controller.HndDragEnter;
+                textBox.PreviewDragOver   += controller.HndPreviewDragOver;
                 textBox.AllowDrop = true;
-                textBox.DragEnter += controller.HndDragEnter;
-                textBox.PreviewDragOver += controller.HndPreviewDragOver;
             }
         }
 
         private void HndRequestFocus(object sender, MouseButtonEventArgs e) {
             this.DispatchNamedEvent(EventName.RequestFocus, new() {
-                ["lane"] = this.MatchCard.Lane,
+                ["lane"]      = this.MatchCard.Lane,
                 ["teamIndex"] = this.TeamIndex,
-                ["append"] = Keyboard.Modifiers.HasFlag(ModifierKeys.Shift)
+                ["append"]    = Keyboard.Modifiers.HasFlag(ModifierKeys.Shift)
             });
         }
 
-        protected void NameTextBoxLoseFocus(object sender, RoutedEventArgs e) {
+        protected void DispatchChangeName(object sender, RoutedEventArgs e) {
             if (sender is not TextBox textBox) return;
             var parent = (StackPanel)textBox.Parent ?? throw new NullReferenceException("Parent is not a StackPanel.");
-            int teamIndex = textBox.Ancestors<TeamCard>().First().TeamIndex;
-            int position = parent.Children.IndexOf(textBox);
 
             this.DispatchNamedEvent(EventName.ChangePlayerName, new() {
-                ["lane"] = this.MatchCard.Lane,
-                ["name"] = textBox.Text,
-                ["teamIndex"] = teamIndex,
-                ["position"] = position
+                ["lane"]      = this.MatchCard.Lane,
+                ["name"]      = textBox.Text,
+                ["teamIndex"] = textBox.Ancestors<TeamCard>().First().TeamIndex,
+                ["position"]  = parent.Children.IndexOf(textBox)
             });
         }
 
@@ -90,7 +84,7 @@ namespace Leagueinator.GUI.Controls {
 
             if (e is KeyEventArgs keyArgs) {
                 if (keyArgs.Key == Key.Enter) {
-                    this.NameTextBoxLoseFocus(sender, e);
+                    this.DispatchChangeName(sender, e);
                     TraversalRequest request = new TraversalRequest(FocusNavigationDirection.Next);
                     textBox.MoveFocus(request);
                 }

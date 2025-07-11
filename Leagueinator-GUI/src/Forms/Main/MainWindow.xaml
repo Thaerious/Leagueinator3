@@ -7,19 +7,16 @@
         x:Class="Leagueinator.GUI.Forms.Main.MainWindow"
         mc:Ignorable="d"
         Title="MainWindow" Height="800" Width="1000" MinWidth="800"
-        KeyDown="HndKeyDownRenamePlayer"
     >
 
     <Window.CommandBindings>
         <CommandBinding Command="Save" Executed="HndSaveLeagueClick"/>
         <CommandBinding Command="SaveAs" Executed="HndSaveAsLeagueClick"/>
-        <CommandBinding Command="{x:Static local:CustomCommands.Swap}" Executed="HndSwap"/>
     </Window.CommandBindings>
 
     <Window.InputBindings>
         <KeyBinding Key="S" Modifiers="Control" Command="Save"/>
         <KeyBinding Key="S" Modifiers="Control+Shift" Command="SaveAs"/>
-        <KeyBinding Key="X" Modifiers="Control" Command="{x:Static local:CustomCommands.Swap}"/>
     </Window.InputBindings>
 
     <Grid>
@@ -51,7 +48,7 @@
                 <MenuItem Header="Add Round" Click="HndGenEmptyRound"/>
                 <MenuItem Header="Copy Round" Click="HndCopyRnd"/>
                 <MenuItem Header="Delete Round" Click="HndDeleteRnd"/>
-                <MenuItem Header="Swap" Command="{x:Static local:CustomCommands.Swap}" InputGestureText="Ctrl+X"/>
+                <MenuItem Header="Swap" Click="HndSwap"/>
             </MenuItem>
 
             <!-- Action Menu -->
@@ -66,7 +63,7 @@
             <!-- Result (Report) Menu -->
             <MenuItem Header="View">
                 <MenuItem Header="Results By Team" Click="HndViewTeamResults"/>
-                <MenuItem IsEnabled="False" Header="Results By Player" Click="HndViewPlayerResults"/>
+                <!--MenuItem IsEnabled="False" Header="Results By Player" Click="HndViewPlayerResults"/-->
                 <MenuItem Header="Show Data" Click="HndShowDataClick"/>
             </MenuItem>
 

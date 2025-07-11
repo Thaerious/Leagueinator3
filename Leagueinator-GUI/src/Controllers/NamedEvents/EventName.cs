@@ -14,7 +14,6 @@
         CopyRound,
         CreateEvent,
         DeleteEvent,
-        DeleteMatch,
         DisplayEventResults,
         DisplayRoundResults,
         EndsUpdated,
@@ -46,5 +45,11 @@
         Update,
         UpdateRoundCount,
         NameUpdated,
+        EventChanged,
+        ChangeEventArg,
+        EventRecordChanged,
+        Notification,
+        EventDeleted,
+        ChangeEventType,
     }
 }

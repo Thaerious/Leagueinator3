@@ -9,6 +9,31 @@
         Height="450" Width="800"
         MinWidth="600" MinHeight="300"
         >
+
+    <Window.Resources>
+        <Style TargetType="DataGridRow">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="Foreground" Value="Black"/>
+            <Style.Triggers>
+                <Trigger Property="IsSelected" Value="True">
+                    <Setter Property="Background" Value="LightGreen"/>
+                    <Setter Property="Foreground" Value="Black"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        <Style TargetType="DataGridCell">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="Black"/>
+            <Style.Triggers>
+                <Trigger Property="IsSelected" Value="True">
+                    <Setter Property="Background" Value="Transparent"/>
+                    <!-- Let the row shine through -->
+                    <Setter Property="Foreground" Value="Black"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
@@ -31,36 +56,30 @@
 
                         <StackPanel Margin="5" Orientation="Horizontal">
                             <Label Grid.Column="0" Grid.Row="0" Content="Name" VerticalAlignment="Center" Margin="0" Width="100"/>
-                            <TextBox x:Name="TxtName" Grid.Column="1" Grid.Row="0" VerticalAlignment="Center" Margin="0" Width="125"/>
+                            <TextBox x:Name="TxtName" TextChanged="TxtChanged" Grid.Column="1" Grid.Row="0" VerticalAlignment="Center" Margin="0" Width="125"/>
                         </StackPanel>
 
                         <StackPanel Margin="5" Orientation="Horizontal">
                             <Label Grid.Column="0" Grid.Row="0" Content="Available Lanes" VerticalAlignment="Center" Margin="0" Width="100"/>
-                            <TextBox x:Name="TxtLanes" Grid.Column="1" Grid.Row="0" VerticalAlignment="Center" Margin="0" Width="125"/>
+                            <TextBox x:Name="TxtLanes" TextChanged="TxtChanged" Text="8"
+                                     Grid.Column="1" Grid.Row="0" VerticalAlignment="Center" Margin="0" Width="125"/>
                         </StackPanel>
 
                         <StackPanel Margin="5" Orientation="Horizontal">
                             <Label Grid.Column="0" Grid.Row="1" Content="Default Ends" VerticalAlignment="Center" Margin="0" Width="100"/>
-                            <TextBox x:Name="TxtEnds" Grid.Column="1" Grid.Row="1" VerticalAlignment="Center" Margin="0" Width="125"/>
+                            <TextBox x:Name="TxtEnds" TextChanged="TxtChanged" Text="10"
+                                     Grid.Column="1" Grid.Row="1" VerticalAlignment="Center" Margin="0" Width="125"/>
                         </StackPanel>
 
                         <StackPanel Margin="5" Orientation="Horizontal">
                             <Label Grid.Column="0" Grid.Row="1" Content="Event Type" VerticalAlignment="Center" Margin="0" Width="100"/>
-                            <ComboBox x:Name="ListEventType" SelectedIndex="0" Width="125">
-                                <ComboBoxItem>Ranked Ladder</ComboBoxItem>
-                                <ComboBoxItem>Round Robin</ComboBoxItem>
-                                <ComboBoxItem>Motley</ComboBoxItem>
+                            <ComboBox x:Name="ListEventType" SelectionChanged="EventTypeChanged" SelectedIndex="0" Width="125">
                             </ComboBox>
                         </StackPanel>
 
                         <StackPanel Margin="5" Orientation="Horizontal">
                             <Label Grid.Column="0" Grid.Row="1" Content="Match Format" VerticalAlignment="Center" Margin="0" Width="100"/>
-                            <ComboBox x:Name="ListMatchFormat" SelectedIndex="1" Width="125">
-                                <ComboBoxItem >1 vs 1</ComboBoxItem>
-                                <ComboBoxItem>2 vs 2</ComboBoxItem>
-                                <ComboBoxItem>3 vs 3</ComboBoxItem>
-                                <ComboBoxItem>4 vs 4</ComboBoxItem>
-                                <ComboBoxItem>4321</ComboBoxItem>
+                            <ComboBox x:Name="ListMatchFormat" SelectionChanged="MatchFormatChanged" SelectedIndex="1" Width="125">
                             </ComboBox>
                         </StackPanel>
                     </StackPanel>
@@ -75,11 +94,12 @@
                               GridLinesVisibility="None" AutoGenerateColumns="False" 
                               SelectionMode="Single" SelectionUnit="FullRow"
                               SelectionChanged="SelectionChanged"
-                              CurrentCellChanged="CellChanged">
+                              IsReadOnly="True"
+                              FocusVisualStyle="{x:Null}">
                         <DataGrid.Columns>
                             <DataGridTextColumn Width="150" Header="Name" Binding="{Binding Name}" />
-                            <DataGridTextColumn Width="150" Header="Date Created" Binding="{Binding Date}" IsReadOnly="True" />
-                            <DataGridTextColumn Width="75" Header="# Rounds" Binding="{Binding Rounds}" IsReadOnly="True" />
+                            <DataGridTextColumn Width="150" Header="Date Created" Binding="{Binding Created}" IsReadOnly="True" />
+                            <DataGridTextColumn Width="75" Header="# Rounds" Binding="{Binding RoundCount}" IsReadOnly="True" />
                         </DataGrid.Columns>
                     </DataGrid>
                 </Border>
@@ -101,8 +121,7 @@
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,5,0,0">
                     <Button x:Name="ButNew"    Click="HndNew"    Width="75" Content="New" Margin="0 0 5 0"/>
                     <Button x:Name="ButDelete" Click="HndDelete" Width="75" Content="Delete" Margin="0 0 5 0" IsEnabled="False"/>
-                    <Button x:Name="ButSelect" Click="HndSelect" Width="75" Content="Select" Margin="0 0 5 0" IsEnabled="False"/>
-                    <Button x:Name="ButExit"   Click="HndExit"   Width="75" Content="Exit"/>
+                    <Button x:Name="ButExit"   Click="HndExit"   Width="75" Content="Close"/>
                 </StackPanel>
             </StackPanel>
         </Border>

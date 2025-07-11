@@ -9,10 +9,6 @@ namespace Leagueinator.GUI.Model {
         
         public RoundData() : base() {}
 
-        public RoundData(EventData eventData){
-            this.Fill(eventData);
-        }
-
         public void Fill(EventData eventData) {
             for (int i = 0; i < eventData.LaneCount; i++) {
                 if (!this.Any(m => m.Lane == i)) {
@@ -90,7 +86,7 @@ namespace Leagueinator.GUI.Model {
             return new(-1, -1, -1);
         }
 
-        internal void AssignPlayersRandomly() {
+        internal void AssignPlayersRandomly() { // TODO Make this a seperate algorithm
             var dict = new Dictionary<(int, int, int), string>();
 
             // Populate the dictionary with player Names and their positions

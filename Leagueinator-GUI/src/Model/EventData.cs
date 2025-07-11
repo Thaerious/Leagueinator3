@@ -1,6 +1,5 @@
 ﻿using Leagueinator.GUI.Controllers.Algorithms;
 using System.Collections;
-using System.Diagnostics.Eventing.Reader;
 
 namespace Leagueinator.GUI.Model {
 
@@ -48,6 +47,10 @@ namespace Leagueinator.GUI.Model {
             }
 
             return copy;
+        }
+
+        public void SetRound(int index, RoundData roundData) {
+            this.Rounds[index] = roundData;
         }
 
         public RoundData AddRound(bool fill = true) {

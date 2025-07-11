@@ -3,24 +3,6 @@ using System.Collections;
 using System.Text.Json.Serialization;
 
 namespace Leagueinator.GUI.Model {
-
-    public class ReadOnlyTeamData {       
-
-        public ReadOnlyTeamData(TeamData teamData) {
-            this.TeamData = teamData.Copy();
-            this.Names = (string[])teamData.Names.Clone();
-        }
-
-        private readonly TeamData TeamData;
-
-        public string[] Names { get; }
-
-        public int IndexOf(string name) {
-            return Array.IndexOf(this.Names, name);
-        }
-    }
-
-
     public class TeamData : IEquatable<TeamData> {
 
         public string[] Names { get; }
@@ -37,10 +19,6 @@ namespace Leagueinator.GUI.Model {
 
         public TeamData Copy() {
             return new TeamData(this.Names);
-        }
-
-        public void Clear() {
-            Array.Fill(this.Names, string.Empty);
         }
 
         public string this[int index] {
@@ -60,13 +38,6 @@ namespace Leagueinator.GUI.Model {
 
         public int IndexOf(string name) {
             return Array.IndexOf(this.Names, name);
-        }
-
-        public void Add(string name, int position) {
-            if (position < 0 || position >= this.Names.Length) {
-                throw new ArgumentOutOfRangeException(nameof(position), "Position is out of range.");
-            }
-            this.Names[position] = name;
         }
 
         public void Remove(string name) {
@@ -93,6 +64,7 @@ namespace Leagueinator.GUI.Model {
             }
             return true;
         }
+
         public override int GetHashCode() {
             int hash = 17;
             foreach (var s in this.Names)
@@ -137,10 +109,6 @@ namespace Leagueinator.GUI.Model {
 
         internal void CopyFrom(TeamData teamData) {
             teamData.Names.CopyTo(this.Names, 0);
-        }
-
-        public ReadOnlyTeamData AsReadOnly() {
-            return new(this);
         }
     }
 }
