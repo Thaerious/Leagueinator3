@@ -98,7 +98,7 @@ namespace Leagueinator.GUI.Forms.Main {
             for (int i = 0; i < roundRecords.Players.Count; i++) {
                 RoundRecord roundRecord = roundRecords.Players[i];
                 MatchCard matchCard = (MatchCard)this.MatchCardStackPanel.Children[roundRecord.Lane];
-                TeamCard teamCard = matchCard.GetTeamCard(roundRecord.Team) ?? throw new KeyNotFoundException();
+                TeamCard teamCard = matchCard.GetTeamCard(roundRecord.Team);
                 teamCard[roundRecord.Pos] = roundRecord.Name;
             }
         }

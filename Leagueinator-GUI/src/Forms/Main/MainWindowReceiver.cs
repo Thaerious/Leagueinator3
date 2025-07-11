@@ -86,16 +86,16 @@ namespace Leagueinator.GUI.Forms.Main {
         }
 
         [NamedEventHandler(EventName.TieBreakerUpdated)]
-        internal void DoTieBreakerUpdated(int lane, int tieBreaker) {
+        internal void DoTieBreakerUpdated(int lane, int teamIndex) {
             MatchCard matchCard = this.MainWindow.GetMatchCard(lane);
-            matchCard.SetTieBreaker(tieBreaker);
+            matchCard.SetTieBreaker(teamIndex);
         }
 
 
         [NamedEventHandler(EventName.NameUpdated)]
         internal void DoTieBreakerUpdated(int lane, int teamIndex, int position, string name) {
             MatchCard matchCard = this.MainWindow.GetMatchCard(lane);
-            TeamCard teamCard = matchCard.GetTeamCard(teamIndex) ?? throw new KeyNotFoundException();
+            TeamCard teamCard = matchCard.GetTeamCard(teamIndex);
             teamCard[position] = name;
         }
 

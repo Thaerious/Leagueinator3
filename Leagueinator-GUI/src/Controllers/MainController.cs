@@ -368,12 +368,12 @@ namespace Leagueinator.GUI.Controllers {
         }
 
         [NamedEventHandler(EventName.ChangeTieBreaker)]
-        internal void DoTieBreaker(int lane, int tieBreaker) {
-            this.RoundData[lane].TieBreaker = tieBreaker;
+        internal void DoTieBreaker(int lane, int teamIndex) {
+            this.RoundData[lane].TieBreaker = teamIndex;
             this.InvokeSetTitle(this.FileName, false);
             this.NamedEventDisp.Dispatch(EventName.TieBreakerUpdated, new() {
                 ["lane"] = lane,
-                ["tieBreaker"] = tieBreaker,
+                ["teamIndex"] = teamIndex,
             });
         }
 

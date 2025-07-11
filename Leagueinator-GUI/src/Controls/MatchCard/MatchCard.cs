@@ -2,55 +2,71 @@
 using Leagueinator.GUI.Forms.Main;
 using Leagueinator.GUI.Model;
 using Leagueinator.GUI.Utility.Extensions;
-using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 
 namespace Leagueinator.GUI.Controls {
 
+    /// <summary>
+    /// Abstract base class for a user control that represents a match card UI element.
+    /// Handles match-related UI and dispatches named events for interactions.
+    /// </summary>
     public abstract partial class MatchCard : UserControl {
+        /// <summary>
+        /// Gets the format of the match, to be defined by subclasses.
+        /// </summary>
         public abstract MatchFormat MatchFormat { get; }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MatchCard"/> class.
+        /// Sets up event handlers for text boxes and match UI elements.
+        /// </summary>
         public MatchCard() {
-            this.MouseDown += this.MatchCard_MouseDown;
-            this.Loaded += MatchCard_Loaded;
+            this.Loaded += (s, e) => {
+                InfoCard infoCard = this.GetDescendantsOfType<InfoCard>().FirstOrDefault()
+                                  ?? throw new NullReferenceException("InfoCard not found on MatchCard.");
+
+                infoCard.TxtEnds.TextChanged += this.EndsTextChanged;
+                infoCard.TxtEnds.PreviewMouseLeftButtonDown += this.PreventCaretBehaviour;
+                infoCard.TxtEnds.GotKeyboardFocus += this.TextBoxSelectAll;
+
+                foreach (TextBox textBox in this.FindByTag("Bowls").Cast<TextBox>()) {
+                    textBox.TextChanged += this.BowlsTextChanged;
+                    textBox.PreviewMouseLeftButtonDown += this.PreventCaretBehaviour;
+                    textBox.GotKeyboardFocus += this.TextBoxSelectAll;
+                }
+            };
         }
 
+        /// <summary>
+        /// Prevents caret jumping when clicking a non-focused textbox.
+        /// </summary>
+        private void PreventCaretBehaviour(object sender, MouseButtonEventArgs e) {
+            if (sender is TextBox textBox && !textBox.IsKeyboardFocusWithin) {
+                e.Handled = true;
+                textBox.Focus();
+            }
+        }
+
+        /// <summary>
+        /// Updates the tie breaker selection by checking one checkbox and unchecking the other.
+        /// </summary>
+        /// <param name="teamIndex">The team index to set as tie breaker.</param>
         internal void SetTieBreaker(int teamIndex) {
             foreach (CheckBox cb in this.FindByTag("CheckTie").Cast<CheckBox>()) {
                 var teamIndexForCB = cb.Ancestors<TeamCard>().FirstOrDefault()?.TeamIndex;
-                if (teamIndexForCB == teamIndex) {
-                    cb.IsChecked = true;
-                }
-                else {
-                    cb.IsChecked = false;
-                }
+                cb.IsChecked = teamIndexForCB == teamIndex;
             }
         }
 
-        private void MatchCard_Loaded(object sender, RoutedEventArgs e) {
-            InfoCard infoCard = this.GetDescendantsOfType<InfoCard>().FirstOrDefault() ?? throw new NullReferenceException("InfoCard not found in MatchCard.");
-
-            infoCard.TxtEnds.TextChanged += this.EndsTextChanged;
-            infoCard.TxtEnds.PreviewMouseLeftButtonDown += this.TextBoxPreventDefaultCaretBehaviour;
-            infoCard.TxtEnds.GotKeyboardFocus += this.TextBoxSelectAllOnFocus;
-
-            foreach (TextBox textBox in this.FindByTag("Bowls").Cast<TextBox>()) {
-                textBox.TextChanged += this.BowlsTextChanged;
-                textBox.PreviewMouseLeftButtonDown += this.TextBoxPreventDefaultCaretBehaviour;
-                textBox.GotKeyboardFocus += this.TextBoxSelectAllOnFocus;
-            }
-        }
-
+        /// <summary>
+        /// Handles changes to the "Ends" textbox.
+        /// Dispatches a named event with the new ends value.
+        /// </summary>
         private void EndsTextChanged(object sender, TextChangedEventArgs e) {
             if (sender is not TextBox textBox) return;
-
-            if (textBox.Text.Trim() == "") {
-                textBox.Text = "0";
-                textBox.SelectAll(); 
-                return;
-            }
+            if (PreventEmptyTextBox(textBox)) return;
 
             this.DispatchNamedEvent(EventName.ChangeEnds, new() {
                 ["lane"] = this.Lane,
@@ -58,39 +74,46 @@ namespace Leagueinator.GUI.Controls {
             });
         }
 
+        /// <summary>
+        /// Handles changes to the bowls score textboxes.
+        /// Dispatches a named event with the updated score.
+        /// </summary>
         private void BowlsTextChanged(object sender, TextChangedEventArgs e) {
             if (sender is not TextBox textBox) return;
-
-            if (textBox.Text.Trim() == "") {
-                textBox.Text = "0"; 
-                textBox.SelectAll(); 
-                return;
-            }
+            if (PreventEmptyTextBox(textBox)) return;
 
             this.DispatchNamedEvent(EventName.ChangeBowls, new() {
-                ["lane"]      = this.Lane,
-                ["bowls"]     = int.Parse(textBox.Text),
+                ["lane"] = this.Lane,
+                ["bowls"] = int.Parse(textBox.Text),
                 ["teamIndex"] = textBox.Ancestors<TeamCard>().First().TeamIndex
             });
         }
 
-        private void TextBoxPreventDefaultCaretBehaviour(object sender, MouseButtonEventArgs e) {
-            if (sender is TextBox textBox && !textBox.IsKeyboardFocusWithin) {
-                e.Handled = true; // Prevents default focus/caret behavior
-                textBox.Focus();  // Triggers GotKeyboardFocus
-            }
-        }
-
-        private void TextBoxSelectAllOnFocus(object sender, KeyboardFocusChangedEventArgs e) {
+        /// <summary>
+        /// Selects all text in a textbox when it receives keyboard focus.
+        /// </summary>
+        private void TextBoxSelectAll(object sender, KeyboardFocusChangedEventArgs e) {
             (sender as TextBox)?.SelectAll();
         }
 
+        /// <summary>
+        /// Sets the ends value in the UI.
+        /// </summary>
+        /// <param name="ends">The number of ends to display.</param>
         public void SetEnds(int ends) {
             var infoCard = this.GetDescendantsOfType<InfoCard>().First();
             infoCard.TxtEnds.Text = ends.ToString();
         }
 
+        /// <summary>
+        /// Sets the bowls scores for the teams.
+        /// </summary>
+        /// <param name="bowlsScored">An array of scores to apply to the textbox fields.</param>
+        /// <exception cref="ArgumentNullException">Thrown if input array is null.</exception>
+        /// <exception cref="Exception">Thrown if array length does not match number of UI fields.</exception>
         public void SetBowls(int[] bowlsScored) {
+            if (bowlsScored is null) throw new ArgumentNullException(nameof(bowlsScored));
+
             int i = 0;
             TextBox[] bowlsTextBoxes = this.FindByTag("Bowls").Cast<TextBox>().ToArray();
             if (bowlsTextBoxes.Length != bowlsScored.Length) throw new Exception("Array length mismatch between score and textboxes.");
@@ -100,53 +123,54 @@ namespace Leagueinator.GUI.Controls {
             }
         }
 
+        /// <summary>
+        /// Gets or sets the lane value from the InfoCard.
+        /// </summary>
         public int Lane {
             get {
                 var infoCard = this.GetDescendantsOfType<InfoCard>().FirstOrDefault();
                 return infoCard?.Lane ?? throw new NullReferenceException("InfoCard not found.");
             }
             set {
-                var infoCard = this.GetDescendantsOfType<InfoCard>().FirstOrDefault() 
+                var infoCard = this.GetDescendantsOfType<InfoCard>().FirstOrDefault()
                             ?? throw new NullReferenceException("InfoCard not found.");
                 infoCard.Lane = value;
             }
         }
 
-        private void MatchCard_MouseDown(object sender, MouseButtonEventArgs e) {
-            var infoCard = this.GetDescendantsOfType<InfoCard>().First();
-            var textBlock = infoCard.GetDescendantsOfType<TextBlock>().Where(tb => tb.Name == "LblLane").First();
-        }
-
-        public TeamCard? GetTeamCard(int teamIndex) {
+        /// <summary>
+        /// Gets the <see cref="TeamCard"/> for a given team index.
+        /// </summary>
+        /// <param name="teamIndex">The team index.</param>
+        /// <returns>The matching <see cref="TeamCard"/>.</returns>
+        /// <exception cref="NullReferenceException">If the card is not found.</exception>
+        public TeamCard GetTeamCard(int teamIndex) {
             return this
                 .GetDescendantsOfType<TeamCard>()
                 .Where(teamCard => teamCard.TeamIndex == teamIndex)
-                .FirstOrDefault();
+                .FirstOrDefault()
+                ?? throw new NullReferenceException("TeamCard not found.");
         }
 
         /// <summary>
-        /// Context menu handler for remove match.
+        /// Handles the context menu action to remove a match.
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         public void HndRemoveMatch(object _, RoutedEventArgs __) {
-            Debug.WriteLine($"HndRemoveMatch({this.Lane})");
             this.DispatchNamedEvent(EventName.RemoveMatch, new() {
                 ["lane"] = this.Lane,
             });
         }
 
         /// <summary>
-        /// Context menu handler for changing the match format.
+        /// Handles the context menu action to change the match format.
+        /// Expects the sender to be a MenuItem with a string Tag representing a MatchFormat enum value.
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        /// <exception cref="NullReferenceException"></exception>
-        /// <exception cref="ArgumentException"></exception>
+        /// <exception cref="NullReferenceException">Thrown if tag is missing.</exception>
+        /// <exception cref="ArgumentException">Thrown if tag is invalid.</exception>
         public void HndChangeFormat(object sender, RoutedEventArgs __) {
             if (sender is not MenuItem menuItem) return;
 
-            if (menuItem.Tag is null) return;  // tag is null during initialization
+            if (menuItem.Tag is null) return;
             if (menuItem.Tag is not string customData) throw new NullReferenceException("Missing tag on context menu item");
 
             bool success = Enum.TryParse(customData, out MatchFormat matchFormat);
@@ -159,12 +183,9 @@ namespace Leagueinator.GUI.Controls {
         }
 
         /// <summary>
-        /// Invoked when a tie checkBox matchRow changes.
-        /// Will uncheck the other tie check box on this match card.
-        /// Updates the underlying TeamRow matchRow for tie.
+        /// Handles tie breaker checkbox changes.
+        /// Ensures only one checkbox is checked and dispatches an update event.
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         public void HndTieValueChanged(object sender, RoutedEventArgs _) {
             if (sender is not CheckBox checkBox) return;
 
@@ -176,16 +197,29 @@ namespace Leagueinator.GUI.Controls {
 
             if (checkBox.IsChecked == true) checkTie[otherIndex].IsChecked = false;
 
-            int newCheckedTeamIndex = checkTie.FindIndex(cb => cb.IsChecked == true);
-
             this.DispatchNamedEvent(EventName.ChangeTieBreaker, new() {
                 ["lane"] = this.Lane,
-                ["tieBreaker"] = newCheckedTeamIndex,
+                ["teamIndex"] = checkTie.FindIndex(cb => cb.IsChecked == true)
             });
         }
 
-        public void OnlyNumbers(object sender, TextCompositionEventArgs e) {
-            e.Handled = !e.Text.All(char.IsDigit);
+        ///// <summary>
+        ///// Filters out non-numeric input in TextBoxes.
+        ///// </summary>
+        //public void OnlyNumbers(object sender, TextCompositionEventArgs e) {
+        //    e.Handled = !e.Text.All(char.IsDigit);
+        //}
+
+        /// <summary>
+        /// Replaces empty textboxes with "0" and selects the text.
+        /// </summary>
+        private static bool PreventEmptyTextBox(TextBox textBox) {
+            if (textBox.Text.Trim() == "") {
+                textBox.Text = "0";
+                textBox.SelectAll();
+                return true;
+            }
+            return false;
         }
     }
 }
