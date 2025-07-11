@@ -1,8 +1,8 @@
 ﻿
 
 using Leagueinator.GUI.Utility.Extensions;
+using System.Diagnostics;
 using System.Diagnostics.Tracing;
-using System.Windows.Shapes;
 
 namespace Leagueinator.GUI.Model {
     public class LeagueData : List<EventData> {
@@ -24,19 +24,25 @@ namespace Leagueinator.GUI.Model {
                 UID = this.GetNextUID()
             };
             this.Add(eventData);
+            Debug.WriteLine($" * Add Event {eventData.UID}");
             return eventData;
         }
 
         public static LeagueData FromString(string s) {
             LeagueData leagueData = [];
-            List<string> lines = s.Split('\n').ToList();
-            AddEvents(lines, leagueData);
+            List<string> lines = [.. s.Split('\n')];
+
+            string line = lines.Dequeue();
+            var parts = s.Split('|');
+            if (parts.Length != 8) throw new FormatException("Invalid EventRecord string format");
+            int eventCount = int.Parse(parts[0]);
+            leagueData.NextUID = int.Parse(parts[1]);
+
+            AddEvents(eventCount, lines, leagueData);
             return leagueData;
         }
 
-        private static void AddEvents(List<string> lines, LeagueData leagueData) {
-            int eventCount = NextInt(lines);
-
+        private static void AddEvents(int eventCount, List<string> lines, LeagueData leagueData) {
             for (int i = 0; i < eventCount; i++) {
                 EventRecord eventRecord = EventRecord.FromString(lines.Dequeue());
                 EventData eventData = EventData.FromRecord(eventRecord);
@@ -72,7 +78,7 @@ namespace Leagueinator.GUI.Model {
         }
 
         public override string ToString() {
-            string sb = $"{this.Count}\n";
+            string sb = $"{this.Count}|{this.NextUID}\n";
             
             foreach (EventData @event in this) {
                 sb += EventData.ToRecord(@event).ToString() + "\n";
@@ -93,6 +99,13 @@ namespace Leagueinator.GUI.Model {
             }
 
             return sb;
+        }
+
+        internal void RemoveEventByUID(int eventUID) {
+            EventData? eventData = this.Where(e => e.UID == eventUID).FirstOrDefault()
+                                ?? throw new KeyNotFoundException();
+
+            this.Remove(eventData);
         }
     }
 }

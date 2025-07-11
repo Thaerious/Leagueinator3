@@ -9,7 +9,6 @@ using Leagueinator.GUI.Forms.Print;
 using Leagueinator.GUI.Model;
 using Leagueinator.GUI.Model.Results;
 using Microsoft.Win32;
-using System.Diagnostics;
 using System.IO;
 using System.Text.Json;
 using System.Windows;
@@ -110,6 +109,29 @@ namespace Leagueinator.GUI.Controllers {
             });
         }
 
+        [NamedEventHandler(EventName.DeleteEvent)]
+        internal void DoDeleteEvent(int eventUID) {
+            if (this.LeagueData.Count < 2) {
+                this.NamedEventDisp.Dispatch(EventName.Notification, new() {
+                    ["message"] = "Can not delete last event."
+                });
+                return;
+            }
+
+            this.LeagueData.RemoveEventByUID(eventUID);
+
+            this.NamedEventDisp.Dispatch(EventName.EventDeleted, new() {
+                ["uid"] = eventUID
+            });
+
+            this.EventData = this.LeagueData.Last();
+            this.CurrentRoundIndex = this.EventData.Count() - 1;
+
+            this.NamedEventDisp.Dispatch(EventName.EventChanged, new() {
+                ["eventRecord"] = EventData.ToRecord(this.EventData)
+            });
+        }
+
         [NamedEventHandler(EventName.EventManager)]
         internal void DoEventManager() {
             var form = new EventManagerForm();
@@ -127,6 +149,9 @@ namespace Leagueinator.GUI.Controllers {
 
             this.InvokeRoundUpdate();
             this.InvokeSetTitle(this.FileName, true);
+
+            form.NamedEventDisp -= this.NamedEventRcv;
+            this.NamedEventDisp -= form.NamedEventRcv;
         }
 
         [NamedEventHandler(EventName.LoadLeague)]

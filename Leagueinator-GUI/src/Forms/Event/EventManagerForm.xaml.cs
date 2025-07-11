@@ -1,11 +1,11 @@
 ﻿using Leagueinator.GUI.Controllers;
 using Leagueinator.GUI.Controllers.NamedEvents;
 using Leagueinator.GUI.Controls;
-using Leagueinator.GUI.Model;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
+using EventRecord = Leagueinator.GUI.Model.EventRecord;
 
 namespace Leagueinator.GUI.Forms.Event {
     /// <summary>
@@ -38,7 +38,7 @@ namespace Leagueinator.GUI.Forms.Event {
             foreach (var record in eventRecords) this.EventRecords.Add(record);
             this.DataContext = this;
             this.DoEventChanged(selected);
-            this.ShowDialog();           
+            this.ShowDialog();
         }
 
         private void HndNew(object sender, EventArgs e) {
@@ -61,10 +61,24 @@ namespace Leagueinator.GUI.Forms.Event {
             this.NamedEventDisp.ResumeEvents();
         }
 
+        [NamedEventHandler(EventName.EventDeleted)]
+        internal void DoEventDeleted(int uid) {
+            var index = EventRecords.ToList().FindIndex(r => r.UID == uid);
+            EventRecords.RemoveAt(index);
+        }
+
         [NamedEventHandler(EventName.EventRecordChanged)]
         internal void DoEventNameChanged(EventRecord eventRecord) {
             var index = EventRecords.ToList().FindIndex(r => r.UID == eventRecord.UID);
-            if (index >= 0) EventRecords[index] = eventRecord;
+            if (index < 0) return;
+
+            if (this.EventData.SelectedIndex == index) {
+                EventRecords[index] = eventRecord;
+                this.EventData.SelectedItem = eventRecord;
+            }
+            else {
+                EventRecords[index] = eventRecord;
+            }
         }
 
         private void HndDelete(object sender, EventArgs e) {
@@ -77,22 +91,12 @@ namespace Leagueinator.GUI.Forms.Event {
             this.Close();
         }
 
-        private void CellChanged(object sender, EventArgs e) {
-            Debug.WriteLine($"Cell Event '{EventData.SelectedItem}'");
-
-            //if (this.EventData.SelectedItem is EventItem item) {
-            //    this.SelectedEvent = (EventItem)EventData.SelectedItem;
-            //    this.ButDelete.IsEnabled = true;
-            //}
-        }
-
         private void SelectionChanged(object sender, SelectionChangedEventArgs e) {
-            if (this.EventData.SelectedItem is EventRecord record) {
-                this.ButDelete.IsEnabled = true;
-                this.NamedEventDisp.Dispatch(EventName.SelectEvent, new() {
-                    ["uid"] = record.UID,
-                });
-            }
+            if (this.EventData.SelectedItem is not EventRecord record) return;
+            this.ButDelete.IsEnabled = true;
+            this.NamedEventDisp.Dispatch(EventName.SelectEvent, new() {
+                ["uid"] = record.UID,
+            });
         }
 
         private void TxtChanged(object sender, TextChangedEventArgs args) {
@@ -109,10 +113,6 @@ namespace Leagueinator.GUI.Forms.Event {
         }
 
         private void MatchFormatChanged(object sender, SelectionChangedEventArgs e) {
-        }
-
-        private void ClickRename(object sender, RoutedEventArgs e) {
-
         }
     }
 }

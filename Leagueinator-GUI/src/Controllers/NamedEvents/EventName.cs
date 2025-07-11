@@ -48,5 +48,7 @@
         EventChanged,
         ChangeEventArg,
         EventRecordChanged,
+        Notification,
+        EventDeleted,
     }
 }

@@ -1,11 +1,6 @@
 ﻿using Leagueinator.GUI.Controllers.NamedEvents;
-using Leagueinator.GUI.Forms.Print;
-using Leagueinator.GUI.src.Controllers;
-using Microsoft.Win32;
-using System.Diagnostics;
 using System.Reflection;
 using System.Windows;
-using System.Windows.Controls;
 
 namespace Leagueinator.GUI.Forms.Main {
 

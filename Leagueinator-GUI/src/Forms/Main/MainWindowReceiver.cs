@@ -3,6 +3,7 @@ using Leagueinator.GUI.Controls;
 using Leagueinator.GUI.Model;
 using Leagueinator.GUI.Utility.Extensions;
 using System.Diagnostics;
+using System.Windows;
 
 namespace Leagueinator.GUI.Forms.Main {
     public class MainWindowReceiver : NamedEventReceiver {
@@ -98,6 +99,11 @@ namespace Leagueinator.GUI.Forms.Main {
             MatchCard matchCard = this.MainWindow.GetMatchCard(lane);
             TeamCard teamCard = matchCard.GetTeamCard(teamIndex) ?? throw new KeyNotFoundException();
             teamCard[position] = name;
+        }
+
+        [NamedEventHandler(EventName.Notification)]
+        internal void DoNotification(string message) {
+            MessageBox.Show(message, "Notification", MessageBoxButton.OK, MessageBoxImage.Information);
         }
     }
 }
