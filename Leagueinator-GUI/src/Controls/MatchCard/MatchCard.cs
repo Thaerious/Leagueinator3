@@ -10,9 +10,6 @@ using System.Windows.Input;
 namespace Leagueinator.GUI.Controls {
 
     public abstract partial class MatchCard : UserControl {
-        private int? _pendingLane = null;
-        private int? _pendingEnds = null; // TODO GET RID OF THIS
-        private int _lastCheckedTeamIndex = -1;
         public bool SuppressBowlsEvent = false;
 
         public abstract MatchFormat MatchFormat { get; }
@@ -37,33 +34,23 @@ namespace Leagueinator.GUI.Controls {
         private void MatchCard_Loaded(object sender, RoutedEventArgs e) {
             InfoCard infoCard = this.GetDescendantsOfType<InfoCard>().FirstOrDefault() ?? throw new NullReferenceException("InfoCard not found in MatchCard.");
 
-            if (_pendingLane.HasValue) {
-                infoCard.LblLane.Text = _pendingLane.Value.ToString();
-                _pendingLane = null;
-            }
-
-            if (_pendingEnds.HasValue) {
-                infoCard.TxtEnds.Text = _pendingEnds.Value.ToString();
-                _pendingEnds = null;
-            }
-
-            infoCard.TxtEnds.TextChanged += this.TextBoxInvokeEndsEvent;
+            infoCard.TxtEnds.TextChanged += this.EndsTextChanged;
             infoCard.TxtEnds.PreviewMouseLeftButtonDown += this.TextBoxPreventDefaultCaretBehaviour;
             infoCard.TxtEnds.GotKeyboardFocus += this.TextBoxSelectAllOnFocus;
 
             foreach (TextBox textBox in this.FindByTag("Bowls").Cast<TextBox>()) {
-                textBox.TextChanged += this.TextBoxChanged;
+                textBox.TextChanged += this.BowlsTextChanged;
                 textBox.PreviewMouseLeftButtonDown += this.TextBoxPreventDefaultCaretBehaviour;
                 textBox.GotKeyboardFocus += this.TextBoxSelectAllOnFocus;
             }
         }
 
-        private void TextBoxInvokeEndsEvent(object sender, TextChangedEventArgs e) {
+        private void EndsTextChanged(object sender, TextChangedEventArgs e) {
             if (sender is not TextBox textBox) return;
 
             if (textBox.Text.Trim() == "") {
-                textBox.Text = "0"; // Default to 0 if empty
-                textBox.SelectAll(); // Select all text for easy editing
+                textBox.Text = "0";
+                textBox.SelectAll(); 
                 return;
             }
 
@@ -73,22 +60,20 @@ namespace Leagueinator.GUI.Controls {
             });
         }
 
-        private void TextBoxChanged(object sender, TextChangedEventArgs e) {
-            if (this.SuppressBowlsEvent) return; // Prevents looping when setting ChangeBowls property
+        private void BowlsTextChanged(object sender, TextChangedEventArgs e) {
             if (sender is not TextBox textBox) return;
+            if (this.SuppressBowlsEvent) return; // Prevents looping when setting ChangeBowls property            
 
             if (textBox.Text.Trim() == "") {
-                textBox.Text = "0"; // Default to 0 if empty
-                textBox.SelectAll(); // Select all text for easy editing
+                textBox.Text = "0"; 
+                textBox.SelectAll(); 
                 return;
             }
 
-            int teamIndex = textBox.Ancestors<TeamCard>().First().TeamIndex;
-            var textBoxValue = int.Parse(textBox.Text);
             this.DispatchNamedEvent(EventName.ChangeBowls, new() {
-                ["lane"] = this.Lane,
-                ["bowls"] = textBoxValue,
-                ["teamIndex"] = teamIndex
+                ["lane"]      = this.Lane,
+                ["bowls"]     = int.Parse(textBox.Text),
+                ["teamIndex"] = textBox.Ancestors<TeamCard>().First().TeamIndex
             });
         }
 
@@ -121,11 +106,11 @@ namespace Leagueinator.GUI.Controls {
         public int Lane {
             get {
                 var infoCard = this.GetDescendantsOfType<InfoCard>().FirstOrDefault();
-                return infoCard?.Lane ?? this._pendingLane ?? -1;
+                return infoCard?.Lane ?? throw new NullReferenceException("InfoCard not found.");
             }
             set {
-                var infoCard = this.GetDescendantsOfType<InfoCard>().FirstOrDefault();
-                if (infoCard is null) throw new NullReferenceException("InfoCard not found.");
+                var infoCard = this.GetDescendantsOfType<InfoCard>().FirstOrDefault() 
+                            ?? throw new NullReferenceException("InfoCard not found.");
                 infoCard.Lane = value;
             }
         }
@@ -186,32 +171,16 @@ namespace Leagueinator.GUI.Controls {
         public void HndTieValueChanged(object sender, RoutedEventArgs _) {
             if (sender is not CheckBox checkBox) return;
 
-            List<CheckBox> checkTie = this.FindByTag("CheckTie")
-                                          .OfType<CheckBox>()
-                                          .ToList();
+            var checkTie = this.FindByTag("CheckTie").OfType<CheckBox>().ToList();
+            if (checkTie.Count != 2) return;
 
-            // Uncheck the opposite checkBox.
-            if (checkBox.IsChecked == true && checkBox == checkTie[0]) {
-                checkTie[1].IsChecked = false;
-            }
-            else if (checkBox.IsChecked == true && checkBox == checkTie[1]) {
-                checkTie[0].IsChecked = false;
-            }
+            int clickedIndex = checkTie.IndexOf(checkBox);
+            int otherIndex = 1 - clickedIndex;
 
-            int newCheckedTeamIndex = -1;
+            if (checkBox.IsChecked == true) checkTie[otherIndex].IsChecked = false;
 
-            if (checkTie[0].IsChecked == true && checkTie[1].IsChecked == false) {
-                newCheckedTeamIndex = 0;
-            }
-            else if (checkTie[0].IsChecked == false && checkTie[1].IsChecked == true) {
-                newCheckedTeamIndex = 1;
-            }
-            else {
-                newCheckedTeamIndex = -1;
-            }
+            int newCheckedTeamIndex = checkTie.FindIndex(cb => cb.IsChecked == true);
 
-            int lastCheckedTeamIndex = _lastCheckedTeamIndex;
-            this._lastCheckedTeamIndex = newCheckedTeamIndex;
             this.DispatchNamedEvent(EventName.ChangeTieBreaker, new() {
                 ["lane"] = this.Lane,
                 ["tieBreaker"] = newCheckedTeamIndex,
