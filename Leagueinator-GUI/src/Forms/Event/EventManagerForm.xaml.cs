@@ -1,13 +1,16 @@
 ﻿using Leagueinator.GUI.Controllers;
 using Leagueinator.GUI.Controllers.NamedEvents;
 using Leagueinator.GUI.Controls;
+using Leagueinator.GUI.Model;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using EventRecord = Leagueinator.GUI.Model.EventRecord;
 
 namespace Leagueinator.GUI.Forms.Event {
+
+    public record MatchFormatRecord(MatchFormat MatchFormat, string DisplayName) { }
+
     /// <summary>
     /// Interaction logic for EventManagerForm.xaml
     /// </summary>
@@ -27,11 +30,16 @@ namespace Leagueinator.GUI.Forms.Event {
             this.Loaded += (s, e) => {
                 this.TxtEnds.PreviewTextInput += InputHandlers.OnlyNumbers;
                 this.TxtLanes.PreviewTextInput += InputHandlers.OnlyNumbers;
-            };
-        }
 
-        private void EventManagerForm_Loaded(object sender, RoutedEventArgs e) {
-            throw new NotImplementedException();
+                this.ListMatchFormat.ItemsSource = new List<MatchFormatRecord> {
+                    new(MatchFormat.VS1, "1 vs 1"),
+                    new(MatchFormat.VS2, "2 vs 2"),
+                    new(MatchFormat.VS3, "3 vs 3"),
+                    new(MatchFormat.VS4, "4 vs 4"),
+                    new(MatchFormat.A4321, "4321"),
+                };
+                this.ListMatchFormat.DisplayMemberPath = "DisplayName";
+            };
         }
 
         public void ShowDialog(MainController mainController, List<EventRecord> eventRecords, EventRecord selected) {
@@ -100,19 +108,27 @@ namespace Leagueinator.GUI.Forms.Event {
         }
 
         private void TxtChanged(object sender, TextChangedEventArgs args) {
-            if (this.IsLoaded == false) return;
-
-            this.NamedEventDisp.Dispatch(EventName.ChangeEventArg, new() {
-                ["name"] = this.TxtName.Text,
-                ["laneCount"] = int.Parse(this.TxtLanes.Text),
-                ["ends"] = int.Parse(this.TxtEnds.Text),
-            });
+            this.InvokeChangeEventArg();
         }
 
         private void EventTypeChanged(object sender, SelectionChangedEventArgs e) {
         }
 
         private void MatchFormatChanged(object sender, SelectionChangedEventArgs e) {
+            this.InvokeChangeEventArg();
+        }
+
+        private void InvokeChangeEventArg() {
+            if (this.IsLoaded == false) return;
+
+            MatchFormatRecord mfr = (MatchFormatRecord)this.ListMatchFormat.SelectedItem;
+
+            this.NamedEventDisp.Dispatch(EventName.ChangeEventArg, new() {
+                ["name"] = this.TxtName.Text,
+                ["laneCount"] = int.Parse(this.TxtLanes.Text),
+                ["ends"] = int.Parse(this.TxtEnds.Text),
+                ["matchFormat"] = mfr.MatchFormat
+            });
         }
     }
 }

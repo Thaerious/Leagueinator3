@@ -2,7 +2,6 @@
 using Leagueinator.GUI.Controls;
 using Leagueinator.GUI.Model;
 using Leagueinator.GUI.Utility.Extensions;
-using System.Diagnostics;
 using System.Windows;
 
 namespace Leagueinator.GUI.Forms.Main {

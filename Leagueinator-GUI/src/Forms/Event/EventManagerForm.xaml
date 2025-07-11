@@ -83,11 +83,6 @@
                         <StackPanel Margin="5" Orientation="Horizontal">
                             <Label Grid.Column="0" Grid.Row="1" Content="Match Format" VerticalAlignment="Center" Margin="0" Width="100"/>
                             <ComboBox x:Name="ListMatchFormat" SelectionChanged="MatchFormatChanged" SelectedIndex="1" Width="125">
-                                <ComboBoxItem >1 vs 1</ComboBoxItem>
-                                <ComboBoxItem>2 vs 2</ComboBoxItem>
-                                <ComboBoxItem>3 vs 3</ComboBoxItem>
-                                <ComboBoxItem>4 vs 4</ComboBoxItem>
-                                <ComboBoxItem>4321</ComboBoxItem>
                             </ComboBox>
                         </StackPanel>
                     </StackPanel>

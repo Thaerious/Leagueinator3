@@ -56,7 +56,6 @@ namespace Leagueinator.GUI.Controls {
                 textBox.PreviewMouseLeftButtonDown += this.TextBoxPreventDefaultCaretBehaviour;
                 textBox.GotKeyboardFocus += this.TextBoxSelectAllOnFocus;
             }
-
         }
 
         private void TextBoxInvokeEndsEvent(object sender, TextChangedEventArgs e) {
@@ -177,27 +176,6 @@ namespace Leagueinator.GUI.Controls {
                 ["lane"] = this.Lane,
                 ["format"] = matchFormat
             });
-        }
-
-        public void UpdateData(ReadOnlyMatchData matchData) {
-            this.Lane = matchData.Lane;
-            this.SetEnds(matchData.Ends);
-            this.SetTieBreaker(matchData.TieBreaker);
-
-            this.SuppressBowlsEvent = true;
-
-            for (int team = 0; team < matchData.CountTeams(); team++) {
-                var nameCount = matchData.GetTeam(team).Names.Count();
-
-                for (int position = 0; position < nameCount; position++) {
-                    TeamCard teamCard = this.GetTeamCard(team)!;
-                    var name = matchData.GetTeam(team).Names[position];
-                    teamCard[position] = name;
-                    teamCard.BowlsPanel.Bowls.Text = matchData.Score[team].ToString();
-                }
-            }
-
-            this.SuppressBowlsEvent = false;
         }
 
         /// <summary>

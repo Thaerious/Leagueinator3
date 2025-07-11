@@ -56,9 +56,7 @@ namespace Leagueinator.GUI.Forms.Main {
 
         public void PopulateMatchCards(RoundRecordList roundRecords) {
             this.Dispatcher.InvokeAsync(new Action(() => {
-                this.NamedEventDisp.PauseEvents();
                 this.DoPopulateMatchCards(roundRecords);
-                this.NamedEventDisp.ResumeEvents();
             }), DispatcherPriority.Background);
         }
 
@@ -81,6 +79,7 @@ namespace Leagueinator.GUI.Forms.Main {
 
                 // Assign tab order & set data when loaded
                 matchCard.Loaded += (s, e) => {
+                    this.NamedEventDisp.PauseEvents();
                     matchCard.Lane = matchRecord.Lane;
                     matchCard.SetEnds(matchRecord.Ends);
                     matchCard.SetTieBreaker(matchRecord.TieBreaker);
@@ -89,18 +88,19 @@ namespace Leagueinator.GUI.Forms.Main {
 
                     if (cardsLoaded == cardsToLoad) {
                         this.AssignTabOrder();
-                        this.SetPlayerData(roundRecords);
+                        this.SetPlayerNames(roundRecords);
+                        this.NamedEventDisp.ResumeEvents();
                     }
                 };
             }
         }
 
-        private void SetPlayerData(RoundRecordList roundRecords) {
+        private void SetPlayerNames(RoundRecordList roundRecords) {
             for (int i = 0; i < roundRecords.Players.Count; i++) {
-                RoundRecord rr = roundRecords.Players[i];
-                MatchCard matchCard = (MatchCard)this.MatchCardStackPanel.Children[rr.Lane];
-                TeamCard teamCard = matchCard.GetTeamCard(rr.Team) ?? throw new KeyNotFoundException();
-                teamCard[rr.Pos] = rr.Name;
+                RoundRecord roundRecord = roundRecords.Players[i];
+                MatchCard matchCard = (MatchCard)this.MatchCardStackPanel.Children[roundRecord.Lane];
+                TeamCard teamCard = matchCard.GetTeamCard(roundRecord.Team) ?? throw new KeyNotFoundException();
+                teamCard[roundRecord.Pos] = roundRecord.Name;
             }
         }
 

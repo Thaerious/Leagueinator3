@@ -99,10 +99,14 @@ namespace Leagueinator.GUI.Controllers {
             });
         }
         [NamedEventHandler(EventName.ChangeEventArg)]
-        internal void DoChangeEventArg(string name, int ends, int laneCount) {
+        internal void DoChangeEventArg(string name, int ends, int laneCount, MatchFormat matchFormat) {
             this.EventData.EventName   = name;
             this.EventData.DefaultEnds = ends;
             this.EventData.LaneCount   = laneCount;
+            this.EventData.MatchFormat = matchFormat;
+
+            SyncRoundData(this.RoundData, this.EventData);
+            this.InvokeRoundUpdate();
 
             this.NamedEventDisp.Dispatch(EventName.EventRecordChanged, new() {
                 ["eventRecord"] = EventData.ToRecord(this.EventData)
@@ -445,10 +449,6 @@ namespace Leagueinator.GUI.Controllers {
             }
         }
 
-        private JsonSerializerOptions GetOptions() {
-            return new JsonSerializerOptions { WriteIndented = true };
-        }
-
         private void SaveAs() {
             SaveFileDialog dialog = new() {
                 Filter = "League Files (*.league)|*.league"
@@ -511,12 +511,6 @@ namespace Leagueinator.GUI.Controllers {
             return true;
         }
 
-        private void SyncRoundData(EventData eventData) {
-            foreach (RoundData roundData in this.EventData) {
-                this.SyncRoundData(roundData, eventData);
-            }
-        }
-
         /// <summary>
         /// Synchronizes the provided <paramref name="roundRecords"/> with the current event settings.
         /// <para>
@@ -528,7 +522,7 @@ namespace Leagueinator.GUI.Controllers {
         /// </para>
         /// </summary>
         /// <param name="roundRecords">The round leagueData to update, representing a collection of matches for a round.</param>        
-        private void SyncRoundData(RoundData roundData, EventData eventData) {
+        private static void SyncRoundData(RoundData roundData, EventData eventData) {
             // RoundUpdated leagueData by removing empty lanes until the number of lanes matches the event leagueData's lane count.
             for (int i = roundData.Count - 1; i >= 0; i--) {
                 if (roundData.Count <= eventData.LaneCount) break;
