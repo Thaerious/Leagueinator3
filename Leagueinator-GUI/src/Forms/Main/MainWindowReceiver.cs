@@ -5,7 +5,7 @@ using Leagueinator.GUI.Utility.Extensions;
 using System.Windows;
 
 namespace Leagueinator.GUI.Forms.Main {
-    public class MainWindowReceiver : NamedEventReceiver {
+    public class MainWindowReceiver {
 
         private MainWindow MainWindow { get; set; }
 

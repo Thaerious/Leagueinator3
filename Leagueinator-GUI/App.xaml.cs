@@ -1,4 +1,5 @@
 ﻿using Leagueinator.GUI.Controllers;
+using Leagueinator.GUI.Controllers.NamedEvents;
 using Leagueinator.GUI.Forms.Main;
 using Leagueinator.GUI.src.Controllers;
 using System.Diagnostics;
@@ -26,18 +27,13 @@ namespace Leagueinator.GUI {
             this.Dispatcher.InvokeAsync(() => {
                 var mainWindow = (MainWindow)this.MainWindow;
 
-                mainWindow.Loaded += (object s, RoutedEventArgs e) => {
+                mainWindow.Loaded += (s, e) => {
                     MainController mainController = new(mainWindow);
                     FocusController focusController = new(mainController);
 
-                    // Initialize Controller listeners for handling UI generated events
-                    mainWindow.OnDragEnd += mainController.DragEndHnd;
-                    mainWindow.NamedEventDisp += mainController.NamedEventRcv;
-                    mainWindow.NamedEventDisp += focusController.NamedEventRcv;
-
-                    // Initialize UI listeners for handling Controller generated events
-                    mainController.NamedEventDisp += mainWindow.NamedEventRcv;
-                    focusController.NamedEventDisp += mainWindow.NamedEventRcv;
+                    NamedEvent.AddHandler(mainController);
+                    NamedEvent.AddHandler(focusController);
+                    NamedEvent.AddHandler(new MainWindowReceiver(mainWindow));
 
                     mainWindow.Ready();
                 };

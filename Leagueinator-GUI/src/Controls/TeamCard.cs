@@ -60,7 +60,7 @@ namespace Leagueinator.GUI.Controls {
         }
 
         private void HndRequestFocus(object sender, MouseButtonEventArgs e) {
-            this.DispatchNamedEvent(EventName.RequestFocus, new() {
+            NamedEvent.Dispatch(EventName.RequestFocus, new() {
                 ["lane"]      = this.MatchCard.Lane,
                 ["teamIndex"] = this.TeamIndex,
                 ["append"]    = Keyboard.Modifiers.HasFlag(ModifierKeys.Shift)
@@ -71,7 +71,7 @@ namespace Leagueinator.GUI.Controls {
             if (sender is not TextBox textBox) return;
             var parent = (StackPanel)textBox.Parent ?? throw new NullReferenceException("Parent is not a StackPanel.");
 
-            this.DispatchNamedEvent(EventName.ChangePlayerName, new() {
+            NamedEvent.Dispatch(EventName.ChangePlayerName, new() {
                 ["lane"]      = this.MatchCard.Lane,
                 ["name"]      = textBox.Text,
                 ["teamIndex"] = textBox.Ancestors<TeamCard>().First().TeamIndex,

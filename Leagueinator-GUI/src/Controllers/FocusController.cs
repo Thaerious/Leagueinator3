@@ -5,15 +5,11 @@ using Leagueinator.GUI.Utility.Extensions;
 namespace Leagueinator.GUI.src.Controllers {
     public class FocusController {
         public MainController MainController { get; }
-        public NamedEventReceiver NamedEventRcv { get; private set; }
-        public NamedEventDispatcher NamedEventDisp { get; set; }
 
         private List<TeamID> Focused = [];
 
         public FocusController(MainController mainController) {
             this.MainController = mainController;
-            this.NamedEventRcv = new(this);
-            this.NamedEventDisp = new(this);
         }
 
         public record FocusArgs(TeamID TeamId, string Action);
@@ -25,14 +21,14 @@ namespace Leagueinator.GUI.src.Controllers {
         public event FocusRevoked OnFocusRevoked = delegate { };
 
         private void InvokeFocusGranted(TeamID teamID) {
-            this.NamedEventDisp.Dispatch(EventName.FocusGranted, new () {
+            NamedEvent.Dispatch(EventName.FocusGranted, new () {
                 ["teamIndex"] = teamID.TeamIndex,
                 ["lane"] = teamID.Lane
             });
         }
 
         private void InvokeFocusRevoked(TeamID teamID) {
-            this.NamedEventDisp.Dispatch(EventName.FocusRevoked, new() {
+            NamedEvent.Dispatch(EventName.FocusRevoked, new() {
                 ["teamIndex"] = teamID.TeamIndex,
                 ["lane"] = teamID.Lane
             });

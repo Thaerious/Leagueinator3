@@ -1,6 +1,7 @@
 ﻿using Leagueinator.GUI.Controllers;
 using Leagueinator.GUI.Controllers.NamedEvents;
 using Leagueinator.GUI.Controls;
+using Leagueinator.GUI.Forms.Main;
 using Leagueinator.GUI.Model;
 using System.Collections.ObjectModel;
 using System.Windows;
@@ -19,13 +20,8 @@ namespace Leagueinator.GUI.Forms.Event {
 
         public ObservableCollection<EventRecord> EventRecords { get; set; } = [];
 
-        public NamedEventDispatcher NamedEventDisp { get; set; }
-
-        public NamedEventReceiver NamedEventRcv { get; private set; }
 
         public EventManagerForm() {
-            this.NamedEventDisp = new(this);
-            this.NamedEventRcv = new(this);
             InitializeComponent();
 
             this.Loaded += (s, e) => {
@@ -60,11 +56,11 @@ namespace Leagueinator.GUI.Forms.Event {
         #region Button Handlers
 
         private void HndNew(object sender, EventArgs e) {
-            this.NamedEventDisp.Dispatch(EventName.AddEvent);
+            MainWindow.NamedEventDisp.Dispatch(EventName.AddEvent);
         }
 
         private void HndDelete(object sender, EventArgs e) {
-            this.NamedEventDisp.Dispatch(EventName.DeleteEvent, new() {
+            MainWindow.NamedEventDisp.Dispatch(EventName.DeleteEvent, new() {
                 ["eventUID"] = (this.EventData.SelectedItem as EventRecord)!.UID,
             });
         }
@@ -85,12 +81,12 @@ namespace Leagueinator.GUI.Forms.Event {
 
         [NamedEventHandler(EventName.EventChanged)]
         internal void DoEventChanged(EventRecord eventRecord) {
-            this.NamedEventDisp.PauseEvents();
+            MainWindow.NamedEventDisp.PauseEvents();
             this.EventData.SelectedItem = eventRecord;
             this.TxtName.Text = eventRecord.Name;
             this.TxtEnds.Text = eventRecord.DefaultEnds.ToString();
             this.TxtLanes.Text = eventRecord.LaneCount.ToString();
-            this.NamedEventDisp.ResumeEvents();
+            MainWindow.NamedEventDisp.ResumeEvents();
         }
 
         [NamedEventHandler(EventName.EventDeleted)]
@@ -118,7 +114,7 @@ namespace Leagueinator.GUI.Forms.Event {
         private void SelectionChanged(object sender, SelectionChangedEventArgs e) {
             if (this.EventData.SelectedItem is not EventRecord record) return;
             this.ButDelete.IsEnabled = true;
-            this.NamedEventDisp.Dispatch(EventName.SelectEvent, new() {
+            MainWindow.NamedEventDisp.Dispatch(EventName.SelectEvent, new() {
                 ["uid"] = record.UID,
             });
         }
@@ -132,7 +128,7 @@ namespace Leagueinator.GUI.Forms.Event {
 
             EventTypeRecord etf = (EventTypeRecord)this.ListEventType.SelectedItem;
 
-            this.NamedEventDisp.Dispatch(EventName.ChangeEventType, new() {
+            MainWindow.NamedEventDisp.Dispatch(EventName.ChangeEventType, new() {
                 ["eventType"] = etf.EventType
             });
         }
@@ -146,7 +142,7 @@ namespace Leagueinator.GUI.Forms.Event {
 
             MatchFormatRecord mfr = (MatchFormatRecord)this.ListMatchFormat.SelectedItem;
 
-            this.NamedEventDisp.Dispatch(EventName.ChangeEventArg, new() {
+            MainWindow.NamedEventDisp.Dispatch(EventName.ChangeEventArg, new() {
                 ["name"] = this.TxtName.Text,
                 ["laneCount"] = int.Parse(this.TxtLanes.Text),
                 ["ends"] = int.Parse(this.TxtEnds.Text),

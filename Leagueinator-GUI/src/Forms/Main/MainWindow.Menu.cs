@@ -9,12 +9,12 @@ namespace Leagueinator.GUI.Forms.Main {
 
         public void HndSettings(object sender, RoutedEventArgs e) {
             this.ClearFocus();
-            this.NamedEventDisp.Dispatch(EventName.Settings);
+            MainWindow.NamedEventDisp.Dispatch(EventName.Settings);
         }
 
         public void HndSwap(object? sender, RoutedEventArgs e) {
             this.ClearFocus();
-            this.NamedEventDisp.Dispatch(EventName.SwapTeams);
+            MainWindow.NamedEventDisp.Dispatch(EventName.SwapTeams);
         }
 
         /// <summary>
@@ -24,31 +24,31 @@ namespace Leagueinator.GUI.Forms.Main {
         /// <param name="e"></param>
         private void HndDeleteRnd(object sender, RoutedEventArgs e) {
             this.ClearFocus();
-            this.NamedEventDisp.Dispatch(EventName.RemoveRound);
+            MainWindow.NamedEventDisp.Dispatch(EventName.RemoveRound);
         }
 
         private void HndNewLeagueClick(object sender, RoutedEventArgs e) {
             this.ClearFocus();
-            this.NamedEventDisp.Dispatch(EventName.NewLeague);
+            MainWindow.NamedEventDisp.Dispatch(EventName.NewLeague);
         }
         private void HndLoadLeagueClick(object sender, RoutedEventArgs e) {
             this.ClearFocus();
-            this.NamedEventDisp.Dispatch(EventName.LoadLeague);
+            MainWindow.NamedEventDisp.Dispatch(EventName.LoadLeague);
         }
 
         private void HndAssignPlayersRandomly(object sender, RoutedEventArgs e) {
             this.ClearFocus();
-            this.NamedEventDisp.Dispatch(EventName.AssignPlayersRandomly);
+            MainWindow.NamedEventDisp.Dispatch(EventName.AssignPlayersRandomly);
         }   
 
         private void HndSaveLeagueClick(object sender, RoutedEventArgs e) {
             this.ClearFocus();
-            this.NamedEventDisp.Dispatch(EventName.SaveLeague);
+            MainWindow.NamedEventDisp.Dispatch(EventName.SaveLeague);
         }
 
         private void HndSaveAsLeagueClick(object sender, RoutedEventArgs e) {
             this.ClearFocus();
-            this.NamedEventDisp.Dispatch(EventName.SaveLeagueAs);
+            MainWindow.NamedEventDisp.Dispatch(EventName.SaveLeagueAs);
         }
 
         private void HndExitClick(object sender, RoutedEventArgs e) {
@@ -58,32 +58,32 @@ namespace Leagueinator.GUI.Forms.Main {
 
         private void HndGenEmptyRound(object sender, RoutedEventArgs e) {
             this.ClearFocus();
-            this.NamedEventDisp.Dispatch(EventName.AddRound);
-            this.NamedEventDisp.Dispatch(EventName.SelectRound);
+            MainWindow.NamedEventDisp.Dispatch(EventName.AddRound);
+            MainWindow.NamedEventDisp.Dispatch(EventName.SelectRound);
         }
 
         private void HndCopyRnd(object sender, RoutedEventArgs e) {
             this.ClearFocus();
-            this.NamedEventDisp.Dispatch(EventName.CopyRound);
+            MainWindow.NamedEventDisp.Dispatch(EventName.CopyRound);
         }
         private void HndShowDataClick(object sender, RoutedEventArgs e) {
             this.ClearFocus();
-            this.NamedEventDisp.Dispatch(EventName.ShowData);
+            MainWindow.NamedEventDisp.Dispatch(EventName.ShowData);
         }
 
         private void HndViewTeamResults(object sender, RoutedEventArgs e) {
             this.ClearFocus();
-            this.NamedEventDisp.Dispatch(EventName.PrintTeams);
+            MainWindow.NamedEventDisp.Dispatch(EventName.PrintTeams);
         }
 
         private void HndGenNextRound(object sender, RoutedEventArgs args) {
             this.ClearFocus();
-            this.NamedEventDisp.Dispatch(EventName.GenerateRound);
+            MainWindow.NamedEventDisp.Dispatch(EventName.GenerateRound);
         }
 
         private void HndAssignLanes(object sender, RoutedEventArgs args) {
             this.ClearFocus();
-            this.NamedEventDisp.Dispatch(EventName.AssignLanes);
+            MainWindow.NamedEventDisp.Dispatch(EventName.AssignLanes);
         }
 
         private void HndViewPlayerResults(object sender, RoutedEventArgs e) {
@@ -92,7 +92,7 @@ namespace Leagueinator.GUI.Forms.Main {
 
         private void HndEventManagerClick(object sender, RoutedEventArgs e) {
             this.ClearFocus();
-            this.NamedEventDisp.Dispatch(EventName.EventManager);
+            MainWindow.NamedEventDisp.Dispatch(EventName.EventManager);
         }
 
         private void HndSelectEventClick(object sender, RoutedEventArgs e) {
