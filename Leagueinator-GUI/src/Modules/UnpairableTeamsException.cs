@@ -1,6 +1,6 @@
 ﻿using Leagueinator.GUI.Model;
 
-namespace Leagueinator.GUI.Controllers.Algorithms {
+namespace Leagueinator.GUI.Modules {
     [Serializable]
     internal class UnpairableTeamsException : PreconditionException {
         public TeamData? Team { get; private set; }

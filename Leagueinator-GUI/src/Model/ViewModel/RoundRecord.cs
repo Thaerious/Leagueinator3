@@ -1,4 +1,10 @@
 ﻿namespace Leagueinator.GUI.Model {
+
+
+    /// <summary>
+    /// A record representing a round in an event.
+    /// Contains non-reflective for a single player in a single match.
+    /// </summary>
     public record RoundRecord{
         public required int EventUID;
         public required int Round;

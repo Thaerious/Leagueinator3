@@ -1,14 +1,15 @@
-﻿namespace Leagueinator.GUI.Model {
-    public enum MatchFormat { VS1, VS2, VS3, VS4, A4321 };
+﻿using Leagueinator.GUI.Modules.RankedLadder;
+using Leagueinator.GUI.Modules;
 
-    public static class MatchFormatMeta {
-        public static readonly Dictionary<MatchFormat, (int TeamCount, int TeamSize, string Label)> Info = new() {
-            { MatchFormat.VS1, (2, 1, "1 vs 1") },
-            { MatchFormat.VS2, (2, 2, "2 vs 2") },
-            { MatchFormat.VS3, (2, 3, "3 vs 3") },
-            { MatchFormat.VS4, (2, 4, "4 vs 4") },
-            { MatchFormat.A4321, (4, 1, "4321") },
-        };
+namespace Leagueinator.GUI.Model {
+    public enum EventType { RankedLadder, RoundRobin, Motley };
+
+    public static class EventTypeMeta {
+        public static IModule GetModule(EventType eventType) {
+            return eventType switch {
+                EventType.RankedLadder => new RankedLadderModule(),
+            };
+        }
     }
 }
 

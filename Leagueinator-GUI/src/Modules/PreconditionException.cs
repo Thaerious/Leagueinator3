@@ -1,5 +1,5 @@
 ﻿
-namespace Leagueinator.GUI.Controllers.Algorithms {
+namespace Leagueinator.GUI.Modules {
     [Serializable]
     internal class PreconditionException : Exception {
         public PreconditionException() {

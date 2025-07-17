@@ -1,11 +1,11 @@
 ﻿using Leagueinator.GUI.Model;
 using Leagueinator.GUI.Model.Results;
 
-namespace Leagueinator.GUI.Controllers.Algorithms {
-    internal class RankedLadder {
+namespace Leagueinator.GUI.Modules.RankedLadder {
+    internal class RankedLadderImpl {
         public EventData EventData { get; }
 
-        public RankedLadder(EventData eventData) {
+        public RankedLadderImpl(EventData eventData) {
             this.EventData = eventData;
         }
 
@@ -15,7 +15,7 @@ namespace Leagueinator.GUI.Controllers.Algorithms {
         /// </summary>
         /// <returns></returns>
         public RoundData GenerateRound() {
-            RoundData newRound = new RoundData();
+            RoundData newRound = [];
             List<TeamResult> results = new EventResults(this.EventData).ResultsByTeam;
 
             while (results.Count > 0) {

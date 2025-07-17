@@ -103,22 +103,6 @@ namespace Leagueinator.GUI.Model {
             return matches;
         }
 
-        public RoundData GenerateRound() {
-
-            switch (this.EventType) {
-                case EventType.RankedLadder:
-                    var newRound = new RankedLadder(this).GenerateRound();
-                    this.Rounds.Add(newRound);
-                    return newRound;
-                //case EventType.RoundRobin:
-                //    break;
-                //case EventType.Motley:
-                //    break;
-                default:
-                    throw new NotSupportedException($"Match format '{this.MatchFormat}' is not supported.");
-            }
-        }
-
         public IEnumerator<RoundData> GetEnumerator() {
             return this.Rounds.GetEnumerator();
         }
