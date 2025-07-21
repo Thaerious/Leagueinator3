@@ -2,7 +2,7 @@
 using System.Text;
 
 namespace Leagueinator.GUI.Model.Results {
-    internal class TeamResult : IComparable<TeamResult>{
+    public class TeamResult : IComparable<TeamResult>{
         public readonly List<SingleResult> MatchResults = [];
 
         public TeamData Team {

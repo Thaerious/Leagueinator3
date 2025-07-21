@@ -4,7 +4,7 @@ namespace Leagueinator.GUI.Model.Results {
     /// <summary>
     /// Represents the results for all teams within a single round.
     /// </summary>
-    internal class RoundResults {
+    public class RoundResults {
 
         /// <summary>
         /// Gets the list of individual team results for the round.

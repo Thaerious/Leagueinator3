@@ -3,7 +3,7 @@ namespace Leagueinator.GUI.Model.Results {
     /// <summary>
     /// Aggregates results across all rounds of an event.
     /// </summary>
-    internal class EventResults {
+    public class EventResults {
         /// <summary>
         /// Constructs event-level results from a collection of round data.
         /// </summary>
