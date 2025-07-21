@@ -1,11 +1,21 @@
 ﻿
-using System.Diagnostics;
-
 namespace Leagueinator.GUI.Model.Results {
     /// <summary>
     /// Aggregates results across all rounds of an event.
     /// </summary>
     public class EventResults {
+
+        /// <summary>
+        /// AllResults grouped by each round in the event.
+        /// </summary>
+        public List<RoundResults> ByRound { get; } = [];
+
+        /// <summary>
+        /// AllResults aggregated by each unique team across all rounds.
+        /// The results are sorted in descending order of performance.
+        /// </summary>
+        public Dictionary<Players, TeamResult> ByTeam { get; } = [];
+
         /// <summary>
         /// Constructs event-level results from a collection of round data.
         /// </summary>
@@ -13,57 +23,24 @@ namespace Leagueinator.GUI.Model.Results {
         public EventResults(IEnumerable<RoundData> rounds) {
             // Compute round-level results
             foreach (var round in rounds) {
-                ResultsByRound.Add(new RoundResults(round));                
+                RoundResults roundResults = new(round);
+                ByRound.Add(roundResults);
+
+                foreach (SingleResult result in roundResults.AllResults) {
+                    if (!ByTeam.ContainsKey(result.Players)) ByTeam[result.Players] = new(result.Players);
+                    TeamResult teamResult = ByTeam.GetValueOrDefault(result.Players, new(result.Players));
+                    teamResult.Add(result);
+                }
             }
 
-            var teamResultsMap = this.AggregateResultsByTeam(rounds);
-
             // Sort teams by performance and assign ranks
-            var results = teamResultsMap.Values.ToList();
+            List<TeamResult> results = ByTeam.Values.ToList();
             results.Sort();
-            results.Reverse();
 
             for (int i = 0; i < results.Count; i++) {
                 TeamResult teamResult = results[i];
                 teamResult.Rank = i + 1; // Rank starts at 1
             }
-
-            this.ResultsByTeam = results;
         }
-
-        /// <summary>
-        /// Create a map from tem data to their aggregated team results.
-        /// The aggregated results include all matches played by the team across all rounds.
-        /// </summary>
-        /// <param name="roundDataCollection"></param>
-        /// <returns></returns>
-        private Dictionary<Players, TeamResult> AggregateResultsByTeam(IEnumerable<RoundData> rounds) {
-            Dictionary<Players, TeamResult> teamResultsMap = [];
-
-            foreach (RoundResults roundResults in this.ResultsByRound) {
-                foreach (SingleResult singleResult in roundResults.Results) {
-                    Debug.WriteLine($"SingleResult {singleResult}");
-                    if (teamResultsMap.ContainsKey(singleResult.Players) == false) {
-                        teamResultsMap.Add(singleResult.Players, new TeamResult(singleResult.Players));
-                    }
-
-                    TeamResult teamResults = teamResultsMap[singleResult.Players];
-                    teamResults.MatchResults.Add(singleResult);
-                }
-            }
-
-            return teamResultsMap;
-        }
-
-        /// <summary>
-        /// Results grouped by each round in the event.
-        /// </summary>
-        public List<RoundResults> ResultsByRound { get; } = [];
-
-        /// <summary>
-        /// Results aggregated by each unique team across all rounds.
-        /// The results are sorted in descending order of performance.
-        /// </summary>
-        public List<TeamResult> ResultsByTeam { get; } = [];
     }
 }

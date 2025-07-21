@@ -12,15 +12,12 @@ namespace Leagueinator.GUI.Forms.Print {
     /// Interaction logic for PrintWindow.xaml
     /// </summary>
     public partial class PrintWindow : Window {
-        public PrintWindow(EventData eventData) {
-            
+        public PrintWindow(EventData eventData) {           
             InitializeComponent();
-
             EventResults eventResults = new EventResults(eventData);
-            Debug.WriteLine($"Event Results: {eventResults.ResultsByTeam.Count} teams, {eventResults.ResultsByRound.Count} rounds");
 
             this.Loaded += (s, e) => {
-                foreach (TeamResult teamResult in eventResults.ResultsByTeam) {
+                foreach (TeamResult teamResult in eventResults.ByTeam.Values) {
                     this.AddTeam(teamResult);
                 }
             };
@@ -79,7 +76,7 @@ namespace Leagueinator.GUI.Forms.Print {
             });
 
             // Data rows
-            foreach (SingleResult result in teamResult.MatchResults) {
+            foreach (SingleResult result in teamResult) {
                 rows.Rows.Add(this.AddResult(result));
             }
 

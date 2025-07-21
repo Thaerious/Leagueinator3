@@ -17,11 +17,7 @@ namespace Leagueinator.GUI.Modules.RankedLadder {
         /// <returns></returns>
         public RoundData GenerateRound() {
             RoundData newRound = [];
-            List<TeamResult> results = new EventResults(this.EventData).ResultsByTeam;
-
-            foreach (TeamResult result in results) {
-                Debug.WriteLine(result);
-            }
+            List<TeamResult> results = new EventResults(this.EventData).ByTeam.Values.ToList();
 
             while (results.Count > 0) {
                 Players bestTeam = results[0].Players;

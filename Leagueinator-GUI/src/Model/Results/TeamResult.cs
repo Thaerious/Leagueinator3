@@ -2,104 +2,102 @@
 using System.Text;
 
 namespace Leagueinator.GUI.Model.Results {
-    public class TeamResult : IComparable<TeamResult>{
-        public readonly List<SingleResult> MatchResults = [];
-
+    public class TeamResult : List<SingleResult>, IComparable<TeamResult>{
         public readonly Players Players;
 
         public TeamResult(IEnumerable<string> players) {
             this.Players = [..players];
         }
 
+        public int Rank { get; set; } = -1;
+
         public int Wins {
             get {
-                if (this.MatchResults.Count == 0) return 0;
-                return this.MatchResults.Count(r => r.Result == Result.Win);
+                if (this.Count == 0) return 0;
+                return this.Count(r => r.Result == Result.Win);
             }
         }
 
         public int Draws {
             get {
-                if (this.MatchResults.Count == 0) return 0;
-                return this.MatchResults.Count(r => r.Result == Result.Draw);
+                if (this.Count == 0) return 0;
+                return this.Count(r => r.Result == Result.Draw);
             }
         }
 
         public int Losses {
             get {
-                if (this.MatchResults.Count == 0) return 0;
-                return this.MatchResults.Count(r => r.Result == Result.Loss);
+                if (this.Count == 0) return 0;
+                return this.Count(r => r.Result == Result.Loss);
             }
         }
 
         public int Games {
             get {
-                return this.MatchResults.Count;
+                return this.Count;
             }
         }
 
         public int Ends {
             get {
-                if (this.MatchResults.Count == 0) return 0;
-                return this.MatchResults.Sum(r => r.Ends);
+                if (this.Count == 0) return 0;
+                return this.Sum(r => r.Ends);
             }
         }
 
         public int Bowls {
             get {
-                if (this.MatchResults.Count == 0) return 0;
-                return this.MatchResults.Sum(r => r.Bowls);
+                if (this.Count == 0) return 0;
+                return this.Sum(r => r.Bowls);
             }
         }
 
         public int Against {
             get {
-                if (this.MatchResults.Count == 0) return 0;
-                return this.MatchResults.Sum(r => r.Against);
+                if (this.Count == 0) return 0;
+                return this.Sum(r => r.Against);
             }
         }
 
-        public int Rank { get; set; } = -1;
-
         public int CountWins {
             get {
-                if (this.MatchResults.Count == 0) return 0;
-                return this.MatchResults.Count(r => r.Result == Result.Win);
+                if (this.Count == 0) return 0;
+                return this.Count(r => r.Result == Result.Win);
             }
         }
 
         public int CountEnds {
             get {
-                if (this.MatchResults.Count == 0) return 0;
-                return this.MatchResults.Sum(r => r.Ends);
+                if (this.Count == 0) return 0;
+                return this.Sum(r => r.Ends);
             }
         }
 
         public int BowlsFor {
             get {
-                if (this.MatchResults.Count == 0) return 0;
-                return this.MatchResults.Sum(r => r.BowlsFor);
+                if (this.Count == 0) return 0;
+                return this.Sum(r => r.BowlsFor);
             }
         }
 
         public int BowlsAgainst {
             get {
-                if (this.MatchResults.Count == 0) return 0;
-                return this.MatchResults.Sum(r => r.BowlsAgainst);
+                if (this.Count == 0) return 0;
+                return this.Sum(r => r.BowlsAgainst);
             }
         }
 
         public int PlusFor {
             get {
-                if (this.MatchResults.Count == 0) return 0;
-                return this.MatchResults.Sum(r => r.PlusFor);
+                if (this.Count == 0) return 0;
+                return this.Sum(r => r.PlusFor);
             }
         }
 
         public int PlusAgainst {
             get {
-                if (this.MatchResults.Count == 0) return 0;
-                return this.MatchResults.Sum(r => r.PlusAgainst);
+                if (this.Count == 0) return 0;
+                return this.Sum(r => r.PlusAgainst);
             }
         }
         public int CompareTo(TeamResult? other) {
@@ -127,7 +125,7 @@ namespace Leagueinator.GUI.Model.Results {
         }
 
         public override string ToString() {
-            return $"{this.Rank}: {string.Join(", ", this.Players)} #{this.MatchResults.Count}  (Wins: {this.Wins}, Draws: {this.Draws}, Losses: {this.Losses}, For: {this.BowlsFor}+{this.PlusFor}, Against: {this.BowlsAgainst}+{this.PlusAgainst}, Ends: {this.Ends})";
+            return $"{this.Rank}: {string.Join(", ", this.Players)} #{this.Count}  (Wins: {this.Wins}, Draws: {this.Draws}, Losses: {this.Losses}, For: {this.BowlsFor}+{this.PlusFor}, Against: {this.BowlsAgainst}+{this.PlusAgainst}, Ends: {this.Ends})";
         }
     }
 }

@@ -1,7 +1,8 @@
 ﻿namespace Leagueinator.GUI.Model.Results {
 
     /// <summary>
-    /// A collection of all team results for a single Players in an event.
+    /// A collection of all team results for a single set of players in an event.
+    /// Used to report a team's overall score for the event.
     /// </summary>
     public class TeamSummary : List<TeamResults>, IComparable<TeamSummary> {
         public readonly Players Players;

@@ -10,9 +10,9 @@ namespace Leagueinator.GUI.Model.Results {
         /// Gets the list of individual team results for the round.
         /// The results are sorted in descending order of performance, with ranks assigned.
         /// </summary>
-        public List<SingleResult> Results { get; private set; } = [];
+        public List<SingleResult> AllResults { get; private set; } = [];
 
-        public List<MatchResult> MatchResults { get; private set; } = [];
+        public List<MatchResult> ByMatch { get; private set; } = [];
 
         /// <summary>
         /// Constructs a <see cref="RoundResults"/> object from the provided <see cref="RoundData"/>.
@@ -31,14 +31,14 @@ namespace Leagueinator.GUI.Model.Results {
                     results.Add(result);
                     matchResult.Add(result);
                 }
-                this.MatchResults.Add(matchResult);
+                this.ByMatch.Add(matchResult);
             }
 
             results.Sort();
-            this.Results = [.. results.AsEnumerable().Reverse()];
+            this.AllResults = [.. results.AsEnumerable().Reverse()];
 
-            for (int i = 0; i < this.Results.Count; i++) {
-                SingleResult result = this.Results.ElementAt(i);
+            for (int i = 0; i < this.AllResults.Count; i++) {
+                SingleResult result = this.AllResults.ElementAt(i);
                 result.Rank = i + 1; // Rank starts at 1
             }
         }

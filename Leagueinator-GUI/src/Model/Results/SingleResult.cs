@@ -61,22 +61,22 @@ namespace Leagueinator.GUI.Model.Results {
         public readonly int TeamIndex;
 
         public int CompareTo(SingleResult? other) {
-            if (other == null) return 1; // Null is less
+            if (other == null) return -1; // Null is less
 
             int cmp = this.Result.CompareTo(other.Result);
-            if (cmp != 0) return -cmp; // Higher Result wins (Win > Draw > Loss)
+            if (cmp != 0) return cmp; // Higher Result wins (Win > Draw > Loss)
 
             cmp = this.BowlsFor.CompareTo(other.BowlsFor); // Higher is better
-            if (cmp != 0) return cmp;
+            if (cmp != 0) return -cmp;
 
             cmp = this.PlusFor.CompareTo(other.PlusFor); // Higher is better
-            if (cmp != 0) return cmp;
+            if (cmp != 0) return -cmp;
 
             cmp = other.BowlsAgainst.CompareTo(this.BowlsAgainst); // Lower is better
-            if (cmp != 0) return cmp;
+            if (cmp != 0) return -cmp;
 
             cmp = other.PlusAgainst.CompareTo(this.PlusAgainst); // Lower is better
-            if (cmp != 0) return cmp;
+            if (cmp != 0) return -cmp;
 
             return 0; // Equal results
         }

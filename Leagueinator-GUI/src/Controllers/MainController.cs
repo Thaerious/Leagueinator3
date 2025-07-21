@@ -1,6 +1,5 @@
 ﻿using Leagueinator.GUI.Controllers.Algorithms;
 using Leagueinator.GUI.Controllers.NamedEvents;
-using Leagueinator.GUI.Controls;
 using Leagueinator.GUI.Dialogs;
 using Leagueinator.GUI.Forms;
 using Leagueinator.GUI.Forms.Event;
@@ -321,7 +320,7 @@ namespace Leagueinator.GUI.Controllers {
             RoundResults rr = new(this.RoundData);
             TableViewer tv = new TableViewer();
 
-            foreach (SingleResult result in rr.Results) {
+            foreach (SingleResult result in rr.AllResults) {
                 tv.Append(result.ToString());
             }
 
@@ -332,7 +331,7 @@ namespace Leagueinator.GUI.Controllers {
         internal void DoEventResults(object? sender, NamedEventArgs e) {
             EventResults er = new(this.EventData);
             TableViewer tv = new TableViewer();
-            foreach (TeamResult result in er.ResultsByTeam) {
+            foreach (TeamResult result in er.ByTeam.Values) {
                 tv.Append(result.ToString());
             }
             tv.Show();
