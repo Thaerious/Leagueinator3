@@ -3,13 +3,13 @@
 namespace Leagueinator.GUI.Modules {
     [Serializable]
     internal class UnpairableTeamsException : PreconditionException {
-        public TeamData? Team { get; private set; }
+        public List<string> Players { get; private set; } = [];
 
         public UnpairableTeamsException() {
         }
 
-        public UnpairableTeamsException(TeamData team) {
-            this.Team = team;
+        public UnpairableTeamsException(IEnumerable<string> team) {
+            this.Players = [.. team];
         }
 
         public UnpairableTeamsException(string? message) : base(message) {

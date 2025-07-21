@@ -84,17 +84,17 @@ namespace Leagueinator.GUI.Model {
         }
 
         /// <summary>
-        /// Returns a list of all matches that a team has played in.
+        /// Returns a list of all matches that a players has played in.
         /// </summary>
-        /// <param name="targetTeam"></param>
+        /// <param name="players"></param>
         /// <returns></returns>
-        public List<MatchData> GetMatchesForTeam(TeamData targetTeam) {
+        public List<MatchData> GetMatchesForTeam(IEnumerable<string> players) {
             List<MatchData> matches = [];
 
             foreach (RoundData round in this) {
                 foreach (MatchData match in round) {
                     foreach (TeamData consideringTeam in match.Teams) {
-                        if (consideringTeam.Equals(targetTeam)) {
+                        if (consideringTeam.Equals(players)) {
                             matches.Add(match);
                         }
                     }
@@ -114,16 +114,16 @@ namespace Leagueinator.GUI.Model {
         internal void RemoveRound(int index) => this.Rounds.RemoveAt(index);
 
         /// <summary>
-        /// Returns a list of all previous previous opponents for the Target team.
+        /// Returns a list of all previous previous opponents for the Target players.
         /// </summary>
-        /// <param name="team"></param>
+        /// <param name="players"></param>
         /// <returns></returns>
-        public List<TeamData> PreviousOpponents(TeamData team) {
+        public List<TeamData> PreviousOpponents(IEnumerable<string> players) {
             List<TeamData> opponents = [];
 
-            foreach (MatchData match in this.GetMatchesForTeam(team)) {
+            foreach (MatchData match in this.GetMatchesForTeam(players)) {
                 foreach (TeamData opposingTeam in match.Teams) {
-                    if (opposingTeam.Equals(team)) continue; // Skip our own targetTeam
+                    if (opposingTeam.Equals(players)) continue; // Skip our own players
                     opponents.Add(opposingTeam);
                 }
             }
@@ -132,11 +132,11 @@ namespace Leagueinator.GUI.Model {
         }
 
         /// <summary>
-        /// True if any player from targetTeam has played against any player from pollOpponent.
+        /// True if any player from players has played against any player from pollOpponent.
         /// </summary>
         /// <param name="team"></param>
         /// <returns></returns>
-        public bool HasPlayed(TeamData team, TeamData pollOpponent) {
+        public bool HasPlayed(IEnumerable<string> team, TeamData pollOpponent) {
             foreach (TeamData prevOpponent in this.PreviousOpponents(team)) {
                 if (pollOpponent.Names.Intersect(prevOpponent.Names).Any()) {
                     return true;

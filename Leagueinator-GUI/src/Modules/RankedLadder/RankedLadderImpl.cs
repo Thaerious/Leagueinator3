@@ -21,7 +21,7 @@ namespace Leagueinator.GUI.Modules.RankedLadder {
             while (results.Count > 0) {
                 TeamData bestTeam = results[0].Team;
                 results.RemoveAt(0);
-                TeamResult nextResult = this.GetNextTeam(bestTeam, results);
+                TeamResult nextResult = this.GetNextTeam(bestTeam.Players, results);
                 results.Remove(nextResult);
 
                 MatchData matchData = new(this.EventData.MatchFormat) {
@@ -43,13 +43,13 @@ namespace Leagueinator.GUI.Modules.RankedLadder {
         /// </summary>
         /// <param name="results"></param>
         /// <returns></returns>
-        private TeamResult GetNextTeam(TeamData team, List<TeamResult> results) {
+        private TeamResult GetNextTeam(IEnumerable<string> players, List<TeamResult> results) {
             foreach (TeamResult result in results) {
-                if (this.EventData.HasPlayed(team, result.Team)) continue;
+                if (this.EventData.HasPlayed(players, result.Team)) continue;
                 return result; 
             }
 
-            throw new UnpairableTeamsException(team);
+            throw new UnpairableTeamsException(players);
         }
     }
 }
