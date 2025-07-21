@@ -22,12 +22,6 @@ namespace Leagueinator.GUI.Controllers {
         #region Properties
         internal LeagueData LeagueData { get; private set; } = [];
 
-        internal RoundData RoundData {
-            get => this.EventData.GetRound(this.CurrentRoundIndex);
-        }
-
-        private int CurrentRoundIndex { get; set; } = 0;
-
         private EventData? _eventData = default;
         internal EventData EventData {
             get {
@@ -40,9 +34,13 @@ namespace Leagueinator.GUI.Controllers {
                 }
 
                 this._eventData = value;
-                EventTypeMeta.GetModule(value.EventType).LoadModule(this.Window);
+                EventTypeMeta.GetModule(value.EventType).LoadModule(this.Window, this.LeagueData);
             }
         }
+
+        private int CurrentRoundIndex { get; set; } = 0;
+
+        internal RoundData RoundData => this.EventData.GetRound(this.CurrentRoundIndex);
 
         private string FileName { get; set; } = "Leagueinator";
 
@@ -102,7 +100,7 @@ namespace Leagueinator.GUI.Controllers {
 
         [NamedEventHandler(EventName.SelectEvent)]
         internal void DoSelectEvent(int uid) {
-            this.EventData = this.LeagueData.GetEvent(uid);            
+            this.EventData = this.LeagueData.GetEvent(uid);
             this.CurrentRoundIndex = this.EventData.Count() - 1;
 
             NamedEvent.Dispatch(EventName.EventChanged, new() {
@@ -128,14 +126,14 @@ namespace Leagueinator.GUI.Controllers {
         internal void DoChangeEventType(EventType eventType) {
             EventTypeMeta.GetModule(this.EventData.EventType).UnloadModule(this.Window);
             this.EventData.EventType = eventType;
-            EventTypeMeta.GetModule(eventType).LoadModule(this.Window);
+            EventTypeMeta.GetModule(eventType).LoadModule(this.Window, this.LeagueData);
         }
 
         [NamedEventHandler(EventName.ChangeEventArg)]
         internal void DoChangeEventArg(string name, int ends, int laneCount, MatchFormat matchFormat) {
-            this.EventData.EventName   = name;
+            this.EventData.EventName = name;
             this.EventData.DefaultEnds = ends;
-            this.EventData.LaneCount   = laneCount;
+            this.EventData.LaneCount = laneCount;
             this.EventData.MatchFormat = matchFormat;
 
             SyncRoundData(this.RoundData, this.EventData);
@@ -329,7 +327,7 @@ namespace Leagueinator.GUI.Controllers {
         [NamedEventHandler(EventName.DisplayRoundResults)]
         internal void DoRoundResults() {
             RoundResults rr = new(this.RoundData);
-            TextViewer tv = new ();
+            TextViewer tv = new();
 
             foreach (SingleResult result in rr.AllResults) {
                 tv.Append(result.ToString());
@@ -378,7 +376,7 @@ namespace Leagueinator.GUI.Controllers {
             this.InvokeSetTitle(this.FileName, false);
             NamedEvent.Dispatch(EventName.EndsUpdated, new() {
                 ["lane"] = lane,
-                ["ends"]= ends,
+                ["ends"] = ends,
             });
         }
 
@@ -394,7 +392,7 @@ namespace Leagueinator.GUI.Controllers {
 
         [NamedEventHandler(EventName.ChangeBowls)]
         internal void DoBowls(int lane, int teamIndex, int bowls) {
-            this.RoundData[lane].Score[teamIndex] = bowls;            
+            this.RoundData[lane].Score[teamIndex] = bowls;
             this.InvokeSetTitle(this.FileName, false);
 
             NamedEvent.Dispatch(EventName.BowlsUpdated, new() {
@@ -508,7 +506,7 @@ namespace Leagueinator.GUI.Controllers {
                 return false;
             }
 
-            // If the player already exists in the round leagueData, remove them from their current position
+            // If the player already exists in the round LeagueData, remove them from their current position
             // and remove their name from the previous match card.
             if (this.RoundData.HasPlayer(name)) {
                 var existing = this.RoundData.PollPlayer(name);
@@ -536,23 +534,23 @@ namespace Leagueinator.GUI.Controllers {
         /// - Updates the match format for empty matches to match <see cref="EventData.MatchFormat"/>.
         /// </para>
         /// </summary>
-        /// <param name="roundRecords">The round leagueData to update, representing a collection of matches for a round.</param>        
+        /// <param name="roundRecords">The round LeagueData to update, representing a collection of matches for a round.</param>        
         private static void SyncRoundData(RoundData roundData, EventData eventData) {
-            // RoundUpdated leagueData by removing empty lanes until the number of lanes matches the event leagueData's lane count.
+            // RoundUpdated LeagueData by removing empty lanes until the number of lanes matches the event LeagueData's lane count.
             for (int i = roundData.Count - 1; i >= 0; i--) {
                 if (roundData.Count <= eventData.LaneCount) break;
                 if (roundData[i].CountPlayers() != 0) continue;
                 roundData.RemoveAt(i);
             }
 
-            // If the number of lanes is less than the event leagueData's lane count, add new empty lanes.
+            // If the number of lanes is less than the event LeagueData's lane count, add new empty lanes.
             while (roundData.Count < eventData.LaneCount) {
                 roundData.Add(new MatchData(eventData.MatchFormat) {
                     Lane = roundData.Count + 1
                 });
             }
 
-            // Ensure all match leagueData lanes are set correctly.
+            // Ensure all match LeagueData lanes are set correctly.
             for (int i = 0; i < roundData.Count; i++) {
                 roundData[i].Lane = i;
             }
@@ -563,7 +561,7 @@ namespace Leagueinator.GUI.Controllers {
                 matchData.Ends = eventData.DefaultEnds;
             }
 
-            // Ensure all empty match leagueData has the same match format as the event.
+            // Ensure all empty match LeagueData has the same match format as the event.
             foreach (MatchData matchData in roundData) {
                 if (matchData.CountPlayers() != 0) continue;
                 matchData.MatchFormat = eventData.MatchFormat;

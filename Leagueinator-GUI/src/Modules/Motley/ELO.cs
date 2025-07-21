@@ -1,5 +1,6 @@
 ﻿using Leagueinator.GUI.Model;
 using Leagueinator.GUI.Model.Results;
+using System.Numerics;
 
 namespace Leagueinator.GUI.Modules.Motley {
     public class ELO {
@@ -25,8 +26,8 @@ namespace Leagueinator.GUI.Modules.Motley {
             Players winners = matchResult.GetWinners();
             Players losers = matchResult.GetLosers();
 
-            int winnerELO = winners.Select(name => elo[name]).Sum() / winners.Count;
-            int loserELO = losers.Select(name => elo[name]).Sum() / winners.Count;
+            int winnerELO = winners.Where(name => !string.IsNullOrEmpty(name)).Select(name => elo[name]).Sum() / winners.Count;
+            int loserELO = losers.Where(name => !string.IsNullOrEmpty(name)).Select(name => elo[name]).Sum() / winners.Count;
 
             const int K = 32;
 
@@ -35,9 +36,11 @@ namespace Leagueinator.GUI.Modules.Motley {
 
             // Apply to each player evenly
             foreach (var name in winners) {
+                if (string.IsNullOrEmpty(name)) continue;
                 elo[name] += eloChange;
             }
             foreach (var name in losers) {
+                if (string.IsNullOrEmpty(name)) continue;
                 elo[name] -= eloChange;
             }
         }
@@ -45,6 +48,7 @@ namespace Leagueinator.GUI.Modules.Motley {
         private static void AddPlayersToElo(MatchResult matchResult, Dictionary<string, int> elo) {
             foreach (SingleResult singleResult in matchResult) {
                 foreach (string player in singleResult.Players) {
+                    if (string.IsNullOrEmpty(player)) continue; 
                     if (!elo.ContainsKey(player)) {
                         elo[player] = 2000;
                     }

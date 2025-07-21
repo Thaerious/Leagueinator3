@@ -1,6 +1,4 @@
-﻿
-
-using Leagueinator.GUI.Utility.Extensions;
+﻿using Leagueinator.GUI.Utility.Extensions;
 using System.Diagnostics;
 
 namespace Leagueinator.GUI.Model {
