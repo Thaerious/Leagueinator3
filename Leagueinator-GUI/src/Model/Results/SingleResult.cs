@@ -16,6 +16,8 @@ namespace Leagueinator.GUI.Model.Results {
 
         public TeamData TeamData { get; }
 
+        public Players Players => new(TeamData.Names);
+
         public Result Result {
             get {
                 if (this.MatchData.Score.Sum() == 0) return Result.Vacant;

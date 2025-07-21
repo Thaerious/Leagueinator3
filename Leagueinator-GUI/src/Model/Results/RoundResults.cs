@@ -12,6 +12,8 @@ namespace Leagueinator.GUI.Model.Results {
         /// </summary>
         public List<SingleResult> Results { get; private set; } = [];
 
+        public List<MatchResult> MatchResults { get; private set; } = [];
+
         /// <summary>
         /// Constructs a <see cref="RoundResults"/> object from the provided <see cref="RoundData"/>.
         /// Calculates results for each team in each match, assigns ranks based on performance.
@@ -23,10 +25,13 @@ namespace Leagueinator.GUI.Model.Results {
             foreach (MatchData matchData in RoundData) {
                 if (matchData.CountPlayers() == 0) continue;
 
+                MatchResult matchResult = [];
                 for (int team = 0; team < matchData.Teams.Count(); team++) {
                     SingleResult result = new(matchData, team);
                     results.Add(result);
+                    matchResult.Add(result);
                 }
+                this.MatchResults.Add(matchResult);
             }
 
             results.Sort();
