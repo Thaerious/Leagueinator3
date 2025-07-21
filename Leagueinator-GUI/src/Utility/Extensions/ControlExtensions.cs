@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Media;
 
 namespace Leagueinator.GUI.Utility.Extensions {
@@ -73,6 +74,24 @@ namespace Leagueinator.GUI.Utility.Extensions {
                 if (current is T match) yield return match;
                 current = VisualTreeHelper.GetParent(current);
             }
+        }
+
+        public static MenuItem? FindMenuItemByHeader(this Menu menu, string header) {
+            return FindMenuItemByHeader(menu.Items, header);
+        }
+
+        private static MenuItem? FindMenuItemByHeader(ItemCollection items, string header) {
+            foreach (var item in items) {
+                if (item is MenuItem menuItem) {
+                    if (menuItem.Header?.ToString() == header)
+                        return menuItem;
+
+                    var found = FindMenuItemByHeader(menuItem.Items, header);
+                    if (found != null)
+                        return found;
+                }
+            }
+            return null;
         }
     }
 }

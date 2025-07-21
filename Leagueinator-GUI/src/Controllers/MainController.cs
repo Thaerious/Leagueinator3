@@ -312,6 +312,14 @@ namespace Leagueinator.GUI.Controllers {
         #endregion
 
         #region Report Handlers
+
+        [NamedEventHandler(EventName.DisplayText)]
+        internal void DoDisplayText(string text) {
+            TextViewer tv = new();
+            tv.Append(text);
+            tv.Show();
+        }
+
         [NamedEventHandler(EventName.PrintTeams)]
         internal void DoPrintTeams() {
             PrintWindow pw = new(this.EventData);
@@ -321,7 +329,7 @@ namespace Leagueinator.GUI.Controllers {
         [NamedEventHandler(EventName.DisplayRoundResults)]
         internal void DoRoundResults() {
             RoundResults rr = new(this.RoundData);
-            TextViewer tv = new TextViewer();
+            TextViewer tv = new ();
 
             foreach (SingleResult result in rr.AllResults) {
                 tv.Append(result.ToString());

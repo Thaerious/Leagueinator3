@@ -1,4 +1,5 @@
-﻿using Leagueinator.GUI.Dialogs;
+﻿using Leagueinator.GUI.Controllers.NamedEvents;
+using Leagueinator.GUI.Dialogs;
 using Leagueinator.GUI.Forms.Main;
 using Leagueinator.GUI.Model;
 using Leagueinator.GUI.Modules.RankedLadder;
@@ -19,9 +20,9 @@ namespace Leagueinator.GUI.Modules.Motley {
         }
 
         private void EloMenuClick(object sender, RoutedEventArgs e) {
-            TextViewer tv = new TextViewer();
-            tv.Append("ELO");
-            tv.Show();
+            NamedEvent.Dispatch(EventName.DisplayText, new() {
+                ["text"] = "ELO"
+            });           
         }
 
         public void UnloadModule(Window window) {

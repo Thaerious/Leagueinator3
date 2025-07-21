@@ -16,6 +16,7 @@
         DeleteEvent,
         DisplayEventResults,
         DisplayRoundResults,
+        DisplayText,
         EndsUpdated,
         EventAdded,
         EventManager,

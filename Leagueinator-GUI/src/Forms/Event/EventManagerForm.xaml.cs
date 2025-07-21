@@ -39,7 +39,7 @@ namespace Leagueinator.GUI.Forms.Event {
 
                 this.ListEventType.ItemsSource = new List<EventTypeRecord> {
                     new(EventType.RankedLadder, "Ranked Ladder"),
-                    //new(EventType.Motley, "Motley"), TODO ENABLE
+                    new(EventType.Motley, "Motley"),
                     //new(EventType.RoundRobin, "Round Robin"), TODO ENABLE
                 };
                 this.ListEventType.DisplayMemberPath = "DisplayName";
