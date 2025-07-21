@@ -1,7 +1,9 @@
-﻿namespace Leagueinator.GUI.Modules {
-    public interface IModule {
-        public void LoadHooks();
+﻿using System.Windows;
 
-        public void LoadMenu();
+namespace Leagueinator.GUI.Modules {
+    public interface IModule {
+        public void LoadModule(Window targetWindow);
+
+        public void UnloadModule(Window targetWindow);
     }
 }

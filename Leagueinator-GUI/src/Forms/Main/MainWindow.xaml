@@ -31,7 +31,7 @@
         </Grid.RowDefinitions>
 
         <!-- Main Menu -->
-        <Menu Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3">
+        <Menu Name="MainMenu" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3">
             <!-- File Menu -->
             <MenuItem Header="File">
                 <MenuItem Header="New" Click="HndNewLeagueClick"/>

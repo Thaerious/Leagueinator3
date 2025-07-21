@@ -42,8 +42,8 @@ src
 │   ├── RenameDialog.xaml.cs
 │   ├── SettingsDialog.xaml
 │   ├── SettingsDialog.xaml.cs
-│   ├── TableViewer.xaml
-│   └── TableViewer.xaml.cs
+│   ├── TextViewer.xaml
+│   └── TextViewer.xaml.cs
 ├── Forms
 │   ├── ConfirmationDialog.xaml
 │   ├── ConfirmationDialog.xaml.cs

@@ -35,9 +35,12 @@ namespace Leagueinator.GUI.Controllers {
                 return _eventData;
             }
             set {
-                this._eventData = value;                
-                EventTypeMeta.GetModule(value.EventType).LoadHooks();
-                EventTypeMeta.GetModule(value.EventType).LoadMenu();
+                if (this._eventData is not null) {
+                    EventTypeMeta.GetModule(this._eventData.EventType).UnloadModule(this.Window);
+                }
+
+                this._eventData = value;
+                EventTypeMeta.GetModule(value.EventType).LoadModule(this.Window);
             }
         }
 
@@ -123,9 +126,9 @@ namespace Leagueinator.GUI.Controllers {
 
         [NamedEventHandler(EventName.ChangeEventType)]
         internal void DoChangeEventType(EventType eventType) {
+            EventTypeMeta.GetModule(this.EventData.EventType).UnloadModule(this.Window);
             this.EventData.EventType = eventType;
-            EventTypeMeta.GetModule(eventType).LoadHooks();
-            EventTypeMeta.GetModule(eventType).LoadMenu();
+            EventTypeMeta.GetModule(eventType).LoadModule(this.Window);
         }
 
         [NamedEventHandler(EventName.ChangeEventArg)]
@@ -318,7 +321,7 @@ namespace Leagueinator.GUI.Controllers {
         [NamedEventHandler(EventName.DisplayRoundResults)]
         internal void DoRoundResults() {
             RoundResults rr = new(this.RoundData);
-            TableViewer tv = new TableViewer();
+            TextViewer tv = new TextViewer();
 
             foreach (SingleResult result in rr.AllResults) {
                 tv.Append(result.ToString());
@@ -330,7 +333,7 @@ namespace Leagueinator.GUI.Controllers {
         [NamedEventHandler(EventName.DisplayEventResults)]
         internal void DoEventResults(object? sender, NamedEventArgs e) {
             EventResults er = new(this.EventData);
-            TableViewer tv = new TableViewer();
+            TextViewer tv = new TextViewer();
             foreach (TeamResult result in er.ByTeam.Values) {
                 tv.Append(result.ToString());
             }
@@ -339,7 +342,7 @@ namespace Leagueinator.GUI.Controllers {
 
         [NamedEventHandler(EventName.ShowData)]
         internal void DoShow() {
-            TableViewer tv = new TableViewer();
+            TextViewer tv = new TextViewer();
             tv.Append(this.GetShow());
             tv.Show();
         }

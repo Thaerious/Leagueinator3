@@ -2,10 +2,10 @@
 
 namespace Leagueinator.GUI.Dialogs {
     /// <summary>
-    /// Interaction logic for TableViewer.xaml
+    /// Interaction logic for TextViewer.xaml
     /// </summary>
-    public partial class TableViewer : Window {
-        public TableViewer() {
+    public partial class TextViewer : Window {
+        public TextViewer() {
             this.InitializeComponent();
         }
 
