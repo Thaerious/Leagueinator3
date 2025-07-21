@@ -7,6 +7,8 @@ namespace Leagueinator.GUI.Model {
 
         public string[] Names { get; }
 
+        public Players Players => [.. this.Names];
+
         public TeamData(int size) {
             this.Names = new string[size];
             Array.Fill(this.Names, string.Empty);

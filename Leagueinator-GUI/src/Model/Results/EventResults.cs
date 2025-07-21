@@ -35,16 +35,16 @@ namespace Leagueinator.GUI.Model.Results {
         /// </summary>
         /// <param name="roundDataCollection"></param>
         /// <returns></returns>
-        private Dictionary<TeamData, TeamResult> AggregateResultsByTeam(IEnumerable<RoundData> rounds) {
-            Dictionary<TeamData, TeamResult> teamResultsMap = [];
+        private Dictionary<Players, TeamResult> AggregateResultsByTeam(IEnumerable<RoundData> rounds) {
+            Dictionary<Players, TeamResult> teamResultsMap = [];
 
             foreach (RoundResults roundResults in this.ResultsByRound) {
                 foreach (SingleResult singleResult in roundResults.Results) {
-                    if (teamResultsMap.ContainsKey(singleResult.TeamData) == false) {
-                        teamResultsMap.Add(singleResult.TeamData, new TeamResult(singleResult.TeamData));
+                    if (teamResultsMap.ContainsKey(singleResult.Players) == false) {
+                        teamResultsMap.Add(singleResult.Players, new TeamResult(singleResult.TeamData));
                     }
 
-                    TeamResult teamResults = teamResultsMap[singleResult.TeamData];
+                    TeamResult teamResults = teamResultsMap[singleResult.Players];
                     teamResults.MatchResults.Add(singleResult);
                 }
             }
