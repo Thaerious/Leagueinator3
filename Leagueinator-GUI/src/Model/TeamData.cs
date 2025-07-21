@@ -112,5 +112,9 @@ namespace Leagueinator.GUI.Model {
         internal void CopyFrom(TeamData teamData) {
             teamData.Names.CopyTo(this.Names, 0);
         }
+
+        internal void CopyFrom(IEnumerable<string> players) {
+            players.ToArray().CopyTo(this.Names, 0);
+        }
     }
 }

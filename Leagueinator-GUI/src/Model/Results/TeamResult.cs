@@ -5,12 +5,10 @@ namespace Leagueinator.GUI.Model.Results {
     public class TeamResult : IComparable<TeamResult>{
         public readonly List<SingleResult> MatchResults = [];
 
-        public TeamData Team {
-            get; private set;
-        }
+        public readonly Players Players;
 
-        public TeamResult(TeamData team) {
-            this.Team = team;
+        public TeamResult(IEnumerable<string> players) {
+            this.Players = [..players];
         }
 
         public int Wins {
@@ -129,7 +127,7 @@ namespace Leagueinator.GUI.Model.Results {
         }
 
         public override string ToString() {
-            return $"{this.Rank}: {string.Join(", ", this.Team)} #{this.MatchResults.Count}  (Wins: {this.Wins}, Draws: {this.Draws}, Losses: {this.Losses}, For: {this.BowlsFor}+{this.PlusFor}, Against: {this.BowlsAgainst}+{this.PlusAgainst}, Ends: {this.Ends})";
+            return $"{this.Rank}: {string.Join(", ", this.Players)} #{this.MatchResults.Count}  (Wins: {this.Wins}, Draws: {this.Draws}, Losses: {this.Losses}, For: {this.BowlsFor}+{this.PlusFor}, Against: {this.BowlsAgainst}+{this.PlusAgainst}, Ends: {this.Ends})";
         }
     }
 }

@@ -7,16 +7,14 @@ namespace Leagueinator.GUI.Model.Results {
         public SingleResult(MatchData matchData, int teamIndex) {
             this.MatchData = matchData;
             this.TeamIndex = teamIndex;
-            this.TeamData = matchData.Teams[teamIndex];
             this.Ends = matchData.Ends;
             this.Bowls = matchData.Score[teamIndex];
             this.Against = matchData.Score.Sum() - this.Bowls;
             this.Rank = -1; // Default rank, this is set by the DisplayRoundResults class
+            this.Players = [..matchData.Teams[teamIndex].Players];
         }
 
-        public TeamData TeamData { get; }
-
-        public Players Players => new(TeamData.Names);
+        public Players Players { get; }
 
         public Result Result {
             get {

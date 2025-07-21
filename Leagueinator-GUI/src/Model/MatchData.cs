@@ -181,6 +181,22 @@ namespace Leagueinator.GUI.Model {
             throw new ModelConstraintException("No empty team slot available in the match.");
         }
 
+        /// <summary>
+        /// CopyRound the team to the next empty slot in the match.
+        /// If there are no empty slots, it throws an exception.
+        /// </summary>
+        /// <param name="teamData"></param>
+        /// <exception cref="NotImplementedException"></exception>
+        internal void AddTeam(IEnumerable<string> players) {
+            foreach (TeamData team in this.Teams) {
+                if (team.IsEmpty()) {
+                    team.CopyFrom(players);
+                    return;
+                }
+            }
+            throw new ModelConstraintException("No empty team slot available in the match.");
+        }
+
         public static MatchData FromRecord(MatchRecord record) {
             return new MatchData(record.MatchFormat) {
                 Ends = record.Ends,

@@ -45,7 +45,7 @@ namespace Leagueinator.GUI.Forms.Print {
             };
 
             // Add team header
-            string teamHeader = $"[{teamResult.Rank}] {string.Join(", ", teamResult.Team)}";
+            string teamHeader = $"[{teamResult.Rank}] {string.Join(", ", teamResult.Players)}";
 
             outerCell.Blocks.Add(
                 new Paragraph(new Run(teamHeader)) {

@@ -1,4 +1,6 @@
 ﻿
+using System.Diagnostics;
+
 namespace Leagueinator.GUI.Model.Results {
     /// <summary>
     /// Aggregates results across all rounds of an event.
@@ -40,8 +42,9 @@ namespace Leagueinator.GUI.Model.Results {
 
             foreach (RoundResults roundResults in this.ResultsByRound) {
                 foreach (SingleResult singleResult in roundResults.Results) {
+                    Debug.WriteLine($"SingleResult {singleResult}");
                     if (teamResultsMap.ContainsKey(singleResult.Players) == false) {
-                        teamResultsMap.Add(singleResult.Players, new TeamResult(singleResult.TeamData));
+                        teamResultsMap.Add(singleResult.Players, new TeamResult(singleResult.Players));
                     }
 
                     TeamResult teamResults = teamResultsMap[singleResult.Players];

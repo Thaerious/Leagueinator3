@@ -1,5 +1,6 @@
 ﻿using Leagueinator.GUI.Model;
 using Leagueinator.GUI.Model.Results;
+using System.Diagnostics;
 
 namespace Leagueinator.GUI.Modules.RankedLadder {
     internal class RankedLadderImpl {
@@ -18,10 +19,14 @@ namespace Leagueinator.GUI.Modules.RankedLadder {
             RoundData newRound = [];
             List<TeamResult> results = new EventResults(this.EventData).ResultsByTeam;
 
+            foreach (TeamResult result in results) {
+                Debug.WriteLine(result);
+            }
+
             while (results.Count > 0) {
-                TeamData bestTeam = results[0].Team;
+                Players bestTeam = results[0].Players;
                 results.RemoveAt(0);
-                TeamResult nextResult = this.GetNextTeam(bestTeam.Players, results);
+                TeamResult nextResult = this.GetNextTeam(bestTeam, results);
                 results.Remove(nextResult);
 
                 MatchData matchData = new(this.EventData.MatchFormat) {
@@ -29,8 +34,8 @@ namespace Leagueinator.GUI.Modules.RankedLadder {
                     Ends = this.EventData.DefaultEnds,
                 };
 
-                matchData.AddTeam(bestTeam.Copy()); 
-                matchData.AddTeam(nextResult.Team.Copy()); 
+                matchData.AddTeam(bestTeam); 
+                matchData.AddTeam(nextResult.Players); 
                 newRound.Add(matchData);
             }
 
@@ -45,7 +50,7 @@ namespace Leagueinator.GUI.Modules.RankedLadder {
         /// <returns></returns>
         private TeamResult GetNextTeam(IEnumerable<string> players, List<TeamResult> results) {
             foreach (TeamResult result in results) {
-                if (this.EventData.HasPlayed(players, result.Team)) continue;
+                if (this.EventData.HasPlayed(players, result.Players)) continue;
                 return result; 
             }
 

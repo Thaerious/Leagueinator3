@@ -136,9 +136,9 @@ namespace Leagueinator.GUI.Model {
         /// </summary>
         /// <param name="team"></param>
         /// <returns></returns>
-        public bool HasPlayed(IEnumerable<string> team, TeamData pollOpponent) {
+        public bool HasPlayed(IEnumerable<string> team, IEnumerable<string> opponent) {
             foreach (TeamData prevOpponent in this.PreviousOpponents(team)) {
-                if (pollOpponent.Names.Intersect(prevOpponent.Names).Any()) {
+                if (opponent.Intersect(prevOpponent.Names).Any()) {
                     return true;
                 }
             }
