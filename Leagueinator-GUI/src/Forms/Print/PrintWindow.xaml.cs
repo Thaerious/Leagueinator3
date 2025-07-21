@@ -109,7 +109,7 @@ namespace Leagueinator.GUI.Forms.Print {
 
         private TableRow AddResult(SingleResult result) {
             List<string> names = [..result.MatchData.GetPlayers()];
-            names = [.. names.Except(result.TeamData.Names)];
+            names = [.. names.Except(result.Players)];
             var joinNames = string.Join(", ", names);
 
 

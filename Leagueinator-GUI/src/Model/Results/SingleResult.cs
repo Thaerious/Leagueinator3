@@ -32,7 +32,7 @@ namespace Leagueinator.GUI.Model.Results {
         }
 
         public override string ToString() {
-            return $"{this.Rank}: {this.Result} [{this.TeamData}]  (For: {this.BowlsFor}+{this.PlusFor}, Against: {this.BowlsAgainst}+{this.PlusAgainst}, Ends: {this.Ends} Lane: {this.MatchData.Lane + 1})";
+            return $"{this.Rank}: {this.Result} [{this.Players}]  (For: {this.BowlsFor}+{this.PlusFor}, Against: {this.BowlsAgainst}+{this.PlusAgainst}, Ends: {this.Ends} Lane: {this.MatchData.Lane + 1})";
         }
 
         public int Ends { get; set; } = 0;
