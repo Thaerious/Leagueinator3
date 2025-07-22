@@ -1,5 +1,5 @@
 ﻿
-namespace Leagueinator.GUI.Model.Results {
+namespace Leagueinator.GUI.Model.Results.BowlsPlus {
     public class LeagueResults : List<EventResults> {
         
         public LeagueResults(LeagueData leagueData) : base() {

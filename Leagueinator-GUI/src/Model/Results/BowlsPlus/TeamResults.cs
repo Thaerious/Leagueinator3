@@ -1,4 +1,4 @@
-﻿namespace Leagueinator.GUI.Model.Results {
+﻿namespace Leagueinator.GUI.Model.Results.BowlsPlus {
 
     /// <summary>
     /// The results of a single team in a match.

@@ -1,5 +1,5 @@
 ﻿
-namespace Leagueinator.GUI.Model.Results {
+namespace Leagueinator.GUI.Model.Results.BowlsPlus {
     /// <summary>
     /// Aggregates results across all rounds of an event.
     /// </summary>

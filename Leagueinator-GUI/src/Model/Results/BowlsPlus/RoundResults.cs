@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
 
-namespace Leagueinator.GUI.Model.Results {
+namespace Leagueinator.GUI.Model.Results.BowlsPlus {
     /// <summary>
     /// Represents the results for all teams within a single round.
     /// </summary>
@@ -25,8 +25,9 @@ namespace Leagueinator.GUI.Model.Results {
             foreach (MatchData matchData in RoundData) {
                 if (matchData.CountPlayers() == 0) continue;
 
-                MatchResult matchResult = [];
-                for (int team = 0; team < matchData.Teams.Count(); team++) {
+                MatchResult matchResult = new() {Lane = matchData.Lane };
+
+                for (int team = 0; team < matchData.Teams.Length; team++) {
                     SingleResult result = new(matchData, team);
                     results.Add(result);
                     matchResult.Add(result);

@@ -1,40 +1,15 @@
-﻿namespace Leagueinator.GUI.Model.Results {
+﻿using System.Diagnostics;
+using System.Text;
 
-    /// <summary>
-    /// A collection of all team results for a single set of players in an event.
-    /// Used to report a team's overall score for the event.
-    /// </summary>
-    public class TeamSummary : List<TeamResults>, IComparable<TeamSummary> {
+namespace Leagueinator.GUI.Model.Results.BowlsPlus {
+    public class TeamResult : List<SingleResult>, IComparable<TeamResult>{
         public readonly Players Players;
 
-        public TeamSummary(IEnumerable<string> players) {
-            this.Players = new(players);
+        public TeamResult(IEnumerable<string> players) {
+            this.Players = [..players];
         }
 
-        public int CompareTo(TeamSummary? other) {
-            if (other == null) return 1; // Null is less
-
-            int cmp = this.Wins.CompareTo(other.Wins);
-            if (cmp != 0) return cmp;
-
-            cmp = this.Draws.CompareTo(other.Draws);
-            if (cmp != 0) return cmp;
-
-            cmp = this.BowlsFor.CompareTo(other.BowlsFor); // Higher is better
-            if (cmp != 0) return cmp;
-
-            cmp = this.PlusFor.CompareTo(other.PlusFor); // Higher is better
-            if (cmp != 0) return cmp;
-
-            cmp = other.BowlsAgainst.CompareTo(this.BowlsAgainst); // Lower is better
-            if (cmp != 0) return cmp;
-
-            cmp = other.PlusAgainst.CompareTo(this.PlusAgainst); // Lower is better
-            if (cmp != 0) return cmp;
-
-            return 0; // Equal results
-        }
-
+        public int Rank { get; set; } = -1;
 
         public int Wins {
             get {
@@ -84,8 +59,6 @@
             }
         }
 
-        public int Rank { get; set; } = -1;
-
         public int CountWins {
             get {
                 if (this.Count == 0) return 0;
@@ -126,6 +99,29 @@
                 if (this.Count == 0) return 0;
                 return this.Sum(r => r.PlusAgainst);
             }
+        }
+        public int CompareTo(TeamResult? other) {
+            if (other == null) return 1; // Null is less
+
+            int cmp = this.Wins.CompareTo(other.Wins);
+            if (cmp != 0) return cmp;
+
+            cmp = this.Draws.CompareTo(other.Draws);
+            if (cmp != 0) return cmp;
+
+            cmp = this.BowlsFor.CompareTo(other.BowlsFor); // Higher is better
+            if (cmp != 0) return cmp;
+
+            cmp = this.PlusFor.CompareTo(other.PlusFor); // Higher is better
+            if (cmp != 0) return cmp;
+
+            cmp = other.BowlsAgainst.CompareTo(this.BowlsAgainst); // Lower is better
+            if (cmp != 0) return cmp;
+
+            cmp = other.PlusAgainst.CompareTo(this.PlusAgainst); // Lower is better
+            if (cmp != 0) return cmp;
+
+            return 0; // Equal results
         }
 
         public override string ToString() {

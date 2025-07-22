@@ -6,7 +6,7 @@ using Leagueinator.GUI.Forms.Event;
 using Leagueinator.GUI.Forms.Main;
 using Leagueinator.GUI.Forms.Print;
 using Leagueinator.GUI.Model;
-using Leagueinator.GUI.Model.Results;
+using Leagueinator.GUI.Model.Results.BowlsPlus;
 using Leagueinator.GUI.Modules;
 using Microsoft.Win32;
 using System.Diagnostics;

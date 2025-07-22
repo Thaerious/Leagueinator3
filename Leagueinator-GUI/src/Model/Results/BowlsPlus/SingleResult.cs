@@ -1,6 +1,4 @@
-﻿using Leagueinator.GUI.Model;
-
-namespace Leagueinator.GUI.Model.Results {
+﻿namespace Leagueinator.GUI.Model.Results.BowlsPlus {
 
     public class SingleResult : IComparable<SingleResult> {
 
@@ -42,7 +40,9 @@ namespace Leagueinator.GUI.Model.Results {
         public int Rank { get; set; } = -1;
 
         public int BowlsFor {
-            get => Math.Min((int)Math.Floor(this.Ends * 1.5), this.Bowls);
+            get {               
+                return Math.Min((int)Math.Floor(this.Ends * 1.5), this.Bowls);
+            }
         }
 
         public int BowlsAgainst {

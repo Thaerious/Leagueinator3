@@ -1,4 +1,4 @@
-﻿using Leagueinator.GUI.Model.Results;
+﻿using Leagueinator.GUI.Model.Results.BowlsPlus;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;

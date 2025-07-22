@@ -1,5 +1,5 @@
 ﻿using Leagueinator.GUI.Model;
-using Leagueinator.GUI.Model.Results;
+using Leagueinator.GUI.Model.Results.BowlsPlus;
 using System.Numerics;
 
 namespace Leagueinator.GUI.Modules.Motley {
@@ -13,6 +13,7 @@ namespace Leagueinator.GUI.Modules.Motley {
 
                 foreach (RoundResults roundResults in eventResults.ByRound) {
                     foreach (MatchResult matchResult in roundResults.ByMatch) {
+                        if (matchResult.Count == 0) continue;
                         AddPlayersToElo(matchResult, elo);
                         UpdateElo(matchResult, elo);
                     }

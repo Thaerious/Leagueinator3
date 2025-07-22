@@ -1,5 +1,5 @@
 ﻿using Leagueinator.GUI.Model;
-using Leagueinator.GUI.Model.Results;
+using Leagueinator.GUI.Model.Results.BowlsPlus;
 using System.Diagnostics;
 using System.IO;
 using System.Windows;
