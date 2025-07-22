@@ -36,7 +36,6 @@ namespace Leagueinator.GUI.Modules.Motley {
         }
 
         public void UnloadModule(Window window) {
-            Debug.WriteLine("Unload Motley Module");
             if (Hooks.GenerateRound == this.GenerateRound) {
                 Hooks.GenerateRound = null;
             }

@@ -172,8 +172,8 @@ namespace Leagueinator.GUI.Controllers {
         internal void DoShowEventManager() {
             var form = new EventManagerForm();
 
-            Debug.WriteLine("Showing Form");
             List<EventRecord> records = [.. this.LeagueData.Select(data => EventData.ToRecord(data))];
+            NamedEvent.AddHandler(form);
             form.ShowDialog(this, records, EventData.ToRecord(this.EventData));
 
             // After form closes.
@@ -186,6 +186,7 @@ namespace Leagueinator.GUI.Controllers {
 
             this.InvokeRoundUpdate();
             this.InvokeSetTitle(this.FileName, true);
+            NamedEvent.RemoveHandler(form);
         }
 
         #endregion
