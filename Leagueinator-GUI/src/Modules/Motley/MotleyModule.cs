@@ -30,7 +30,7 @@ namespace Leagueinator.GUI.Modules.Motley {
                 sb += $"{kvp.Key} : {kvp.Value}\n";
             }
 
-            NamedEvent.Dispatch(EventName.DisplayText, new() {
+            this.DispatchEvent(EventName.DisplayText, new() {
                 ["text"] = sb
             });           
         }

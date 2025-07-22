@@ -21,7 +21,6 @@ namespace Leagueinator.GUI.Model {
                 UID = this.GetNextUID()
             };
             this.Add(eventData);
-            Debug.WriteLine($" * Add Event {eventData.UID}");
             return eventData;
         }
 

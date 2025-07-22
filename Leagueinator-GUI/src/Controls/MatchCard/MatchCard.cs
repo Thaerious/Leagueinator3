@@ -63,7 +63,7 @@ namespace Leagueinator.GUI.Controls {
             if (sender is not TextBox textBox) return;
             if (textBox.PreventEmpty()) return;
 
-            NamedEvent.Dispatch(EventName.ChangeEnds, new() {
+            this.DispatchEvent(EventName.ChangeEnds, new() {
                 ["lane"] = this.Lane,
                 ["ends"] = int.Parse(textBox.Text)
             });
@@ -77,7 +77,7 @@ namespace Leagueinator.GUI.Controls {
             if (sender is not TextBox textBox) return;
             if (textBox.PreventEmpty()) return;
 
-            NamedEvent.Dispatch(EventName.ChangeBowls, new() {
+            this.DispatchEvent(EventName.ChangeBowls, new() {
                 ["lane"] = this.Lane,
                 ["bowls"] = int.Parse(textBox.Text),
                 ["teamIndex"] = textBox.Ancestors<TeamCard>().First().TeamIndex
@@ -151,7 +151,7 @@ namespace Leagueinator.GUI.Controls {
         /// Handles the context menu action to remove a match.
         /// </summary>
         public void HndRemoveMatch(object _, RoutedEventArgs __) {
-            NamedEvent.Dispatch(EventName.RemoveMatch, new() {
+            this.DispatchEvent(EventName.RemoveMatch, new() {
                 ["lane"] = this.Lane,
             });
         }
@@ -171,7 +171,7 @@ namespace Leagueinator.GUI.Controls {
             bool success = Enum.TryParse(customData, out MatchFormat matchFormat);
             if (!success) throw new ArgumentException("Error on tag on context menu item");
 
-            NamedEvent.Dispatch(EventName.ChangeMatchFormat, new() {
+            this.DispatchEvent(EventName.ChangeMatchFormat, new() {
                 ["lane"] = this.Lane,
                 ["format"] = matchFormat
             });
@@ -192,7 +192,7 @@ namespace Leagueinator.GUI.Controls {
 
             if (checkBox.IsChecked == true) checkTie[otherIndex].IsChecked = false;
 
-            NamedEvent.Dispatch(EventName.ChangeTieBreaker, new() {
+            this.DispatchEvent(EventName.ChangeTieBreaker, new() {
                 ["lane"] = this.Lane,
                 ["teamIndex"] = checkTie.FindIndex(cb => cb.IsChecked == true)
             });

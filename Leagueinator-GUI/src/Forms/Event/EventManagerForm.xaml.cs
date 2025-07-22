@@ -11,21 +11,37 @@ using EventRecord = Leagueinator.GUI.Model.EventRecord;
 
 namespace Leagueinator.GUI.Forms.Event {
 
-    public record MatchFormatRecord(MatchFormat MatchFormat, string DisplayName) { }
-    public record EventTypeRecord(EventType EventType, string DisplayName) { }
+    public record MatchFormatRecord {
+        public MatchFormatRecord(MatchFormat MatchFormat, string DisplayName) {
+            this.MatchFormat = MatchFormat;
+            this.DisplayName = DisplayName;
+        }
+
+        public MatchFormat MatchFormat { get;}
+        public string DisplayName { get; }
+    }
+    public record EventTypeRecord{
+        public EventTypeRecord(EventType EventType, string DisplayName) {
+            this.EventType = EventType;
+            this.DisplayName = DisplayName;
+        }
+        public EventType EventType { get; }
+        public string DisplayName { get; }
+    }
 
     /// <summary>
     /// Interaction logic for EventManagerForm.xaml
     /// </summary>
-    public partial class EventManagerForm : Window {
+    public partial class EventManagerForm : Window, IDispatchesEvents {
 
         public ObservableCollection<EventRecord> EventRecords { get; set; } = [];
-
+        public bool DisableEvents { get; set; } = true;
 
         public EventManagerForm() {
             InitializeComponent();
 
             this.Loaded += (s, e) => {
+                Debug.WriteLine("Loaded");
                 this.TxtEnds.PreviewTextInput += InputHandlers.OnlyNumbers;
                 this.TxtLanes.PreviewTextInput += InputHandlers.OnlyNumbers;
 
@@ -36,33 +52,42 @@ namespace Leagueinator.GUI.Forms.Event {
                     new(MatchFormat.VS4, MatchFormat.VS4.ToString()),
                     new(MatchFormat.A4321, MatchFormat.A4321.ToString()),
                 };
-                this.ListMatchFormat.DisplayMemberPath = "DisplayName";
 
                 this.ListEventType.ItemsSource = new List<EventTypeRecord> {
                     new(EventType.RankedLadder, "Ranked Ladder"),
                     new(EventType.Motley, "Motley"),
                     //new(EventType.RoundRobin, "Round Robin"), TODO ENABLE
                 };
+
                 this.ListMatchFormat.SelectedValuePath = "MatchFormat";
+                this.ListMatchFormat.DisplayMemberPath = "DisplayName";
+
+                this.ListEventType.SelectedValuePath = "EventType";
                 this.ListEventType.DisplayMemberPath = "DisplayName";
             };
         }
 
         public void ShowDialog(MainController mainController, List<EventRecord> eventRecords, EventRecord selected) {
+            Debug.WriteLine("Show");
             foreach (var record in eventRecords) this.EventRecords.Add(record);
             this.DataContext = this;
-            this.DoEventChanged(selected);
-            this.ShowDialog();
+
+            this.Loaded += (s, e) => {
+                this.DoEventChanged(selected);
+                this.DisableEvents = false;
+            };
+
+            this.ShowDialog();            
         }
 
         #region Button Handlers
 
         private void HndNew(object sender, EventArgs e) {
-            MainWindow.NamedEventDisp.Dispatch(EventName.AddEvent);
+            this.DispatchEvent(EventName.AddEvent);
         }
 
         private void HndDelete(object sender, EventArgs e) {
-            MainWindow.NamedEventDisp.Dispatch(EventName.DeleteEvent, new() {
+            this.DispatchEvent(EventName.DeleteEvent, new() {
                 ["eventUID"] = (this.EventData.SelectedItem as EventRecord)!.UID,
             });
         }
@@ -83,18 +108,12 @@ namespace Leagueinator.GUI.Forms.Event {
 
         [NamedEventHandler(EventName.EventChanged)]
         internal void DoEventChanged(EventRecord eventRecord) {
-            MainWindow.NamedEventDisp.PauseEvents();
-            
             this.EventData.SelectedItem = eventRecord;
             this.TxtName.Text = eventRecord.Name;
             this.TxtEnds.Text = eventRecord.DefaultEnds.ToString();
             this.TxtLanes.Text = eventRecord.LaneCount.ToString();
-
-            Debug.WriteLine("DoEventChanged");
-            Debug.WriteLine(eventRecord);
-
             this.ListMatchFormat.SelectedValue = eventRecord.MatchFormat;
-            MainWindow.NamedEventDisp.ResumeEvents();
+            this.ListEventType.SelectedValue = eventRecord.EventType;
         }
 
         [NamedEventHandler(EventName.EventDeleted)]
@@ -119,10 +138,12 @@ namespace Leagueinator.GUI.Forms.Event {
 
         #endregion
 
+        #region Component Handlers
         private void SelectionChanged(object sender, SelectionChangedEventArgs e) {
             if (this.EventData.SelectedItem is not EventRecord record) return;
             this.ButDelete.IsEnabled = true;
-            MainWindow.NamedEventDisp.Dispatch(EventName.SelectEvent, new() {
+
+            this.DispatchEvent(EventName.SelectEvent, new() {
                 ["uid"] = record.UID,
             });
         }
@@ -135,8 +156,9 @@ namespace Leagueinator.GUI.Forms.Event {
             if (this.IsLoaded == false) return;
 
             EventTypeRecord etf = (EventTypeRecord)this.ListEventType.SelectedItem;
+            if (etf is null) return;
 
-            MainWindow.NamedEventDisp.Dispatch(EventName.ChangeEventType, new() {
+            this.DispatchEvent(EventName.ChangeEventType, new() {
                 ["eventType"] = etf.EventType
             });
         }
@@ -144,6 +166,7 @@ namespace Leagueinator.GUI.Forms.Event {
         private void MatchFormatChanged(object sender, SelectionChangedEventArgs e) {
             this.InvokeChangeEventArg();
         }
+        #endregion
 
         private void InvokeChangeEventArg() {
             if (this.IsLoaded == false) return;
@@ -151,7 +174,7 @@ namespace Leagueinator.GUI.Forms.Event {
             MatchFormatRecord? mfr = (MatchFormatRecord)this.ListMatchFormat.SelectedItem;
             if (mfr is null) return;
 
-            MainWindow.NamedEventDisp.Dispatch(EventName.ChangeEventArg, new() {
+            this.DispatchEvent(EventName.ChangeEventArg, new() {
                 ["name"] = this.TxtName.Text,
                 ["laneCount"] = int.Parse(this.TxtLanes.Text),
                 ["ends"] = int.Parse(this.TxtEnds.Text),

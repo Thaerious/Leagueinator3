@@ -21,14 +21,14 @@ namespace Leagueinator.GUI.src.Controllers {
         public event FocusRevoked OnFocusRevoked = delegate { };
 
         private void InvokeFocusGranted(TeamID teamID) {
-            NamedEvent.Dispatch(EventName.FocusGranted, new () {
+            this.DispatchEvent(EventName.FocusGranted, new () {
                 ["teamIndex"] = teamID.TeamIndex,
                 ["lane"] = teamID.Lane
             });
         }
 
         private void InvokeFocusRevoked(TeamID teamID) {
-            NamedEvent.Dispatch(EventName.FocusRevoked, new() {
+            this.DispatchEvent(EventName.FocusRevoked, new() {
                 ["teamIndex"] = teamID.TeamIndex,
                 ["lane"] = teamID.Lane
             });

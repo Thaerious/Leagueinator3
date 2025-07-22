@@ -12,9 +12,8 @@ namespace Leagueinator.GUI.Forms.Main {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window {
-
-        public static NamedEventDispatcher NamedEventDisp { get; } = new();
+    public partial class MainWindow : Window, IDispatchesEvents {
+        public bool DisableEvents { get; set; }
 
         public MainWindow() {
             this.InitializeComponent();
@@ -35,7 +34,7 @@ namespace Leagueinator.GUI.Forms.Main {
         }
 
         public void Ready() {
-            NamedEventDisp.Dispatch(EventName.NewLeague);
+            this.DispatchEvent(EventName.NewLeague);
             this.InvokeRoundButton();
         }
 
@@ -73,7 +72,7 @@ namespace Leagueinator.GUI.Forms.Main {
 
                 // Assign tab order & set data when loaded
                 matchCard.Loaded += (s, e) => {
-                    NamedEventDisp.PauseEvents();
+                    this.DisableEvents = true;
                     matchCard.Lane = matchRecord.Lane;
                     matchCard.SetEnds(matchRecord.Ends);
                     matchCard.SetTieBreaker(matchRecord.TieBreaker);
@@ -83,7 +82,7 @@ namespace Leagueinator.GUI.Forms.Main {
                     if (cardsLoaded == cardsToLoad) {
                         this.AssignTabOrder();
                         this.SetPlayerNames(roundRecords);
-                        NamedEventDisp.ResumeEvents();
+                        this.DisableEvents = false;
                     }
                 };
             }

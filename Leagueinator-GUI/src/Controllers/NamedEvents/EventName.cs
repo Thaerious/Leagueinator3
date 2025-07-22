@@ -19,7 +19,7 @@
         DisplayText,
         EndsUpdated,
         EventAdded,
-        EventManager,
+        ShowEventManager,
         FocusGranted,
         FocusRevoked,
         GenerateRound,

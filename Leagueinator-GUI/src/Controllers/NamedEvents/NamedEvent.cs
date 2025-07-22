@@ -57,7 +57,7 @@ namespace Leagueinator.GUI.Controllers.NamedEvents {
 
             try {
                 string argstring = string.Join(", ", args.Data.Select(kv => $"{kv.Key}={kv.Value}"));
-                Logger.Log($"Event '{args.EventName}'({argstring}) from '{receiver.GetType().Name}' handled by '{receiver.GetType().Name}'.");
+                Logger.Log($"Event <- '{args.EventName}'({argstring}) from '{args.Source.GetType().Name}' handled by '{receiver.GetType().Name}'.");
                 method.Invoke(receiver, [.. orderedArgs]);
                 args.Handled = true;
             }
@@ -75,25 +75,22 @@ namespace Leagueinator.GUI.Controllers.NamedEvents {
         }
 
         /// <summary>
-        /// Invokes a named event with no data payload.
-        /// Logs a warning if no handler marks it as handled.
-        /// </summary>
-        public static void Dispatch(this object source, EventName eventName) {
-            Dispatch(source, eventName, []);
-        }
-
-        /// <summary>
         /// Invokes a named event with a data payload (ArgTable).
         /// Logs a warning if no handler marks it as handled.
         /// </summary>
-        public static void Dispatch(this object source, EventName eventName, ArgTable data) {
-            Logger.Log($"Event '{eventName}' dispatched by {source.GetType().Name}.");
+        public static void DispatchEvent(this object source, EventName eventName, ArgTable? data = null) {
+            if (source is IDispatchesEvents dispatchesEvent) {
+                if (dispatchesEvent.DisableEvents) return;
+            }
 
-            NamedEventArgs args = new(eventName, data);
+            Logger.Log($"Event -> '{eventName}' dispatched by '{source.GetType().Name}'.");
+            data ??= [];
+
+            NamedEventArgs args = new(eventName, source, data);
             InvokeHandlers(args);
 
             if (args.Handled == false) {
-                Logger.Log($"Warning: Event not handled '{eventName}'.");
+                Logger.Log($"Event <> '{eventName}' dispatched by '{source.GetType().Name} not handled.");
             }
         }
     }
