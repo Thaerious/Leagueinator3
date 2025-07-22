@@ -15,8 +15,8 @@ namespace Leagueinator.GUI.Model {
         public MatchFormat MatchFormat {
             get => this._matchFormat;
             set {
-                var teamCount = MatchFormatMeta.Info[value].TeamCount;
-                var teamSize = MatchFormatMeta.Info[value].TeamSize;
+                var teamCount = value.TeamCount();
+                var teamSize = value.TeamSize();
 
                 this._matchFormat = value;
                 this.Score = new int[teamCount];
@@ -68,8 +68,8 @@ namespace Leagueinator.GUI.Model {
         /// </summary>
         /// <param name="matchFormat">The format of the match (number of teams and team size).</param>
         public MatchData(MatchFormat matchFormat) {
-            var teamCount = MatchFormatMeta.Info[matchFormat].TeamCount;
-            var teamSize = MatchFormatMeta.Info[matchFormat].TeamSize;
+            var teamCount = matchFormat.TeamCount();
+            var teamSize = matchFormat.TeamSize();
 
             this.MatchFormat = matchFormat;
             this.Score = new int[teamCount];

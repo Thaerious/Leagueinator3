@@ -4,6 +4,7 @@ using Leagueinator.GUI.Controls;
 using Leagueinator.GUI.Forms.Main;
 using Leagueinator.GUI.Model;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using EventRecord = Leagueinator.GUI.Model.EventRecord;
@@ -29,11 +30,11 @@ namespace Leagueinator.GUI.Forms.Event {
                 this.TxtLanes.PreviewTextInput += InputHandlers.OnlyNumbers;
 
                 this.ListMatchFormat.ItemsSource = new List<MatchFormatRecord> {
-                    new(MatchFormat.VS1, "1 vs 1"),
-                    new(MatchFormat.VS2, "2 vs 2"),
-                    new(MatchFormat.VS3, "3 vs 3"),
-                    new(MatchFormat.VS4, "4 vs 4"),
-                    new(MatchFormat.A4321, "4321"),
+                    new(MatchFormat.VS1, MatchFormat.VS1.ToString()),
+                    new(MatchFormat.VS2, MatchFormat.VS2.ToString()),
+                    new(MatchFormat.VS3, MatchFormat.VS3.ToString()),
+                    new(MatchFormat.VS4, MatchFormat.VS4.ToString()),
+                    new(MatchFormat.A4321, MatchFormat.A4321.ToString()),
                 };
                 this.ListMatchFormat.DisplayMemberPath = "DisplayName";
 
@@ -42,6 +43,7 @@ namespace Leagueinator.GUI.Forms.Event {
                     new(EventType.Motley, "Motley"),
                     //new(EventType.RoundRobin, "Round Robin"), TODO ENABLE
                 };
+                this.ListMatchFormat.SelectedValuePath = "MatchFormat";
                 this.ListEventType.DisplayMemberPath = "DisplayName";
             };
         }
@@ -82,10 +84,16 @@ namespace Leagueinator.GUI.Forms.Event {
         [NamedEventHandler(EventName.EventChanged)]
         internal void DoEventChanged(EventRecord eventRecord) {
             MainWindow.NamedEventDisp.PauseEvents();
+            
             this.EventData.SelectedItem = eventRecord;
             this.TxtName.Text = eventRecord.Name;
             this.TxtEnds.Text = eventRecord.DefaultEnds.ToString();
             this.TxtLanes.Text = eventRecord.LaneCount.ToString();
+
+            Debug.WriteLine("DoEventChanged");
+            Debug.WriteLine(eventRecord);
+
+            this.ListMatchFormat.SelectedValue = eventRecord.MatchFormat;
             MainWindow.NamedEventDisp.ResumeEvents();
         }
 
@@ -140,7 +148,8 @@ namespace Leagueinator.GUI.Forms.Event {
         private void InvokeChangeEventArg() {
             if (this.IsLoaded == false) return;
 
-            MatchFormatRecord mfr = (MatchFormatRecord)this.ListMatchFormat.SelectedItem;
+            MatchFormatRecord? mfr = (MatchFormatRecord)this.ListMatchFormat.SelectedItem;
+            if (mfr is null) return;
 
             MainWindow.NamedEventDisp.Dispatch(EventName.ChangeEventArg, new() {
                 ["name"] = this.TxtName.Text,

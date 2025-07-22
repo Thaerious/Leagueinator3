@@ -78,23 +78,16 @@ namespace Leagueinator.GUI.Controllers.NamedEvents {
         /// Invokes a named event with no data payload.
         /// Logs a warning if no handler marks it as handled.
         /// </summary>
-        public static void Dispatch(EventName eventName) {
-            Logger.Log($"Event '{eventName}' dispatched.");
-
-            NamedEventArgs args = new(eventName);
-            InvokeHandlers(args);
-
-            if (args.Handled == false) {
-                Logger.Log($"Warning: Event not handled '{eventName}'.");
-            }
+        public static void Dispatch(this object source, EventName eventName) {
+            Dispatch(source, eventName, []);
         }
 
         /// <summary>
         /// Invokes a named event with a data payload (ArgTable).
         /// Logs a warning if no handler marks it as handled.
         /// </summary>
-        public static void Dispatch(EventName eventName, ArgTable data) {
-            Logger.Log($"Event '{eventName}' dispatched.");
+        public static void Dispatch(this object source, EventName eventName, ArgTable data) {
+            Logger.Log($"Event '{eventName}' dispatched by {source.GetType().Name}.");
 
             NamedEventArgs args = new(eventName, data);
             InvokeHandlers(args);
