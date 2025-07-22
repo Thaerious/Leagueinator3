@@ -1,20 +1,27 @@
 ﻿using Leagueinator.GUI.Model;
 using Leagueinator.GUI.Model.Results.BowlsPlus;
-using System.Numerics;
+using Leagueinator.GUI.Utility;
+using Leagueinator.GUI.Utility.Extensions;
+using System.Diagnostics;
 
 namespace Leagueinator.GUI.Modules.Motley {
-    public class ELO {
+    public static class ELO {
         public static Dictionary<string, int> CalculateELO(LeagueData league) {
-            Dictionary<string, int> elo = [];
+            // Returns a map from user-name -> deltaELO-score
+            DefaultDictionary<string, int> elo = new((key)=>2000);
+
+            // Sort the event in chronological order
             league.Sort((ed1, ed2) => ed1.Date.CompareTo(ed2.Date));
 
+
             foreach (EventData eventData in league) {
+                // Convert the event data to an event result
                 EventResults eventResults = new(eventData);
 
+                // Cycle through each match result
                 foreach (RoundResults roundResults in eventResults.ByRound) {
                     foreach (MatchResult matchResult in roundResults.ByMatch) {
                         if (matchResult.Count == 0) continue;
-                        AddPlayersToElo(matchResult, elo);
                         UpdateElo(matchResult, elo);
                     }
                 }
@@ -23,37 +30,60 @@ namespace Leagueinator.GUI.Modules.Motley {
             return elo;
         }
 
-        private static void UpdateElo(MatchResult matchResult, Dictionary<string, int> elo) {
-            Players winners = matchResult.GetWinners();
-            Players losers = matchResult.GetLosers();
+        private static void UpdateElo(MatchResult matchResult, DefaultDictionary<string, int> elo) {
+            DefaultDictionary<string, int> deltaELO = new((key) => 0);
 
-            int winnerELO = winners.Where(name => !string.IsNullOrEmpty(name)).Select(name => elo[name]).Sum() / winners.Count;
-            int loserELO = losers.Where(name => !string.IsNullOrEmpty(name)).Select(name => elo[name]).Sum() / winners.Count;
+            List<SingleResult> results = [.. matchResult.Where(s => s.Players.Count > 0)];
+
+            while (results.Count > 0) {
+                SingleResult s1 = results.Pop();
+                foreach (SingleResult s2 in results) {
+                    CalculateElo(s1, s2, deltaELO);
+                }
+            }
+
+            foreach (var kvp in deltaELO) {
+                var name = kvp.Key;
+                var eloChange = kvp.Value / (matchResult.Count - 1);    
+                elo[name] = elo[name] + eloChange;
+            }
+        }
+
+        private static void CalculateElo(SingleResult s1, SingleResult s2, DefaultDictionary<string, int> eloDiff) {
+            Players winners, losers;
+
+            Debug.WriteLine(s1);
+            Debug.WriteLine(s2);
+            Debug.WriteLine(s1.CompareTo(s2));
+
+            if (s1.CompareTo(s2) == 0) {
+                return;
+            }
+            if (s1.CompareTo(s2) > 0) {
+                winners = s1.Players;
+                losers = s2.Players;
+            }
+            else {
+                winners = s2.Players;
+                losers = s1.Players;
+            }
+
+            int winnerELO = winners.Where(name => !string.IsNullOrEmpty(name)).Select(name => eloDiff[name]).Sum() / winners.Count;
+            int loserELO = losers.Where(name => !string.IsNullOrEmpty(name)).Select(name => eloDiff[name]).Sum() / winners.Count;
 
             const int K = 32;
 
             double expectedWin = 1.0 / (1.0 + Math.Pow(10, (loserELO - winnerELO) / 400.0));
-            int eloChange = (int)Math.Round(K * (1 - expectedWin));
+            double eloChange = K * (1 - expectedWin);
 
             // Apply to each player evenly
             foreach (var name in winners) {
                 if (string.IsNullOrEmpty(name)) continue;
-                elo[name] += eloChange;
+                eloDiff[name] += (int)Math.Ceiling(eloChange);
             }
             foreach (var name in losers) {
                 if (string.IsNullOrEmpty(name)) continue;
-                elo[name] -= eloChange;
-            }
-        }
-
-        private static void AddPlayersToElo(MatchResult matchResult, Dictionary<string, int> elo) {
-            foreach (SingleResult singleResult in matchResult) {
-                foreach (string player in singleResult.Players) {
-                    if (string.IsNullOrEmpty(player)) continue; 
-                    if (!elo.ContainsKey(player)) {
-                        elo[player] = 2000;
-                    }
-                }
+                eloDiff[name] -= (int)Math.Floor(eloChange);
             }
         }
     }

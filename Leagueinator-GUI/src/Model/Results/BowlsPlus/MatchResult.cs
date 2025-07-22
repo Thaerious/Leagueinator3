@@ -3,11 +3,11 @@ using Leagueinator.GUI.Modules;
 using System.Diagnostics;
 
 namespace Leagueinator.GUI.Model.Results.BowlsPlus {
-    public class MatchResult : List<SingleResult> {
+    public class MatchResult : List<SingleResult>, IMatchResult {
 
         public int Lane { get; init; }
 
-        internal Players GetWinners() {
+        public Players GetWinners() {
             foreach (SingleResult singleResult in this) {
                 if (singleResult.Result == Result.Win) {
                     return singleResult.Players;
@@ -21,7 +21,7 @@ namespace Leagueinator.GUI.Model.Results.BowlsPlus {
             throw new ModuleException("Match must have a winner to calculate ELO");
         }
 
-        internal Players GetLosers() {
+        public Players GetLosers() {
             foreach (SingleResult singleResult in this) {
                 if (singleResult.Result == Result.Loss) {
                     return singleResult.Players;

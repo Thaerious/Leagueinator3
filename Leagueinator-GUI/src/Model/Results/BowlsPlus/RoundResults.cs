@@ -36,7 +36,7 @@ namespace Leagueinator.GUI.Model.Results.BowlsPlus {
             }
 
             results.Sort();
-            this.AllResults = [.. results.AsEnumerable().Reverse()];
+            this.AllResults = [.. results.AsEnumerable()];
 
             for (int i = 0; i < this.AllResults.Count; i++) {
                 SingleResult result = this.AllResults.ElementAt(i);

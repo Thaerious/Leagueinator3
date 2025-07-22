@@ -37,11 +37,8 @@ namespace Leagueinator.GUI.Utility.Extensions {
             }
         }
 
-        public static IEnumerable<IEnumerable<T>> Combinations<T>(this List<T> list, int count) {
-            if (list.Count == count) {
-                yield return list;
-            }
-            else if (count == 1) {
+        public static IEnumerable<IEnumerable<T>> Combinations<T>(this IEnumerable<T> list, int count) {
+            if (count == 1) {
                 foreach (T t in list) yield return [t];
                 yield break;
             }

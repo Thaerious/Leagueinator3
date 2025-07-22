@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Reflection.Metadata.Ecma335;
 using System.Text;
 
 namespace Leagueinator.GUI.Model.Results.BowlsPlus {
@@ -6,7 +7,7 @@ namespace Leagueinator.GUI.Model.Results.BowlsPlus {
         public readonly Players Players;
 
         public TeamResult(IEnumerable<string> players) {
-            this.Players = [..players];
+            this.Players = [.. players.Where(p => !string.IsNullOrEmpty(p))];
         }
 
         public int Rank { get; set; } = -1;

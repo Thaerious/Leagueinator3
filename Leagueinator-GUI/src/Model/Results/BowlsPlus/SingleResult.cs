@@ -1,4 +1,6 @@
-﻿namespace Leagueinator.GUI.Model.Results.BowlsPlus {
+﻿using Leagueinator.GUI.Utility.Extensions;
+
+namespace Leagueinator.GUI.Model.Results.BowlsPlus {
 
     public class SingleResult : IComparable<SingleResult> {
 
@@ -6,11 +8,12 @@
             this.MatchData = matchData;
             this.TeamIndex = teamIndex;
             this.Ends = matchData.Ends;
-            this.Bowls = matchData.Score[teamIndex];
-            this.Against = matchData.Score.Sum() - this.Bowls;
             this.Rank = -1; // Default rank, this is set by the DisplayRoundResults class
-            this.Players = [..matchData.Teams[teamIndex].Players];
+            this.Players = [.. matchData.Teams[teamIndex].Players.Where(p => !string.IsNullOrEmpty(p))];
+            this.MatchScore = [.. matchData.Score];
         }
+
+        private readonly int[] MatchScore;
 
         public Players Players { get; }
 
@@ -27,26 +30,45 @@
             }
         }
 
+        private int Limit {
+            get {
+                if (this.MatchData.MatchFormat == MatchFormat.A4321) {
+                    return (int)(Math.Floor(this.Ends * 7.5));
+                }
+                else {
+                    return (int)(Math.Floor(this.Ends / 1.5));
+                }
+            }
+        }
+
         public override string ToString() {
-            return $"{this.Rank}: {this.Result} [{this.Players}]  (For: {this.BowlsFor}+{this.PlusFor}, Against: {this.BowlsAgainst}+{this.PlusAgainst}, Ends: {this.Ends} Lane: {this.MatchData.Lane + 1})";
+            return $"{this.Rank}: {this.Result} [{this.Players.JoinString()}]  (For: {this.BowlsFor}+{this.PlusFor}, Against: {this.BowlsAgainst}+{this.PlusAgainst}, Ends: {this.Ends} Lane: {this.MatchData.Lane + 1})";
         }
 
         public int Ends { get; set; } = 0;
 
-        public int Bowls { get; set; } = 0;
+        public int Bowls => this.MatchScore[this.TeamIndex];
 
-        public int Against { get; set; } = 0;
+        public int Against => this.MatchScore.Where((item, index) => index != this.TeamIndex).Max();
 
         public int Rank { get; set; } = -1;
 
         public int BowlsFor {
-            get {               
-                return Math.Min((int)Math.Floor(this.Ends * 1.5), this.Bowls);
+            get {
+                return Math.Min(this.Limit, this.Bowls);
             }
         }
 
+        /// <summary>
+        /// Return the maximum bowls against for all teams in the same match.
+        /// </summary>
         public int BowlsAgainst {
-            get => Math.Min((int)Math.Floor(this.Ends * 1.5), this.Against);
+            get {
+                return this.MatchScore
+                           .Where((score, index) => index != this.TeamIndex)
+                           .Select(score => Math.Min(this.Limit, score))
+                           .Max();
+            }
         }
 
         public int PlusFor {
@@ -61,16 +83,16 @@
         public readonly int TeamIndex;
 
         public int CompareTo(SingleResult? other) {
-            if (other == null) return -1; // Null is less
+            if (other == null) return 1; // Null is less
 
             int cmp = this.Result.CompareTo(other.Result);
-            if (cmp != 0) return cmp; // Higher Result wins (Win > Draw > Loss)
+            if (cmp != 0) return -cmp; // Higher Result wins (Win > Draw > Loss)
 
             cmp = this.BowlsFor.CompareTo(other.BowlsFor); // Higher is better
-            if (cmp != 0) return -cmp;
+            if (cmp != 0) return cmp;
 
             cmp = this.PlusFor.CompareTo(other.PlusFor); // Higher is better
-            if (cmp != 0) return -cmp;
+            if (cmp != 0) return cmp;
 
             cmp = other.BowlsAgainst.CompareTo(this.BowlsAgainst); // Lower is better
             if (cmp != 0) return -cmp;

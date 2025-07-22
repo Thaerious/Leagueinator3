@@ -8,6 +8,7 @@ namespace Leagueinator.GUI.Modules {
     /// </summary>
     public static class Hooks {
         public delegate RoundData GenerateRoundDelegate(EventData eventData);
+        public delegate RoundData ScoringDelegate(EventData eventData);
 
         public static GenerateRoundDelegate? GenerateRound = default;
     }

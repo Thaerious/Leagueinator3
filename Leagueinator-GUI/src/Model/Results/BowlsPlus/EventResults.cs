@@ -1,4 +1,6 @@
 ﻿
+using Leagueinator.GUI.Utility;
+
 namespace Leagueinator.GUI.Model.Results.BowlsPlus {
     /// <summary>
     /// Aggregates results across all rounds of an event.
@@ -14,7 +16,7 @@ namespace Leagueinator.GUI.Model.Results.BowlsPlus {
         /// AllResults aggregated by each unique team across all rounds.
         /// The results are sorted in descending order of performance.
         /// </summary>
-        public Dictionary<Players, TeamResult> ByTeam { get; } = [];
+        public DefaultDictionary<Players, TeamResult> ByTeam { get; } = new((players)=>new(players));
 
         /// <summary>
         /// Constructs event-level results from a collection of round data.
@@ -27,14 +29,13 @@ namespace Leagueinator.GUI.Model.Results.BowlsPlus {
                 ByRound.Add(roundResults);
 
                 foreach (SingleResult result in roundResults.AllResults) {
-                    if (!ByTeam.ContainsKey(result.Players)) ByTeam[result.Players] = new(result.Players);
-                    TeamResult teamResult = ByTeam.GetValueOrDefault(result.Players, new(result.Players));
+                    TeamResult teamResult = ByTeam[result.Players];
                     teamResult.Add(result);
                 }
             }
 
             // Sort teams by performance and assign ranks
-            List<TeamResult> results = ByTeam.Values.ToList();
+            List<TeamResult> results = [.. ByTeam.Values];
             results.Sort();
 
             for (int i = 0; i < results.Count; i++) {
