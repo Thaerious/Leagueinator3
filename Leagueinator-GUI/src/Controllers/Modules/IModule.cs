@@ -3,7 +3,7 @@ using System.Windows;
 
 namespace Leagueinator.GUI.Controllers.Modules {
     public interface IModule {
-        public void LoadModule(Window targetWindow, LeagueData leagueData);
+        public void LoadModule(Window targetWindow, MainController mainController);
 
         public void UnloadModule();
     }

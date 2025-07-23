@@ -1,12 +1,11 @@
 ﻿using Leagueinator.GUI.Model;
 using Leagueinator.GUI.Model.Results.BowlsPlus;
-using System.Diagnostics;
 
 namespace Leagueinator.GUI.Controllers.Modules.RankedLadder {
-    internal class RankedLadderImpl {
+    internal class RankedLadderRoundBuilder {
         public EventData EventData { get; }
 
-        public RankedLadderImpl(EventData eventData) {
+        public RankedLadderRoundBuilder(EventData eventData) {
             this.EventData = eventData;
         }
 

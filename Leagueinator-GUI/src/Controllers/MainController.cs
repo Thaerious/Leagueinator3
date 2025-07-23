@@ -9,7 +9,6 @@ using Leagueinator.GUI.Model;
 using Leagueinator.GUI.Model.Results.BowlsPlus;
 using Leagueinator.GUI.Controllers.Modules;
 using Microsoft.Win32;
-using System.Diagnostics;
 using System.IO;
 using System.Windows;
 
@@ -244,24 +243,6 @@ namespace Leagueinator.GUI.Controllers {
             this.EventData.SetRound(this.CurrentRoundIndex, newRound);
             this.InvokeSetTitle(this.FileName, false);
             this.InvokeRoundUpdate();
-        }
-
-        [NamedEventHandler(EventName.GenerateRound)]
-        internal void DoGenerateRound() {
-            RoundData? newRound = Hooks.GenerateRound?.Invoke(this.EventData);
-
-            if (newRound is null) {
-                throw new Exception("No GenerateRound hook found.");
-            }
-            else {
-                AssignLanes assignLanes = new(this.EventData, newRound);
-                newRound = assignLanes.DoAssignment();
-                this.EventData.AddRound(newRound);
-                this.CurrentRoundIndex = this.EventData.CountRounds() - 1;
-                this.InvokeAddRound(newRound);
-                this.InvokeSetTitle(this.FileName, false);
-                this.InvokeRoundUpdate();
-            }
         }
 
         [NamedEventHandler(EventName.AddRound)]
@@ -597,6 +578,18 @@ namespace Leagueinator.GUI.Controllers {
             return sb;
         }
 
+        #endregion
+
+        #region Public Methods
+        public void AddRound(RoundData newRound) {
+            AssignLanes assignLanes = new(this.EventData, newRound);
+            newRound = assignLanes.DoAssignment();
+            this.EventData.AddRound(newRound);
+            this.CurrentRoundIndex = this.EventData.CountRounds() - 1;
+            //this.InvokeAddRound(newRound);
+            //this.InvokeSetTitle(this.FileName, false);
+            //this.InvokeRoundUpdate();
+        }
         #endregion
     }
 }

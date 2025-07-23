@@ -4,19 +4,19 @@ using System.Windows;
 
 namespace Leagueinator.GUI.Controllers.Modules {
     public abstract class BaseModule : IModule {
-        private LeagueData? _leagueData = null;
-        public LeagueData LeagueData => _leagueData ?? throw new NullReferenceException("LeagueData not set.");
+        private MainController? _mainController = null;
+        public MainController MainController => _mainController ?? throw new NullReferenceException("MainController not set.");
 
         private MainWindow? _mainWindow = null;
         public MainWindow MainWindow => _mainWindow ?? throw new NullReferenceException("MainWindow not set.");
 
-        public virtual void LoadModule(Window window, LeagueData leagueData) {
+        public virtual void LoadModule(Window window, MainController mainController) {
             if (window is not MainWindow mainWindow) {
                 throw new ModuleException($"Window is not of type {typeof(MainWindow).Name}");
             }
 
             this._mainWindow = mainWindow;
-            this._leagueData = leagueData;
+            this._mainController = mainController;
         }
 
         public abstract void UnloadModule();

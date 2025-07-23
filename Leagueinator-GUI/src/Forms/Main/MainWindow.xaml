@@ -53,7 +53,6 @@
 
             <!-- Action Menu -->
             <MenuItem Header="Action">
-                <MenuItem Header="Generate Next Round" Click="HndGenNextRound"/>
                 <MenuItem Header="Assign Players">
                     <MenuItem Header="Randomly" Click="HndAssignPlayersRandomly"/>
                 </MenuItem>

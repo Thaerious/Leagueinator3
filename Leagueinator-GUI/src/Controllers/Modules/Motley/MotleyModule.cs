@@ -5,8 +5,8 @@ using System.Windows;
 
 namespace Leagueinator.GUI.Controllers.Modules.Motley {
     public class MotleyModule : BaseModule {
-        public override void LoadModule(Window window, LeagueData leagueData) {
-            base.LoadModule(window, leagueData);
+        public override void LoadModule(Window window, MainController mainController) {
+            base.LoadModule(window, mainController);
             this.MainWindow.MainMenu.AddMenuItem(["View", "ELO"], this.EloMenuClick);
         }
 
@@ -15,7 +15,7 @@ namespace Leagueinator.GUI.Controllers.Modules.Motley {
         }
 
         private void EloMenuClick(object sender, RoutedEventArgs e) {
-            Dictionary<string, int> elo = ELO.CalculateELO(this.LeagueData);
+            Dictionary<string, int> elo = ELO.CalculateELO(this.MainController.LeagueData);
 
             string sb = "";
             foreach (var kvp in elo) {

@@ -76,11 +76,6 @@ namespace Leagueinator.GUI.Forms.Main {
             this.DispatchEvent(EventName.PrintTeams);
         }
 
-        private void HndGenNextRound(object sender, RoutedEventArgs args) {
-            this.ClearFocus();
-            this.DispatchEvent(EventName.GenerateRound);
-        }
-
         private void HndAssignLanes(object sender, RoutedEventArgs args) {
             this.ClearFocus();
             this.DispatchEvent(EventName.AssignLanes);
