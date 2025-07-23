@@ -1,6 +1,6 @@
 ﻿using System.Runtime.Serialization;
 
-namespace Leagueinator.GUI.Modules {
+namespace Leagueinator.GUI.Controllers.Modules {
     public class ModuleException : Exception {
         public ModuleException() {
         }

@@ -7,7 +7,7 @@ using Leagueinator.GUI.Forms.Main;
 using Leagueinator.GUI.Forms.Print;
 using Leagueinator.GUI.Model;
 using Leagueinator.GUI.Model.Results.BowlsPlus;
-using Leagueinator.GUI.Modules;
+using Leagueinator.GUI.Controllers.Modules;
 using Microsoft.Win32;
 using System.Diagnostics;
 using System.IO;
@@ -18,7 +18,7 @@ namespace Leagueinator.GUI.Controllers {
     /// <summary>
     /// This glues the MainWindow window to the model and handles events from the MainWindow window.
     /// </summary>
-    public class MainController {
+    public partial class MainController {
 
         #region Properties
         internal LeagueData LeagueData { get; private set; } = [];
@@ -30,12 +30,9 @@ namespace Leagueinator.GUI.Controllers {
                 return _eventData;
             }
             set {
-                if (this._eventData is not null) {
-                    EventTypeMeta.GetModule(this._eventData.EventType).UnloadModule(this.Window);
-                }
-
                 this._eventData = value;
-                EventTypeMeta.GetModule(value.EventType).LoadModule(this.Window, this.LeagueData);
+                var module = EventTypeMeta.GetModule(this._eventData.EventType);
+                this.LoadModule(module);
             }
         }
 
@@ -129,9 +126,8 @@ namespace Leagueinator.GUI.Controllers {
 
         [NamedEventHandler(EventName.ChangeEventType)]
         internal void DoChangeEventType(EventType eventType) {
-            EventTypeMeta.GetModule(this.EventData.EventType).UnloadModule(this.Window);
             this.EventData.EventType = eventType;
-            EventTypeMeta.GetModule(eventType).LoadModule(this.Window, this.LeagueData);
+            this.LoadModule(EventTypeMeta.GetModule(eventType));
         }
 
         [NamedEventHandler(EventName.ChangeEventArg)]

@@ -1,6 +1,6 @@
-﻿using Leagueinator.GUI.Modules.RankedLadder;
-using Leagueinator.GUI.Modules;
-using Leagueinator.GUI.Modules.Motley;
+﻿using Leagueinator.GUI.Controllers.Modules.RankedLadder;
+using Leagueinator.GUI.Controllers.Modules;
+using Leagueinator.GUI.Controllers.Modules.Motley;
 
 namespace Leagueinator.GUI.Model {
     public enum EventType { RankedLadder, RoundRobin, Motley };

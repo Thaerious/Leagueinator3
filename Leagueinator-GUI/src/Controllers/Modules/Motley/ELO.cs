@@ -4,7 +4,7 @@ using Leagueinator.GUI.Utility;
 using Leagueinator.GUI.Utility.Extensions;
 using System.Diagnostics;
 
-namespace Leagueinator.GUI.Modules.Motley {
+namespace Leagueinator.GUI.Controllers.Modules.Motley {
     public static class ELO {
         public static Dictionary<string, int> CalculateELO(LeagueData league) {
             // Returns a map from user-name -> deltaELO-score

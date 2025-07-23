@@ -1,6 +1,6 @@
 ﻿using Leagueinator.GUI.Model;
 
-namespace Leagueinator.GUI.Modules {
+namespace Leagueinator.GUI.Controllers.Modules {
 
     /// <summary>
     /// Functions that are used to hook into the controller and model.

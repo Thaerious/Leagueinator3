@@ -1,6 +1,6 @@
 ﻿using Leagueinator.GUI.Model;
 
-namespace Leagueinator.GUI.Modules.Motley {
+namespace Leagueinator.GUI.Controllers.Modules.Motley {
     internal class MotleyImpl {
         private EventData eventData;
 

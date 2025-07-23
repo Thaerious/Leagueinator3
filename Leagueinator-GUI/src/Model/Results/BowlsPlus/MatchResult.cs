@@ -1,5 +1,5 @@
 ﻿
-using Leagueinator.GUI.Modules;
+using Leagueinator.GUI.Controllers.Modules;
 using System.Diagnostics;
 
 namespace Leagueinator.GUI.Model.Results.BowlsPlus {
