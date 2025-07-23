@@ -61,8 +61,6 @@
 
             <!-- Result (Report) Menu -->
             <MenuItem Header="View">
-                <MenuItem Header="Results By Team" Click="HndViewTeamResults"/>
-                <!--MenuItem IsEnabled="False" Header="Results By Player" Click="HndViewPlayerResults"/-->
                 <MenuItem Header="Show Data" Click="HndShowDataClick"/>
             </MenuItem>
 

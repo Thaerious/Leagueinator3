@@ -7,7 +7,7 @@ namespace Leagueinator.GUI.Model {
 
         public string[] Names { get; }
 
-        public Players Players => [.. this.Names];
+        public Players Players => [.. this.Names]; // TODO Names should not be public.
 
         public TeamData(int size) {
             this.Names = new string[size];
@@ -17,6 +17,23 @@ namespace Leagueinator.GUI.Model {
         [JsonConstructor]
         public TeamData(string[] names) {
             this.Names = [.. names];
+        }
+
+        public void AddPlayer(string name) {
+            if (this.IsFull()) throw new InvalidOperationException("TeamData is full");
+            
+            for (int i = 0; i < this.Names.Length; i++) {
+                if (string.IsNullOrEmpty(this.Names[i])) {
+                    this.Names[i] = name;
+                    return;
+                }
+            }
+        }
+
+        public void Clear() {
+            for (int i = 0; i < this.Names.Length; i++) {
+                this.Names[i] = string.Empty;
+            }
         }
 
         public TeamData Copy() {
@@ -115,6 +132,10 @@ namespace Leagueinator.GUI.Model {
 
         internal void CopyFrom(IEnumerable<string> players) {
             players.ToArray().CopyTo(this.Names, 0);
+        }
+
+        internal bool IsFull() {
+            return this.CountPlayers() == this.Names.Length;
         }
     }
 }

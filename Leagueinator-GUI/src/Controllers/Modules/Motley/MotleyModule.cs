@@ -8,10 +8,16 @@ namespace Leagueinator.GUI.Controllers.Modules.Motley {
         public override void LoadModule(Window window, MainController mainController) {
             base.LoadModule(window, mainController);
             this.MainWindow.MainMenu.AddMenuItem(["View", "ELO"], this.EloMenuClick);
+            this.MainWindow.MainMenu.AddMenuItem(["Action", "Assign Players", "Balanced"], this.AssignBalanced);
         }
 
         public override void UnloadModule() {
             this.MainWindow.MainMenu.RemoveMenuItem(["View", "ELO"]);
+        }
+
+        private void AssignBalanced(object sender, RoutedEventArgs e) {
+            AssignPlayers.Balanced(this.MainController.LeagueData, this.MainController.RoundData);
+            this.MainController.InvokeRoundUpdate();
         }
 
         private void EloMenuClick(object sender, RoutedEventArgs e) {

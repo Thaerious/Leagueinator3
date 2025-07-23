@@ -6,8 +6,6 @@ using Leagueinator.GUI.Forms.Event;
 using Leagueinator.GUI.Forms.Main;
 using Leagueinator.GUI.Forms.Print;
 using Leagueinator.GUI.Model;
-using Leagueinator.GUI.Model.Results.BowlsPlus;
-using Leagueinator.GUI.Controllers.Modules;
 using Microsoft.Win32;
 using System.IO;
 using System.Windows;
@@ -57,7 +55,7 @@ namespace Leagueinator.GUI.Controllers {
             this.DispatchEvent(EventName.RoundUpdated, new() {
                 ["roundIndex"] = this.CurrentRoundIndex,
                 ["roundRecords"] = new RoundRecordList(this.EventData, this.RoundData)
-            });
+            });           
         }
 
         public void InvokeAddRound(RoundData roundData) {
@@ -70,6 +68,14 @@ namespace Leagueinator.GUI.Controllers {
             this.IsSaved = saved;
             this.DispatchEvent(EventName.SetTitle, new() {
                 ["title"] = title,
+                ["saved"] = saved
+            });
+        }
+
+        public void InvokeSetTitle(bool saved) {
+            this.IsSaved = saved;
+            this.DispatchEvent(EventName.SetTitle, new() {
+                ["title"] = this.FileName,
                 ["saved"] = saved
             });
         }
@@ -286,13 +292,6 @@ namespace Leagueinator.GUI.Controllers {
             this.InvokeAddRound(newRound);
             this.InvokeSetTitle(this.FileName, false);
         }
-
-        [NamedEventHandler(EventName.AssignPlayersRandomly)]
-        internal void DoAssignPlayersRandomly() {
-            this.RoundData.AssignPlayersRandomly();
-            this.InvokeRoundUpdate();
-            this.InvokeSetTitle(this.FileName, false);
-        }
         #endregion
 
         #region Report Handlers
@@ -301,34 +300,6 @@ namespace Leagueinator.GUI.Controllers {
         internal void DoDisplayText(string text) {
             TextViewer tv = new();
             tv.Append(text);
-            tv.Show();
-        }
-
-        [NamedEventHandler(EventName.PrintTeams)]
-        internal void DoPrintTeams() {
-            PrintWindow pw = new(this.EventData);
-            pw.Show();
-        }
-
-        [NamedEventHandler(EventName.DisplayRoundResults)]
-        internal void DoRoundResults() {
-            RoundResults rr = new(this.RoundData);
-            TextViewer tv = new();
-
-            foreach (SingleResult result in rr.AllResults) {
-                tv.Append(result.ToString());
-            }
-
-            tv.Show();
-        }
-
-        [NamedEventHandler(EventName.DisplayEventResults)]
-        internal void DoEventResults(object? sender, NamedEventArgs e) {
-            EventResults er = new(this.EventData);
-            TextViewer tv = new TextViewer();
-            foreach (TeamResult result in er.ByTeam.Values) {
-                tv.Append(result.ToString());
-            }
             tv.Show();
         }
 
@@ -586,9 +557,9 @@ namespace Leagueinator.GUI.Controllers {
             newRound = assignLanes.DoAssignment();
             this.EventData.AddRound(newRound);
             this.CurrentRoundIndex = this.EventData.CountRounds() - 1;
-            //this.InvokeAddRound(newRound);
-            //this.InvokeSetTitle(this.FileName, false);
-            //this.InvokeRoundUpdate();
+            this.InvokeAddRound(newRound);
+            this.InvokeSetTitle(this.FileName, false);
+            this.InvokeRoundUpdate();
         }
         #endregion
     }

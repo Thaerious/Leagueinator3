@@ -1,5 +1,5 @@
 ﻿using Leagueinator.GUI.Controllers.Algorithms;
-using Leagueinator.GUI.Controllers.NamedEvents;
+using Leagueinator.GUI.Forms.Print;
 using Leagueinator.GUI.Model;
 using Leagueinator.GUI.Utility.Extensions;
 using System.Windows;
@@ -9,20 +9,22 @@ namespace Leagueinator.GUI.Controllers.Modules.RankedLadder {
 
         public override void LoadModule(Window window, MainController mainController) {
             base.LoadModule(window, mainController);
-            this.MainWindow.MainMenu.AddMenuItem(["Action", "Generate Next Round"], this.MenuGenerate);
-            //this.MainWindow.MainMenu.AddMenuItem(["View", "Results By Team"], this.ViewResults);
+            this.MainWindow.MainMenu.AddMenuItem(["Action", "Generate Next Round"], this.GenerateRound);
+            this.MainWindow.MainMenu.AddMenuItem(["View", "Event Results"], this.ViewEventResults);
         }
 
         public override void UnloadModule() {
+            this.MainWindow.MainMenu.RemoveMenuItem(["Action", "Generate Next Round"]);
+            this.MainWindow.MainMenu.RemoveMenuItem(["View", "Event Results"]);
         }
 
-        private void MenuGenerate(object sender, RoutedEventArgs args) {
+        internal void ViewEventResults(object sender, RoutedEventArgs args) {
+            PrintWindow pw = new(this.MainController.EventData);
+            pw.Show();
+        }
+
+        private void GenerateRound(object sender, RoutedEventArgs args) {
             this.MainWindow.ClearFocus();
-            this.DispatchEvent(EventName.GenerateRound);
-        }
-
-        [NamedEventHandler(EventName.GenerateRound)]
-        internal void DoGenerateRound() {
             RankedLadderRoundBuilder builder = new(this.MainController.EventData);
             RoundData newRound = builder.GenerateRound();
             AssignLanes assignLanes = new(this.MainController.EventData, newRound);

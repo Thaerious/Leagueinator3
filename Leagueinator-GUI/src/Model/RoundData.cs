@@ -22,6 +22,14 @@ namespace Leagueinator.GUI.Model {
             this.Sort((a, b) => a.Lane.CompareTo(b.Lane));
         }
 
+        public void ClearNames() {
+            foreach (MatchData matchData in this) {
+                foreach (TeamData teamData in matchData.Teams) {
+                    teamData.Clear();
+                }
+            }
+        }
+
         public RoundData Copy() { 
             RoundData roundCopy = [];
 
@@ -84,38 +92,6 @@ namespace Leagueinator.GUI.Model {
                 }
             }
             return new(-1, -1, -1);
-        }
-
-        internal void AssignPlayersRandomly() { // TODO Make this a seperate algorithm
-            var dict = new Dictionary<(int, int, int), string>();
-
-            // Populate the dictionary with player Names and their positions
-            foreach (MatchData match in this) {
-                for (int team = 0; team < match.Teams.Length; team++) {
-                    for (int position = 0; position < match.Teams[team].Length; position++) {
-                        if (!string.IsNullOrEmpty(match.Teams[team][position])) {
-                            dict[(match.Lane, team, position)] = match.Teams[team][position];
-                        }
-                    }
-                }
-            }
-
-            // Extract keys and values
-            var keys = dict.Keys.ToList();
-            var values = dict.Values.ToList();
-
-            // Shuffle values
-            var rng = new Random();
-            values = values.OrderBy(_ => rng.Next()).ToList();
-
-            // Reassign shuffled values back to their original positions
-            foreach (var key in keys) {
-                var lane = key.Item1;
-                var team = key.Item2;
-                var position = key.Item3;   
-
-                this[lane].Teams[team][position] = values.Pop();
-            }
         }
     }
 }

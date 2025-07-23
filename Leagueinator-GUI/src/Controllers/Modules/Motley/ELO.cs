@@ -2,7 +2,6 @@
 using Leagueinator.GUI.Model.Results.BowlsPlus;
 using Leagueinator.GUI.Utility;
 using Leagueinator.GUI.Utility.Extensions;
-using System.Diagnostics;
 
 namespace Leagueinator.GUI.Controllers.Modules.Motley {
     public static class ELO {
@@ -51,10 +50,6 @@ namespace Leagueinator.GUI.Controllers.Modules.Motley {
 
         private static void CalculateElo(SingleResult s1, SingleResult s2, DefaultDictionary<string, int> eloDiff) {
             Players winners, losers;
-
-            Debug.WriteLine(s1);
-            Debug.WriteLine(s2);
-            Debug.WriteLine(s1.CompareTo(s2));
 
             if (s1.CompareTo(s2) == 0) {
                 return;
