@@ -112,6 +112,10 @@ namespace Leagueinator.GUI.Controllers {
         [NamedEventHandler(EventName.AddEvent)]
         internal void DoAddEvent() {
             EventData eventData = this.LeagueData.AddEvent();
+            eventData.DefaultEnds = this.EventData.DefaultEnds;
+            eventData.LaneCount = this.EventData.LaneCount;
+            eventData.MatchFormat = this.EventData.MatchFormat;
+            eventData.EventType = this.EventData.EventType;
             eventData.AddRound();
 
             this.DispatchEvent(EventName.EventAdded, new() {

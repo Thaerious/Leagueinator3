@@ -1,9 +1,87 @@
-﻿using System.Windows;
+﻿using System.Diagnostics;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 
 namespace Leagueinator.GUI.Utility.Extensions {
     public static class ControlExtensions {
+
+        public static MenuItem AddMenuItem(this Menu menu, string[] headers, RoutedEventHandler hnd) {
+            if (headers.Length == 0) throw new Exception("Must include at least 1 header");
+            ItemsControl current = menu;
+
+            // Traverse down the menu hierarchy by matching headers
+            foreach (var header in headers) {
+                ItemsControl? next = current.GetMenuItem(header);
+                if (next == null) {
+                    next = new MenuItem() { Header = header };
+                    current.Items.Add(next);
+                }
+                current = next;
+            }
+
+            MenuItem newMenuItem = (MenuItem)current;
+            newMenuItem.Click += hnd;
+            return newMenuItem;
+        }
+
+        /// <summary>
+        /// Removes a menu item from a Menu given a header path (e.g., ["View", "ELO"]).
+        /// Supports nested menus.
+        /// </summary>
+        /// <param name="menu">The root Menu to remove from.</param>
+        /// <param name="headers">An array representing the menu hierarchy.</param>
+        /// <returns>True if the menu item was found and removed; false otherwise.</returns>
+        public static bool RemoveMenuItem(this Menu menu, string[] headers) {
+            // Find the target MenuItem to remove
+            MenuItem? menuItem = menu.GetMenuItem(headers);
+            if (menuItem is null) return false;
+
+            if (headers.Length == 1) {
+                // Top-level item (e.g., menu.Items.Remove("Help"))
+                menu.Items.Remove(menuItem);
+            }
+            else {
+                // Nested item — get parent and remove child from it
+                var parent = menu.GetMenuItem(headers[..^1]);
+                parent?.Items.Remove(menuItem);
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// Finds a MenuItem by following a path of headers (e.g., ["File", "Export", "PDF"]).
+        /// </summary>
+        /// <param name="menu">The root Menu to search from.</param>
+        /// <param name="headers">An array of header strings representing the menu hierarchy.</param>
+        /// <returns>The MenuItem at the end of the path, or null if not found.</returns>
+        public static MenuItem? GetMenuItem(this Menu menu, string[] headers) {
+            ItemsControl? current = menu;
+
+            // Traverse down the menu hierarchy by matching headers
+            foreach (var header in headers) {
+                if (current is null) return null;
+                current = current.GetMenuItem(header);
+            }
+
+            // Final check: must be a MenuItem
+            if (current is MenuItem menuItem) return menuItem;
+            return null;
+        }
+
+        /// <summary>
+        /// Finds the first MenuItem under the given ItemsControl with a matching header.
+        /// </summary>
+        /// <param name="menu">A Menu or MenuItem acting as a container.</param>
+        /// <param name="header">The header string to search for.</param>
+        /// <returns>The matching MenuItem, or null if not found.</returns>
+        public static MenuItem? GetMenuItem(this ItemsControl menu, string header) {
+            return menu.Items
+                .OfType<MenuItem>()
+                .FirstOrDefault(m => m.Header?.ToString() == header);
+        }
+
 
         /// <summary>
         /// Finds all descendant <see cref="FrameworkElement"/>s of the specified root that have a matching <see cref="FrameworkElement.Tag"/>.
