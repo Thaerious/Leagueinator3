@@ -1,9 +1,13 @@
-﻿using Leagueinator.GUI.Controllers.Algorithms;
-using System.Collections;
+﻿using System.Collections;
 
 namespace Leagueinator.GUI.Model {
 
     public class EventData : IEnumerable<RoundData> {
+
+        public EventData() {
+            this.Stats = new(this);
+        }
+
         public string EventName { get; set; } = "Name Not Set";
         public DateTime Date { get; set; } = DateTime.Now;
         public MatchFormat MatchFormat { get; set; } = MatchFormat.VS2;
@@ -17,6 +21,8 @@ namespace Leagueinator.GUI.Model {
         public RoundData GetRound(int index) => this.Rounds[index];
 
         public int CountRounds() => this.Rounds.Count;
+
+        public EventDataStats Stats { get; } 
 
         public static EventRecord ToRecord(EventData data) {
             return new EventRecord(

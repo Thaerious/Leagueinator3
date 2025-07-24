@@ -4,7 +4,7 @@ using System.Diagnostics;
 
 namespace Leagueinator.GUI.Controllers.Modules.Motley {
     internal class AssignPlayers {
-        public static void Balanced(LeagueData leagueData, RoundData roundData) {
+        public static void Balanced(LeagueData leagueData, EventData eventData, RoundData roundData) {
             Dictionary<string, int> elo = ELO.CalculateELO(leagueData);
 
             List<string> namesSorted = roundData
@@ -13,37 +13,41 @@ namespace Leagueinator.GUI.Controllers.Modules.Motley {
                 .Where(name => !string.IsNullOrEmpty(name))
                 .ToList();
 
-
             namesSorted.Sort((name1, name2) => {
-                return elo[name1].CompareTo(elo[name2]);
+                return elo[name2].CompareTo(elo[name1]);
             });
-
-            List<string> namesInterleaved = [];
-            while (namesSorted.Count > 0) {
-                namesInterleaved.Add(namesSorted.Pop());
-                if (namesSorted.Count == 0) break;
-                namesInterleaved.Add(namesSorted.Dequeue());
-            }
-
-            foreach (string name in namesInterleaved) {
-                Debug.WriteLine($"{name} {elo[name]}");
-            }
 
             roundData.ClearNames();
 
-            while (namesInterleaved.Count > 0) {
-                foreach (MatchData matchData in roundData) {
-                    foreach (TeamData teamData in matchData.Teams) {
-                        while (!teamData.IsFull() && namesInterleaved.Count > 0) {
-                            string name = namesInterleaved.Pop();
-                            Debug.WriteLine($"Add player {name} to Team");
-                            teamData.AddPlayer(name);
-                            Debug.WriteLine(teamData);
-                            Debug.WriteLine($"{teamData.CountPlayers()} / {teamData.Names.Length}");
-                        }
-                    }
+            foreach (TeamData teamData in roundData.Teams) {
+                if (namesSorted.Count == 0) break;
+                Debug.WriteLine(namesSorted.JoinString());
+
+                string name = namesSorted.Dequeue();
+                teamData.AddPlayer(name);
+                Debug.WriteLine($" + {name} : {eventData.Stats.PreviousPartners(name).JoinString()}");
+
+                if (namesSorted.Count == 0) break;
+
+                while (!teamData.IsFull()) {
+                    string partner = NextPartner(name, namesSorted, eventData);
+                    teamData.AddPlayer(partner);
+                    Debug.WriteLine($" + {partner}");
                 }
             }
+        }
+
+        private static string NextPartner(string name, List<string> sorted, EventData eventData) {
+            for (int i = sorted.Count - 1; i >= 0; i--) {
+                var previous = eventData.Stats.PreviousPartners(name);
+                if (!previous.Contains(sorted[i])) {
+                    var partner = sorted[i];
+                    sorted.RemoveAt(i);
+                    return partner;
+                }
+            }
+
+            throw new Exception("No valid partner found");
         }
 
         public static void Randomly(LeagueData leagueData, RoundData roundData) {

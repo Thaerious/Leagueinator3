@@ -6,8 +6,8 @@ namespace Leagueinator.GUI.Model {
     public record PlayerLocation(int Lane, int TeamIndex, int Position);
 
     public class RoundData : List<MatchData> {
-        
-        public RoundData() : base() {}
+
+        public RoundData() : base() { }
 
         public void Fill(EventData eventData) {
             for (int i = 0; i < eventData.LaneCount; i++) {
@@ -17,7 +17,7 @@ namespace Leagueinator.GUI.Model {
                         Ends = eventData.DefaultEnds
                     });
                 }
-            }   
+            }
 
             this.Sort((a, b) => a.Lane.CompareTo(b.Lane));
         }
@@ -30,7 +30,7 @@ namespace Leagueinator.GUI.Model {
             }
         }
 
-        public RoundData Copy() { 
+        public RoundData Copy() {
             RoundData roundCopy = [];
 
             foreach (MatchData match in this) {
@@ -92,6 +92,20 @@ namespace Leagueinator.GUI.Model {
                 }
             }
             return new(-1, -1, -1);
+        }
+
+        public List<TeamData> Teams {
+            get {
+                List<TeamData> teams = [];
+
+                foreach (MatchData match in this) {
+                    foreach (TeamData team in match.Teams) {
+                        teams.Add(team);
+                    }
+                }
+
+                return teams;
+            }
         }
     }
 }
