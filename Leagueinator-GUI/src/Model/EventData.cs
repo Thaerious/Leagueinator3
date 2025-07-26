@@ -22,7 +22,7 @@ namespace Leagueinator.GUI.Model {
 
         public int CountRounds() => this.Rounds.Count;
 
-        public EventDataStats Stats { get; } 
+        public EventDataStats Stats { get; }
 
         public static EventRecord ToRecord(EventData data) {
             return new EventRecord(
@@ -161,6 +161,18 @@ namespace Leagueinator.GUI.Model {
                 LaneCount = record.LaneCount,
                 EventType = record.EventType,
             };
+        }
+
+        public IEnumerable<Record> Records() {
+            foreach (RoundData roundData in this) {
+                foreach (MatchData matchData in roundData) {
+                    foreach (TeamData teamData in matchData.Teams) {
+                        foreach (string name in teamData) {
+                            yield return new Record(roundData, matchData, teamData, name);
+                        }
+                    }
+                }
+            }
         }
     }
 }

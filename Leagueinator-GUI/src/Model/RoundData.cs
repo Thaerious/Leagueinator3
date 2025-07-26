@@ -107,5 +107,15 @@ namespace Leagueinator.GUI.Model {
                 return teams;
             }
         }
+
+        public IEnumerable<Record> Records() {
+            foreach (MatchData matchData in this) {
+                foreach (TeamData teamData in matchData.Teams) {
+                    foreach (string name in teamData) {
+                        yield return new Record(this, matchData, teamData, name);
+                    }
+                }
+            }
+        }
     }
 }

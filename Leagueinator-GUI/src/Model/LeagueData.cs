@@ -44,7 +44,7 @@ namespace Leagueinator.GUI.Model {
                 EventRecord eventRecord = EventRecord.FromString(srcLines.Dequeue());
                 EventData eventData = EventData.FromRecord(eventRecord);
                 leagueData.Add(eventData);
-                AddRounds(srcLines, eventData, eventRecord);    
+                AddRounds(srcLines, eventData, eventRecord);
             }
         }
 
@@ -76,7 +76,7 @@ namespace Leagueinator.GUI.Model {
 
         public override string ToString() {
             string sb = $"{this.Count}|{this.NextUID}\n";
-            
+
             foreach (EventData @event in this) {
                 sb += EventData.ToRecord(@event).ToString() + "\n";
 
@@ -85,7 +85,7 @@ namespace Leagueinator.GUI.Model {
 
                     sb += $"{roundRecordList.Matches.Count}\n";
                     foreach (MatchRecord matchRecord in roundRecordList.Matches) {
-                        sb += matchRecord.ToString() + "\n";   
+                        sb += matchRecord.ToString() + "\n";
                     }
 
                     sb += $"{roundRecordList.Players.Count}\n";
@@ -103,6 +103,20 @@ namespace Leagueinator.GUI.Model {
                                 ?? throw new KeyNotFoundException();
 
             this.Remove(eventData);
+        }
+
+        public IEnumerable<Record> Records() {
+            foreach (EventData evenData in this) {
+                foreach (RoundData roundData in evenData) {
+                    foreach (MatchData matchData in roundData) {
+                        foreach (TeamData teamData in matchData.Teams) {
+                            foreach (string name in teamData) {
+                                yield return new Record(evenData, roundData, matchData, teamData, name);
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 }
