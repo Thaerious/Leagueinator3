@@ -29,6 +29,8 @@ namespace Leagueinator.GUI.Model {
             }
         }
 
+        public RoundData RoundData { get; set; }
+
         /// <summary>
         /// Gets or sets the lane number for the match. Default is -1 (unassigned).
         /// </summary>
@@ -67,17 +69,11 @@ namespace Leagueinator.GUI.Model {
         /// Initializes a new instance of the <see cref="MatchData"/> class with the specified match format.
         /// </summary>
         /// <param name="matchFormat">The format of the match (number of teams and team size).</param>
-        public MatchData(MatchFormat matchFormat) {
+        public MatchData(RoundData roundData, MatchFormat matchFormat) {
             var teamCount = matchFormat.TeamCount();
             var teamSize = matchFormat.TeamSize();
-
             this.MatchFormat = matchFormat;
-            this.Score = new int[teamCount];
-            this.Teams = TeamData.Collection(teamCount, teamSize);
-
-            for (int i = 0; i < this.Score.Length; i++) {
-                this.Score[i] = 0;
-            }
+            this.RoundData = roundData;
         }
 
         /// <summary>
@@ -97,8 +93,8 @@ namespace Leagueinator.GUI.Model {
         /// Creates a deep copy of this <see cref="MatchData"/> instance, including teams and scores.
         /// </summary>
         /// <returns>A new <see cref="MatchData"/> object with the same data.</returns>
-        public MatchData Copy() {
-            MatchData matchCopy = new(this.MatchFormat) {
+        public MatchData Copy(RoundData roundData) {
+            MatchData matchCopy = new(roundData, this.MatchFormat) {
                 Lane = this.Lane,
                 Ends = this.Ends,
             };
@@ -197,8 +193,8 @@ namespace Leagueinator.GUI.Model {
             throw new ModelConstraintException("No empty team slot available in the match.");
         }
 
-        public static MatchData FromRecord(MatchRecord record) {
-            return new MatchData(record.MatchFormat) {
+        public static MatchData FromRecord(RoundData roundData, MatchRecord record) {
+            return new MatchData(roundData, record.MatchFormat) {
                 Ends = record.Ends,
                 TieBreaker = record.TieBreaker,
                 Lane = record.Lane,

@@ -34,7 +34,7 @@ namespace Leagueinator.GUI.Model {
             RoundData roundCopy = [];
 
             foreach (MatchData match in this) {
-                roundCopy.Add(match.Copy());
+                roundCopy.Add(match.Copy(roundCopy));
             }
 
             return roundCopy;
