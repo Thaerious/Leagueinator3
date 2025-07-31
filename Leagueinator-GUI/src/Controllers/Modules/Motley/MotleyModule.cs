@@ -1,10 +1,11 @@
-﻿using Leagueinator.GUI.Controllers.NamedEvents;
+﻿using Leagueinator.GUI.Controllers.Algorithms;
+using Leagueinator.GUI.Controllers.NamedEvents;
 using Leagueinator.GUI.Model;
+using Leagueinator.Utility.Extensions;
 using Microsoft.Win32;
 using System.Diagnostics;
 using System.IO;
 using System.Windows;
-using Leagueinator.Utility.Extensions;
 
 namespace Leagueinator.GUI.Controllers.Modules.Motley {
     public class MotleyModule : BaseModule {
@@ -28,7 +29,6 @@ namespace Leagueinator.GUI.Controllers.Modules.Motley {
 
             if (dialog.ShowDialog() == true) {
                 var csv = this.ToCSV(this.MainController.LeagueData);
-                Debug.WriteLine(csv);
                 StreamWriter writer = new(dialog.FileName);
                 writer.Write(csv);
                 writer.Close();
@@ -81,9 +81,21 @@ namespace Leagueinator.GUI.Controllers.Modules.Motley {
             else throw new Exception($"Length {values.Length} not supported");
         }
 
-        private void GenerateRound(object sender, RoutedEventArgs e) {            
-            RoundData roundData = AssignPlayers.Assign(this.MainController.LeagueData, this.MainController.EventData, this.MainController.RoundData);
-            this.MainController.AddRound(roundData);
+        private void GenerateRound(object sender, RoutedEventArgs e) {
+            RoundData matchesAssigned = AssignPlayers.Assign(this.MainController.LeagueData, this.MainController.EventData, this.MainController.RoundData);
+            matchesAssigned.Fill(this.MainController.EventData);
+
+            try {
+                var lanesAssigned = new AssignLanes(this.MainController.EventData, matchesAssigned).Run();
+                this.MainController.AddRound(lanesAssigned);
+            }
+            catch (AlgoLogicException ex) {
+                this.DispatchEvent(EventName.Notification, new() {
+                    ["message"] = ex.Message
+                });
+                this.MainController.AddRound(matchesAssigned);
+            }
+            
         }
 
         private void EloMenuClick(object sender, RoutedEventArgs e) {

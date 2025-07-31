@@ -1,8 +1,6 @@
 ﻿using Algorithms;
 using Leagueinator.GUI.Model;
-using System.Diagnostics;
 using Utility;
-using Utility.Extensions;
 
 namespace Leagueinator.GUI.Controllers.Algorithms {
     /// <summary>
@@ -39,7 +37,6 @@ namespace Leagueinator.GUI.Controllers.Algorithms {
 
             DefaultDictionary<MatchData, List<int>> permittedLanes = new(key => [.. Enumerable.Range(1, this.EventData.LaneCount)]);
 
-            Debug.WriteLine(this.RoundData.Records().JoinString("\n"));
             var recordsForRound = this.RoundData.Records().Where(r => r.RoundData == this.RoundData);
 
             foreach (Record record in recordsForRound) {

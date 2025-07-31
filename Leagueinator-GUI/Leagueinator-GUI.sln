@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestAlgo", "..\TestAlgo\Tes
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Utility", "..\Utility\Utility.csproj", "{3A5ACF47-225F-44AC-A99C-CB4AB061F7A9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AlgorithmsTest", "..\AlgorithmsTest\AlgorithmsTest.csproj", "{7801D135-B2C5-4F39-A5E7-03718AD54601}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{3A5ACF47-225F-44AC-A99C-CB4AB061F7A9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3A5ACF47-225F-44AC-A99C-CB4AB061F7A9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3A5ACF47-225F-44AC-A99C-CB4AB061F7A9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7801D135-B2C5-4F39-A5E7-03718AD54601}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7801D135-B2C5-4F39-A5E7-03718AD54601}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7801D135-B2C5-4F39-A5E7-03718AD54601}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7801D135-B2C5-4F39-A5E7-03718AD54601}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

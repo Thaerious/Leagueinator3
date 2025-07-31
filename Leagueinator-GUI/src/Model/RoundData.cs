@@ -51,7 +51,6 @@ namespace Leagueinator.GUI.Model {
         }
 
         public void SetPlayer(string name, int lane, int teamIndex, int position) {
-            Debug.WriteLine($"SetPlayer: name={name}, lane={lane}, team={teamIndex}, pos={position}");
             if (this.HasPlayer(name)) {
                 this.RemovePlayer(name);
             }

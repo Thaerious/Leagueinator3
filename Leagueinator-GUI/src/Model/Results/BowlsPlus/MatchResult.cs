@@ -14,7 +14,6 @@ namespace Leagueinator.GUI.Model.Results.BowlsPlus {
                 }
             }
 
-            Debug.WriteLine($"MatchResult Lane = {this.Lane}");
             foreach (SingleResult singleResult in this) {
                 Debug.WriteLine(singleResult);
             }

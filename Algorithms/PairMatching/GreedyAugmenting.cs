@@ -16,7 +16,6 @@ namespace Algorithms.PairMatching {
             List<Solution<T>> population = [];
 
             // Build initial solutions from randomly selected initialEdges.
-            Debug.WriteLine("Build initial population");
             while (population.Count < popsize) {
                 Solution<T> solution = new(graph);
                 var initialEdges = graph.Edges.OrderBy(edge => rng.Next()).ToList();
@@ -33,13 +32,10 @@ namespace Algorithms.PairMatching {
             int bestGen = 0;
             int bestFit = 0;
 
-            Debug.WriteLine("Improve Population");
             for (int i = 0; i < gencount; i++) {
-                Debug.WriteLine($"Generation {i}");
                 List<Solution<T>> next = [];
 
                 foreach (var solution in population) {
-                    Debug.WriteLine($"Mutating solution {population.IndexOf(solution)}");
                     var copy = solution.Copy();
                     var edge = edges[rng.Next(population.Count)];
                     copy.Set(edge);

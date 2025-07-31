@@ -21,13 +21,11 @@ namespace Leagueinator.GUI.Controllers.Modules.Motley {
         }
 
         public RoundData Run() {
-            Debug.WriteLine("Assign pre run");
             RoundData roundData = [];
             this.ELO = Motley.ELO.CalculateELO(this.LeagueData);
             List<string> names = [.. RoundData.Records().Select(r => r.Name)];
             List<string> setAside = [];
 
-            Debug.WriteLine("Keep only players from the source round");
             // Keep only players from the source round (ELO has all players from the league).
             foreach (var name in this.ELO.Keys.ToList()) {
                 if (!names.Contains(name)) {
@@ -35,7 +33,6 @@ namespace Leagueinator.GUI.Controllers.Modules.Motley {
                 }
             }
 
-            Debug.WriteLine("Remove odd players");
             if (ELO.Count % 2 != 0) {
                 setAside = this.SetAside(3);
                 foreach (string name in setAside) this.ELO.Remove(name);
@@ -46,7 +43,6 @@ namespace Leagueinator.GUI.Controllers.Modules.Motley {
                 });
             }
 
-            Debug.WriteLine("Remove non-4 players");
             if (ELO.Count % 4 != 0) {
                 setAside = this.SetAside(2);
                 foreach (string name in setAside) this.ELO.Remove(name);
@@ -56,15 +52,12 @@ namespace Leagueinator.GUI.Controllers.Modules.Motley {
                 this.AssignTeams(roundData);
             }
 
-            Debug.WriteLine("Assign Matches");
             var matchesAssigned = this.AssignMatches(roundData);
-
-            Debug.WriteLine("Assign post run");
-            return new AssignLanes(this.EventData, matchesAssigned).Run();
+            return matchesAssigned;
+            
         }
 
         private RoundData AssignMatches(RoundData roundData) {
-            Debug.WriteLine("AssgningMatches");
             Dictionary<TeamData, int> teamELO = [];
 
             foreach (TeamData team in roundData.Teams) {
@@ -98,11 +91,9 @@ namespace Leagueinator.GUI.Controllers.Modules.Motley {
         }
 
         private RoundData AssignTeams(RoundData roundData) {
-            Debug.WriteLine("Assign Teams");
             Graph<string> graph = new();
             GreedyAugmenting<string> pairingAlgorithm = new(graph);
 
-            Debug.WriteLine("Building ELO graph");
             foreach (var kv1 in this.ELO) {
                 string forPlayer = kv1.Key;
 
@@ -121,12 +112,10 @@ namespace Leagueinator.GUI.Controllers.Modules.Motley {
                 }
             }
 
-            Debug.WriteLine("Running Algorithm");
             Solution<string>? best = pairingAlgorithm.Run(20, 20);
 
             if (best == null) throw new Exception("No pairings generated");
 
-            Debug.WriteLine("Building Teams");
             for (int i = 0; i < best!.Count; i += 2) {
                 MatchData match = new(MatchFormat.VS2) {
                     Lane = roundData.Count,

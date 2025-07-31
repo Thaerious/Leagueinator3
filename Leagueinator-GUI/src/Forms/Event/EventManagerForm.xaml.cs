@@ -41,7 +41,6 @@ namespace Leagueinator.GUI.Forms.Event {
             InitializeComponent();
 
             this.Loaded += (s, e) => {
-                Debug.WriteLine("Loaded");
                 this.TxtEnds.PreviewTextInput += InputHandlers.OnlyNumbers;
                 this.TxtLanes.PreviewTextInput += InputHandlers.OnlyNumbers;
 
@@ -68,7 +67,6 @@ namespace Leagueinator.GUI.Forms.Event {
         }
 
         public void ShowDialog(MainController mainController, List<EventRecord> eventRecords, EventRecord selected) {
-            Debug.WriteLine("Show");
             foreach (var record in eventRecords) this.EventRecords.Add(record);
             this.DataContext = this;
 

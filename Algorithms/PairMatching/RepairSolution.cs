@@ -11,10 +11,6 @@ namespace Algorithms.PairMatching {
 
         public RepairSolution(Graph<T> graph, Solution<T> solution) {
             if (graph.Size % 2 != 0) throw new ArgumentException("Graph must have even number of nodes.");
-
-            Debug.WriteLine(graph.ToCSV());
-            Debug.WriteLine(solution.ToList().JoinString(", ", "\""));
-
             this.Graph = graph;
             this.Solution = solution.Copy();
             this.UpdateMetrics();
@@ -116,12 +112,10 @@ namespace Algorithms.PairMatching {
         }
 
         public Solution<T> Repair() {
-            Debug.WriteLine("Repairing Solution");
             this.UpdateMetrics();
 
             int i = 0;
             while (this.Uncovered.Count > 0) {
-                Debug.WriteLine($"Uncovered.Count == {this.Uncovered.Count}");
                 var path = this.GetPath(this.Uncovered.First());
                 this.Solution.Set(path);
                 this.UpdateMetrics();

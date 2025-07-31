@@ -1,12 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Utility.Extensions;
-
-namespace Algorithms {
+﻿namespace Algorithms {
 
     /// <summary>
     /// Assign each Key a Value from the list of permitted values.
@@ -20,6 +12,11 @@ namespace Algorithms {
 
         private Dictionary<K, List<V>> Permitted { get; }
 
+        /// <summary>
+        /// Create a dictionary of keys to one of the permitted values.
+        /// Each value will only be assigned once.
+        /// </summary>
+        /// <returns></returns>
         public Dictionary<K, V>? Run() {
             var keys = Permitted.Keys.ToList();
             var used = new HashSet<V>();
