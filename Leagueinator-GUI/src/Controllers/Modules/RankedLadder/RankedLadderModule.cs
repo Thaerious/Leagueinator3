@@ -1,8 +1,9 @@
 ﻿using Leagueinator.GUI.Controllers.Algorithms;
 using Leagueinator.GUI.Forms.Print;
 using Leagueinator.GUI.Model;
-using Leagueinator.GUI.Utility.Extensions;
 using System.Windows;
+using Leagueinator.Utility.Extensions;
+using System.Diagnostics;
 
 namespace Leagueinator.GUI.Controllers.Modules.RankedLadder {
     public class RankedLadderModule : BaseModule {
@@ -28,7 +29,7 @@ namespace Leagueinator.GUI.Controllers.Modules.RankedLadder {
             RankedLadderRoundBuilder builder = new(this.MainController.EventData);
             RoundData newRound = builder.GenerateRound();
             AssignLanes assignLanes = new(this.MainController.EventData, newRound);
-            newRound = assignLanes.DoAssignment();
+            newRound = assignLanes.Run();
             this.MainController.AddRound(newRound);
         }
     }

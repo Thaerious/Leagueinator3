@@ -4,7 +4,6 @@ using Leagueinator.GUI.Dialogs;
 using Leagueinator.GUI.Forms;
 using Leagueinator.GUI.Forms.Event;
 using Leagueinator.GUI.Forms.Main;
-using Leagueinator.GUI.Forms.Print;
 using Leagueinator.GUI.Model;
 using Microsoft.Win32;
 using System.IO;
@@ -245,7 +244,7 @@ namespace Leagueinator.GUI.Controllers {
         [NamedEventHandler(EventName.AssignLanes)]
         internal void DoAssignLanes() {
             AssignLanes assignLanes = new(this.EventData, this.RoundData);
-            RoundData newRound = assignLanes.DoAssignment();
+            RoundData newRound = assignLanes.Run();
             this.EventData.SetRound(this.CurrentRoundIndex, newRound);
             this.InvokeSetTitle(this.FileName, false);
             this.InvokeRoundUpdate();
@@ -328,7 +327,6 @@ namespace Leagueinator.GUI.Controllers {
 
         [NamedEventHandler(EventName.ChangeEnds)]
         internal void DoEnds(int lane, int ends) {
-
             this.RoundData[lane].Ends = ends;
             this.InvokeSetTitle(this.FileName, false);
             this.DispatchEvent(EventName.EndsUpdated, new() {
@@ -553,8 +551,8 @@ namespace Leagueinator.GUI.Controllers {
 
         #region Public Methods
         public void AddRound(RoundData newRound) {
-            AssignLanes assignLanes = new(this.EventData, newRound);
-            newRound = assignLanes.DoAssignment();
+            //AssignLanes assignLanes = new(this.EventData, newRound);
+            //newRound = assignLanes.DoAssignment();
             this.EventData.AddRound(newRound);
             this.CurrentRoundIndex = this.EventData.CountRounds() - 1;
             this.InvokeAddRound(newRound);

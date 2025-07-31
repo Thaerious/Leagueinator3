@@ -1,7 +1,6 @@
 ﻿using Leagueinator.GUI.Controllers;
 using Leagueinator.GUI.Controllers.NamedEvents;
-using Leagueinator.GUI.Forms.Main;
-using Leagueinator.GUI.Utility.Extensions;
+using Leagueinator.Utility.Extensions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;

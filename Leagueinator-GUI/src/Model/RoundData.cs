@@ -1,4 +1,4 @@
-﻿using Leagueinator.GUI.Utility.Extensions;
+﻿using Utility.Extensions;
 using System.Diagnostics;
 using System.Text;
 
@@ -34,19 +34,10 @@ namespace Leagueinator.GUI.Model {
             RoundData roundCopy = [];
 
             foreach (MatchData match in this) {
-                roundCopy.Add(match.Copy(roundCopy));
+                roundCopy.Add(match.Copy());
             }
 
             return roundCopy;
-        }
-
-        public override string ToString() {
-            StringBuilder sb = new();
-            foreach (MatchData match in this) {
-                sb.Append(match.ToString());
-                sb.Append('\n');
-            }
-            return sb.ToString();
         }
 
         public void RemovePlayer(string name) {
@@ -116,6 +107,15 @@ namespace Leagueinator.GUI.Model {
                     }
                 }
             }
+        }
+
+        public override string ToString() {
+            StringBuilder sb = new();
+            foreach (MatchData match in this) {
+                sb.Append(match.ToString());
+                sb.Append('\n');
+            }
+            return sb.ToString();
         }
     }
 }

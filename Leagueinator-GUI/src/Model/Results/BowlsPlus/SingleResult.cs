@@ -1,4 +1,4 @@
-﻿using Leagueinator.GUI.Utility.Extensions;
+﻿using Utility.Extensions;
 
 namespace Leagueinator.GUI.Model.Results.BowlsPlus {
 

@@ -7,6 +7,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Leagueinator", "Leagueinato
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Algorithms", "..\Algorithms\Algorithms.csproj", "{D19156EA-AEFB-5C1C-8225-789CA5C209E7}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestAlgo", "..\TestAlgo\TestAlgo.csproj", "{12562D04-BAC5-4508-AE61-55C0341A2693}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Utility", "..\Utility\Utility.csproj", "{3A5ACF47-225F-44AC-A99C-CB4AB061F7A9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +25,14 @@ Global
 		{D19156EA-AEFB-5C1C-8225-789CA5C209E7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D19156EA-AEFB-5C1C-8225-789CA5C209E7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D19156EA-AEFB-5C1C-8225-789CA5C209E7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{12562D04-BAC5-4508-AE61-55C0341A2693}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{12562D04-BAC5-4508-AE61-55C0341A2693}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{12562D04-BAC5-4508-AE61-55C0341A2693}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{12562D04-BAC5-4508-AE61-55C0341A2693}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3A5ACF47-225F-44AC-A99C-CB4AB061F7A9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3A5ACF47-225F-44AC-A99C-CB4AB061F7A9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3A5ACF47-225F-44AC-A99C-CB4AB061F7A9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3A5ACF47-225F-44AC-A99C-CB4AB061F7A9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

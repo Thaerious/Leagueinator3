@@ -1,7 +1,8 @@
 ﻿using Leagueinator.GUI.Controllers;
-using Leagueinator.GUI.Utility.Extensions;
+using Utility.Extensions;
 using System.Windows;
 using System.Windows.Controls;
+using Leagueinator.Utility.Extensions;
 
 namespace Leagueinator.GUI.Controls {
     /// <summary>

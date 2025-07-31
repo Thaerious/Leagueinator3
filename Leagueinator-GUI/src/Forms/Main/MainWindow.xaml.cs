@@ -1,12 +1,12 @@
 ﻿using Leagueinator.GUI.Controllers.NamedEvents;
 using Leagueinator.GUI.Controls;
 using Leagueinator.GUI.Model;
-using Leagueinator.GUI.Utility.Extensions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Threading;
+using Leagueinator.Utility.Extensions;
 
 namespace Leagueinator.GUI.Forms.Main {
     /// <summary>

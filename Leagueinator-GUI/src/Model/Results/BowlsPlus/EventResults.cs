@@ -1,5 +1,5 @@
 ﻿
-using Leagueinator.GUI.Utility;
+using Utility;
 
 namespace Leagueinator.GUI.Model.Results.BowlsPlus {
     /// <summary>

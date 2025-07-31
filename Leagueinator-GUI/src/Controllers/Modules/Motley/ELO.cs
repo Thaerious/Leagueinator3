@@ -1,7 +1,7 @@
 ﻿using Leagueinator.GUI.Model;
 using Leagueinator.GUI.Model.Results.BowlsPlus;
-using Leagueinator.GUI.Utility;
-using Leagueinator.GUI.Utility.Extensions;
+using Utility;
+using Utility.Extensions;
 
 namespace Leagueinator.GUI.Controllers.Modules.Motley {
     public static class ELO {
@@ -11,7 +11,6 @@ namespace Leagueinator.GUI.Controllers.Modules.Motley {
 
             // Sort the event in chronological order
             league.Sort((ed1, ed2) => ed1.Date.CompareTo(ed2.Date));
-
 
             foreach (EventData eventData in league) {
                 // Convert the event data to an event result

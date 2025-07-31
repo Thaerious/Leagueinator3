@@ -1,5 +1,6 @@
-﻿using Leagueinator.GUI.Utility.Extensions;
+﻿using Utility.Extensions;
 using System.Windows.Controls;
+using Leagueinator.Utility.Extensions;
 
 namespace Leagueinator.GUI.Controls {
     public partial class MatchCard4321 : MatchCard {

@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Runtime.CompilerServices;
 
-namespace Leagueinator.GUI.Utility {
+namespace Utility {
     public static class Logger {
         public static void Log(
             string message,

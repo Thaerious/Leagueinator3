@@ -1,8 +1,9 @@
 ﻿using Leagueinator.GUI.Controllers.NamedEvents;
 using Leagueinator.GUI.Controls;
 using Leagueinator.GUI.Model;
-using Leagueinator.GUI.Utility.Extensions;
+using Utility.Extensions;
 using System.Windows;
+using Leagueinator.Utility.Extensions;
 
 namespace Leagueinator.GUI.Forms.Main {
     public class MainWindowReceiver {

@@ -1,4 +1,4 @@
-﻿namespace Leagueinator.GUI.Utility {
+﻿namespace Utility {
     public class DefaultDictionary<K, V> : Dictionary<K, V> where K : notnull {
 
         public DefaultDictionary(Func<K, V> generator) {

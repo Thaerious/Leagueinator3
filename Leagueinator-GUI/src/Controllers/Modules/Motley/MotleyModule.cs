@@ -1,10 +1,10 @@
 ﻿using Leagueinator.GUI.Controllers.NamedEvents;
 using Leagueinator.GUI.Model;
-using Leagueinator.GUI.Utility.Extensions;
 using Microsoft.Win32;
 using System.Diagnostics;
 using System.IO;
 using System.Windows;
+using Leagueinator.Utility.Extensions;
 
 namespace Leagueinator.GUI.Controllers.Modules.Motley {
     public class MotleyModule : BaseModule {
@@ -12,13 +12,13 @@ namespace Leagueinator.GUI.Controllers.Modules.Motley {
             base.LoadModule(window, mainController);
             this.MainWindow.MainMenu.AddMenuItem(["View", "ELO"], this.EloMenuClick);
             this.MainWindow.MainMenu.AddMenuItem(["View", "Export CSV"], this.ExportCSV);
-            this.MainWindow.MainMenu.AddMenuItem(["Action", "Assign Players", "Balanced"], this.AssignBalanced);
+            this.MainWindow.MainMenu.AddMenuItem(["Action", "Generate Next Round"], this.GenerateRound);
         }
 
         public override void UnloadModule() {
             this.MainWindow.MainMenu.RemoveMenuItem(["View", "ELO"]);
             this.MainWindow.MainMenu.RemoveMenuItem(["View", "Export CSV"]);
-            this.MainWindow.MainMenu.RemoveMenuItem(["Action", "Assign Players", "Balanced"]);
+            this.MainWindow.MainMenu.RemoveMenuItem(["Action", "Generate Next Round"]);
         }
 
         private void ExportCSV(object sender, RoutedEventArgs e) {
@@ -81,17 +81,17 @@ namespace Leagueinator.GUI.Controllers.Modules.Motley {
             else throw new Exception($"Length {values.Length} not supported");
         }
 
-        private void AssignBalanced(object sender, RoutedEventArgs e) {
-            AssignPlayers assignPlayers = new();
-            assignPlayers.Balanced(this.MainController.LeagueData, this.MainController.EventData, this.MainController.RoundData);
-            this.MainController.InvokeRoundUpdate();
+        private void GenerateRound(object sender, RoutedEventArgs e) {            
+            RoundData roundData = AssignPlayers.Assign(this.MainController.LeagueData, this.MainController.EventData, this.MainController.RoundData);
+            this.MainController.AddRound(roundData);
         }
 
         private void EloMenuClick(object sender, RoutedEventArgs e) {
             Dictionary<string, int> elo = ELO.CalculateELO(this.MainController.LeagueData);
+            var ordered = elo.OrderBy(kvp => kvp.Value);
 
             string sb = "";
-            foreach (var kvp in elo) {
+            foreach (var kvp in ordered) {
                 sb += $"{kvp.Key} : {kvp.Value}\n";
             }
 
@@ -99,9 +99,5 @@ namespace Leagueinator.GUI.Controllers.Modules.Motley {
                 ["text"] = sb
             });
         }
-
-        public RoundData GenerateRound(EventData eventData) {
-            throw new NotImplementedException();
-        }        
     }
 }

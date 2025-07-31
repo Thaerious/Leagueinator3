@@ -1,9 +1,8 @@
-﻿using System.Diagnostics;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 
-namespace Leagueinator.GUI.Utility.Extensions {
+namespace Leagueinator.Utility.Extensions {
     public static class ControlExtensions {
 
         public static MenuItem AddMenuItem(this Menu menu, string[] headers, RoutedEventHandler hnd) {
@@ -38,7 +37,7 @@ namespace Leagueinator.GUI.Utility.Extensions {
             if (menuItem is null) return false;
 
             if (headers.Length == 1) {
-                // Top-level item (e.g., menu.Items.Remove("Help"))
+                // Top-level item (e.g., menu.Keys.Remove("Help"))
                 menu.Items.Remove(menuItem);
             }
             else {

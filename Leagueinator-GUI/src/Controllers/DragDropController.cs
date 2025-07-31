@@ -1,8 +1,9 @@
-﻿using Leagueinator.GUI.Utility.Extensions;
+﻿using Utility.Extensions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using static Leagueinator.GUI.Controllers.DragDropDelegates;
+using Leagueinator.Utility.Extensions;
 
 namespace Leagueinator.GUI.Controllers {
     public class DragDropController {

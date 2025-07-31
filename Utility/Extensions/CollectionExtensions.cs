@@ -1,10 +1,16 @@
 ﻿
-namespace Leagueinator.GUI.Utility.Extensions {
+namespace Utility.Extensions {
     public static class CollectionExtensions {
 
-        public static string JoinString<T>(this IEnumerable<T> collection, string delim = ",") {
+        public static string JoinString<K, V>(this IEnumerable<KeyValuePair<K, V>> collection, string delim = ",") {
             if (!collection.Any()) return "";
-            string[] array = collection.Select(item => item.ToString()).ToArray();
+            string[] array = collection.Select(item => $"({item.Key}:{item.Value})").ToArray();
+            return string.Join(delim, array);
+        }
+
+        public static string JoinString<T>(this IEnumerable<T> collection, string delim = ",", string wrapper = "") {
+            if (!collection.Any()) return "";
+            string[] array = collection.Select(item => item.ToString()).Select(s => $"{wrapper}{s}{wrapper}").ToArray();
             return string.Join(delim, array);
         }
         
@@ -35,6 +41,13 @@ namespace Leagueinator.GUI.Utility.Extensions {
                 list[k] = list[n];
                 list[n] = value;
             }
+        }
+
+        public static IEnumerable<T> Do<T>(this IEnumerable<T> list, Action<T> action) {
+            return list.Select(item => {
+                action(item);
+                return item;
+            });
         }
 
         public static IEnumerable<IEnumerable<T>> Combinations<T>(this IEnumerable<T> list, int count) {

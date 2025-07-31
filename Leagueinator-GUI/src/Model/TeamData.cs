@@ -1,5 +1,6 @@
 ﻿
 using System.Collections;
+using System.Diagnostics;
 using System.Text.Json.Serialization;
 
 namespace Leagueinator.GUI.Model {

@@ -90,7 +90,7 @@ namespace Leagueinator.GUI.Model {
         /// Creates a deep copy of this <see cref="MatchData"/> instance, including teams and scores.
         /// </summary>
         /// <returns>A new <see cref="MatchData"/> object with the same data.</returns>
-        public MatchData Copy(RoundData roundData) {
+        public MatchData Copy() {
             MatchData matchCopy = new(this.MatchFormat) {
                 Lane = this.Lane,
                 Ends = this.Ends,
