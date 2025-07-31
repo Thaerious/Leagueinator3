@@ -12,8 +12,7 @@ namespace Leagueinator.GUI.Forms.Main {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window, IDispatchesEvents {
-        public bool DisableEvents { get; set; }
+    public partial class MainWindow : Window {
 
         public MainWindow() {
             this.InitializeComponent();
@@ -72,7 +71,7 @@ namespace Leagueinator.GUI.Forms.Main {
 
                 // Assign tab order & set data when loaded
                 matchCard.Loaded += (s, e) => {
-                    this.DisableEvents = true;
+                    this.PauseEvents();
                     matchCard.Lane = matchRecord.Lane;
                     matchCard.SetEnds(matchRecord.Ends);
                     matchCard.SetTieBreaker(matchRecord.TieBreaker);
@@ -82,7 +81,7 @@ namespace Leagueinator.GUI.Forms.Main {
                     if (cardsLoaded == cardsToLoad) {
                         this.AssignTabOrder();
                         this.SetPlayerNames(roundRecords);
-                        this.DisableEvents = false;
+                        this.ResumeEvents();
                     }
                 };
             }

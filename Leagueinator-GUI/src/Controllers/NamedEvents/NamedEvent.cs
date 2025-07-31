@@ -9,6 +9,8 @@ namespace Leagueinator.GUI.Controllers.NamedEvents {
 
         private static readonly Dictionary<EventName, List<MethodRecord>> Handlers = [];
 
+        private static HashSet<object> Paused = [];
+
         public static void AddHandler(object receiver) {
             var methods = receiver.GetType().GetMethods(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.DeclaredOnly);
 
@@ -79,9 +81,7 @@ namespace Leagueinator.GUI.Controllers.NamedEvents {
         /// Logs a warning if no handler marks it as handled.
         /// </summary>
         public static void DispatchEvent(this object source, EventName eventName, ArgTable? data = null) {
-            if (source is IDispatchesEvents dispatchesEvent) {
-                if (dispatchesEvent.DisableEvents) return;
-            }
+            if (Paused.Contains(source)) return;
 
             Logger.Log($"Event -> '{eventName}' dispatched by '{source.GetType().Name}'.");
             data ??= [];
@@ -92,6 +92,14 @@ namespace Leagueinator.GUI.Controllers.NamedEvents {
             if (args.Handled == false) {
                 Logger.Log($"Event <> '{eventName}' dispatched by '{source.GetType().Name} not handled.");
             }
+        }
+
+        public static void PauseEvents(this object source) {
+            Paused.Add(source); 
+        }
+
+        public static void ResumeEvents(this object source) {
+            Paused.Remove(source);
         }
     }
 }
