@@ -327,6 +327,10 @@ namespace Leagueinator.GUI.Controllers {
 
         [NamedEventHandler(EventName.ChangeEnds)]
         internal void DoEnds(int lane, int ends) {
+            if (lane < 0 || lane >= this.RoundData.Count) {
+                throw new ArgumentOutOfRangeException($"Argument '{nameof(lane)}' value '{lane}' is not within [0 .. {this.RoundData.Count - 1}]");
+            }
+
             this.RoundData[lane].Ends = ends;
             this.InvokeSetTitle(this.FileName, false);
             this.DispatchEvent(EventName.EndsUpdated, new() {

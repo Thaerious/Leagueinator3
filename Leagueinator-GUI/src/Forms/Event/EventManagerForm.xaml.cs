@@ -1,10 +1,8 @@
 ﻿using Leagueinator.GUI.Controllers;
 using Leagueinator.GUI.Controllers.NamedEvents;
 using Leagueinator.GUI.Controls;
-using Leagueinator.GUI.Forms.Main;
 using Leagueinator.GUI.Model;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using EventRecord = Leagueinator.GUI.Model.EventRecord;
@@ -32,7 +30,7 @@ namespace Leagueinator.GUI.Forms.Event {
     /// <summary>
     /// Interaction logic for EventManagerForm.xaml
     /// </summary>
-    public partial class EventManagerForm : Window, IDispatchesEvents {
+    public partial class EventManagerForm : Window {
 
         public ObservableCollection<EventRecord> EventRecords { get; set; } = [];
         public bool DisableEvents { get; set; } = true;
@@ -106,12 +104,14 @@ namespace Leagueinator.GUI.Forms.Event {
 
         [NamedEventHandler(EventName.EventChanged)]
         internal void DoEventChanged(EventRecord eventRecord) {
+            this.PauseEvents();
             this.EventData.SelectedItem = eventRecord;
             this.TxtName.Text = eventRecord.Name;
             this.TxtEnds.Text = eventRecord.DefaultEnds.ToString();
             this.TxtLanes.Text = eventRecord.LaneCount.ToString();
             this.ListMatchFormat.SelectedValue = eventRecord.MatchFormat;
             this.ListEventType.SelectedValue = eventRecord.EventType;
+            this.ResumeEvents();
         }
 
         [NamedEventHandler(EventName.EventDeleted)]
