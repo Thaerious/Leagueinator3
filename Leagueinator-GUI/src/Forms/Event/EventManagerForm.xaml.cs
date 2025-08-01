@@ -33,7 +33,6 @@ namespace Leagueinator.GUI.Forms.Event {
     public partial class EventManagerForm : Window {
 
         public ObservableCollection<EventRecord> EventRecords { get; set; } = [];
-        public bool DisableEvents { get; set; } = true;
 
         public EventManagerForm() {
             InitializeComponent();
@@ -70,7 +69,7 @@ namespace Leagueinator.GUI.Forms.Event {
 
             this.Loaded += (s, e) => {
                 this.DoEventChanged(selected);
-                this.DisableEvents = false;
+                this.ResumeEvents();
             };
 
             this.ShowDialog();            

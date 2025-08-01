@@ -53,9 +53,6 @@
 
             <!-- Action Menu -->
             <MenuItem Header="Action">
-                <MenuItem Header="Assign Players">
-                    <MenuItem Header="Randomly" Click="HndAssignPlayersRandomly"/>
-                </MenuItem>
                 <MenuItem Header="Assign Lanes" Click="HndAssignLanes"/>
             </MenuItem>
 

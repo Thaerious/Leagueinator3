@@ -177,6 +177,7 @@ namespace Leagueinator.GUI.Controllers {
             var form = new EventManagerForm();
 
             List<EventRecord> records = [.. this.LeagueData.Select(data => EventData.ToRecord(data))];
+            form.PauseEvents();
             NamedEvent.AddHandler(form);
             form.ShowDialog(this, records, EventData.ToRecord(this.EventData));
 

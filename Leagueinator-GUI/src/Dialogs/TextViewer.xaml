@@ -6,9 +6,15 @@
         xmlns:local="clr-namespace:Leagueinator.GUI.Dialogs"
         mc:Ignorable="d"
         Title="TextViewer" Height="450" Width="800">
-    <Grid>
+    <DockPanel>
+        <Menu DockPanel.Dock="Top">
+            <MenuItem Header="Save" Click="Hnd_Save"/>
+            <MenuItem Header="Print" Click="Hnd_Print"/>
+        </Menu>
+
         <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
-            <TextBlock x:Name="MainTextBlock" FontFamily="Cascadia Mono SemiBold" FontSize="14"/>
+            <TextBox x:Name="MainTextBlock" FontFamily="Cascadia Mono SemiBold" FontSize="14" 
+                 TextWrapping="Wrap" AcceptsReturn="True" IsReadOnly="True" VerticalScrollBarVisibility="Auto"/>
         </ScrollViewer>
-    </Grid>
+    </DockPanel>
 </Window>
