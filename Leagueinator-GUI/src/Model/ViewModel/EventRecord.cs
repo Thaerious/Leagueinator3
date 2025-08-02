@@ -23,7 +23,7 @@
 
         public static EventRecord FromString(string s) {
             var parts = s.Split('|');
-            if (parts.Length != 8) throw new FormatException("Invalid EventRecord string format");
+            if (parts.Length != 7) throw new FormatException("Invalid EventRecord string format");
 
             return new EventRecord(
                 Name: parts[0],
