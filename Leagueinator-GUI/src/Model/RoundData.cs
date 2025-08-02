@@ -12,7 +12,8 @@ namespace Leagueinator.GUI.Model {
         public void Fill(EventData eventData) {
             for (int i = 0; i < eventData.LaneCount; i++) {
                 if (!this.Any(m => m.Lane == i)) {
-                    this.Add(new MatchData(eventData.MatchFormat) {
+                    this.Add(new MatchData() {
+                        MatchFormat = eventData.MatchFormat,
                         Lane = i,
                         Ends = eventData.DefaultEnds
                     });

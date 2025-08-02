@@ -1,8 +1,9 @@
 ﻿using Utility.Extensions;
 using System.Windows.Controls;
 using Leagueinator.Utility.Extensions;
+using Leagueinator.GUI.Controls.MatchCards;
 
-namespace Leagueinator.GUI.Controls {
+namespace Leagueinator.GUI.Controls.MatchCards {
     /// <summary>
     /// Interaction logic for BowlsPanel.xaml
     /// </summary>

@@ -4,7 +4,7 @@ using System.Windows;
 using System.Windows.Controls;
 using Leagueinator.Utility.Extensions;
 
-namespace Leagueinator.GUI.Controls {
+namespace Leagueinator.GUI.Controls.MatchCards {
     /// <summary>
     /// Interaction logic for InfoCard.xaml
     /// </summary>

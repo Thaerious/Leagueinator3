@@ -6,7 +6,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Xml.Linq;
 
-namespace Leagueinator.GUI.Controls {
+namespace Leagueinator.GUI.Controls.MatchCards {
     public class TeamCard : Border {
 
         public TeamCard() {

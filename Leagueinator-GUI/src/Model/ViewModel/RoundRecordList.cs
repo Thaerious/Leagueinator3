@@ -5,19 +5,13 @@
 
         public RoundRecordList(EventData @event, RoundData round) {
             foreach (MatchData match in round) {
-                this.Matches.Add(new() {
-                    MatchFormat = match.MatchFormat,
-                    Ends = match.Ends,
-                    TieBreaker = match.TieBreaker,
-                    Lane = match.Lane,
-                    Score = match.Score,
-                });
+                this.Matches.Add(new MatchRecord(match));
 
                 foreach (TeamData team in match.Teams) {
                     foreach (string player in team) {
                         if (player == string.Empty) continue;   
                         RoundRecord record = new() {
-                            EventUID = @event.UID,
+                            EventName = @event.EventName,
                             Round = @event.IndexOf(round),
                             Lane = match.Lane,
                             Team = Array.IndexOf(match.Teams, team),

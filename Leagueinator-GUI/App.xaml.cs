@@ -27,15 +27,16 @@ namespace Leagueinator.GUI {
             this.Dispatcher.InvokeAsync(() => {
                 var mainWindow = (MainWindow)this.MainWindow;
 
-                mainWindow.Loaded += (s, e) => {
+                mainWindow.ContentRendered += (s, e) => {
+                    Debug.WriteLine("Main Window Loaded");
                     MainController mainController = new(mainWindow);
                     FocusController focusController = new(mainController);
 
-                    NamedEvent.AddHandler(mainController);
-                    NamedEvent.AddHandler(focusController);
-                    NamedEvent.AddHandler(new MainWindowReceiver(mainWindow));
+                    NamedEvent.RegisterHandler(mainController);
+                    NamedEvent.RegisterHandler(focusController);
+                    NamedEvent.RegisterHandler(new MainWindowReceiver(mainWindow));
 
-                    mainWindow.Ready();
+                    this.DispatchEvent(EventName.NewLeague);
                 };
             });
         }

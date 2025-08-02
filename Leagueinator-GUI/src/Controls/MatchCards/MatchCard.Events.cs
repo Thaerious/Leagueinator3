@@ -1,7 +1,7 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
 
-namespace Leagueinator.GUI.Controls {
+namespace Leagueinator.GUI.Controls.MatchCards {
     public abstract partial class MatchCard : UserControl {
 
         public class MatchCardEventArgs(object source, string field, bool echo = false) 

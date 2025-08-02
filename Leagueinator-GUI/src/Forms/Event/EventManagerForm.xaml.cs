@@ -1,6 +1,6 @@
 ﻿using Leagueinator.GUI.Controllers;
 using Leagueinator.GUI.Controllers.NamedEvents;
-using Leagueinator.GUI.Controls;
+using Leagueinator.GUI.Controls.MatchCards;
 using Leagueinator.GUI.Model;
 using System.Collections.ObjectModel;
 using System.Windows;
@@ -81,12 +81,6 @@ namespace Leagueinator.GUI.Forms.Event {
             this.DispatchEvent(EventName.AddEvent);
         }
 
-        private void HndDelete(object sender, EventArgs e) {
-            this.DispatchEvent(EventName.DeleteEvent, new() {
-                ["eventUID"] = (this.EventData.SelectedItem as EventRecord)!.UID,
-            });
-        }
-
         private void HndExit(object sender, EventArgs e) {
             this.Close();
         }
@@ -101,7 +95,7 @@ namespace Leagueinator.GUI.Forms.Event {
         }
 
 
-        [NamedEventHandler(EventName.EventChanged)]
+        [NamedEventHandler(EventName.EventSelected)]
         internal void DoEventChanged(EventRecord eventRecord) {
             this.PauseEvents();
             this.EventData.SelectedItem = eventRecord;
@@ -113,38 +107,9 @@ namespace Leagueinator.GUI.Forms.Event {
             this.ResumeEvents();
         }
 
-        [NamedEventHandler(EventName.EventDeleted)]
-        internal void DoEventDeleted(int uid) {
-            var index = EventRecords.ToList().FindIndex(r => r.UID == uid);
-            EventRecords.RemoveAt(index);
-        }
-
-        [NamedEventHandler(EventName.EventRecordChanged)]
-        internal void DoEventNameChanged(EventRecord eventRecord) {
-            var index = EventRecords.ToList().FindIndex(r => r.UID == eventRecord.UID);
-            if (index < 0) return;
-
-            if (this.EventData.SelectedIndex == index) {
-                EventRecords[index] = eventRecord;
-                this.EventData.SelectedItem = eventRecord;
-            }
-            else {
-                EventRecords[index] = eventRecord;
-            }
-        }
-
         #endregion
 
         #region Component Handlers
-        private void SelectionChanged(object sender, SelectionChangedEventArgs e) {
-            if (this.EventData.SelectedItem is not EventRecord record) return;
-            this.ButDelete.IsEnabled = true;
-
-            this.DispatchEvent(EventName.SelectEvent, new() {
-                ["uid"] = record.UID,
-            });
-        }
-
         private void TxtChanged(object sender, TextChangedEventArgs args) {
             this.InvokeChangeEventArg();
         }

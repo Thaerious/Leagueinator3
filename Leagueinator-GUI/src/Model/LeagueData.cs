@@ -9,16 +9,13 @@ namespace Leagueinator.GUI.Model {
             return this.NextUID++;
         }
 
-        public EventData GetEvent(int eventUID) {
-            foreach (EventData @event in this) {
-                if (@event.UID == eventUID) return @event;
-            }
-            throw new KeyNotFoundException();
-        }
+        internal EventData AddEvent(string? name = null) {
+            name = name ?? DateTime.Now.ToString("MMMM d, yyyy");
+            int count = this.Select(e => e.EventName.StartsWith(name)).Count();
+            if (count > 0) name = $"{name} [{count}]";
 
-        internal EventData AddEvent() {
             EventData eventData = new() {
-                UID = this.GetNextUID()
+                EventName = name
             };
             this.Add(eventData);
             return eventData;
@@ -54,8 +51,7 @@ namespace Leagueinator.GUI.Model {
 
                 int matchCount = NextInt(srcLines);
                 for (int j = 0; j < matchCount; j++) {
-                    MatchRecord matchRecord = MatchRecord.FromString(srcLines.Dequeue());
-                    MatchData matchData = MatchData.FromRecord(matchRecord);
+                    MatchData matchData = MatchData.FromString(srcLines.Dequeue());
                     roundData.Add(matchData);
                 }
 
@@ -96,13 +92,6 @@ namespace Leagueinator.GUI.Model {
             }
 
             return sb;
-        }
-
-        internal void RemoveEventByUID(int eventUID) {
-            EventData? eventData = this.Where(e => e.UID == eventUID).FirstOrDefault()
-                                ?? throw new KeyNotFoundException();
-
-            this.Remove(eventData);
         }
 
         public IEnumerable<Record> Records() {

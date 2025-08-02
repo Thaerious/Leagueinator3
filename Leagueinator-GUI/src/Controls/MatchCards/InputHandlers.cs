@@ -2,7 +2,7 @@
 using System.Windows.Controls;
 using System.Windows.Input;
 
-namespace Leagueinator.GUI.Controls {
+namespace Leagueinator.GUI.Controls.MatchCards {
     public static class InputHandlers {
         public static void OnlyNumbers(object sender, TextCompositionEventArgs e) {
             e.Handled = !e.Text.All(char.IsDigit);

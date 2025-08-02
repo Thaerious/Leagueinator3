@@ -1,9 +1,7 @@
 ﻿using Leagueinator.GUI.Controllers.NamedEvents;
-using Leagueinator.GUI.Controls;
-using Leagueinator.GUI.Model;
-using Utility.Extensions;
 using System.Windows;
 using Leagueinator.Utility.Extensions;
+using Leagueinator.GUI.Controls.MatchCards;
 
 namespace Leagueinator.GUI.Forms.Main {
     public class MainWindowReceiver {
@@ -43,30 +41,6 @@ namespace Leagueinator.GUI.Forms.Main {
             else {
                 this.MainWindow.Title = $"{title} [✘]";
             }
-        }
-
-        [NamedEventHandler(EventName.UpdateRoundCount)]
-        internal void DoUpdateRoundCount(int count) {
-            this.MainWindow.RoundButtonStackPanel.Children.Clear();
-            for (int i = 0; i < count; i++) {
-                this.MainWindow.AddRoundButton();
-            }
-        }
-
-        [NamedEventHandler(EventName.RoundUpdated)]
-        internal void DoRoundUpdated(int roundIndex, RoundRecordList roundRecords) {
-            this.MainWindow.HighLightRound(roundIndex);
-            this.MainWindow.PopulateMatchCards(roundRecords);
-        }
-
-        [NamedEventHandler(EventName.RoundRemoved)]
-        internal void DoRoundRemoved(int roundIndex) {
-            this.MainWindow.RemoveRound(roundIndex);
-        }
-
-        [NamedEventHandler(EventName.RoundAdded)]
-        internal void DoRoundAdded() {
-            this.MainWindow.AddRoundButton();
         }
 
         [NamedEventHandler(EventName.MatchRemoved)]

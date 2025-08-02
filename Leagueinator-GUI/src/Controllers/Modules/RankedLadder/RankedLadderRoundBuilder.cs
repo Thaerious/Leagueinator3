@@ -24,7 +24,8 @@ namespace Leagueinator.GUI.Controllers.Modules.RankedLadder {
                 TeamResult nextResult = this.GetNextTeam(bestTeam, results);
                 results.Remove(nextResult);
 
-                MatchData matchData = new(this.EventData.MatchFormat) {
+                MatchData matchData = new() {
+                    MatchFormat = this.EventData.MatchFormat,
                     Lane = newRound.Count,
                     Ends = this.EventData.DefaultEnds,
                 };

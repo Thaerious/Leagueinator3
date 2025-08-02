@@ -37,7 +37,8 @@ namespace Leagueinator.GUI.Controllers.Modules.Motley {
                 setAside = this.SetAside(3);
                 foreach (string name in setAside) this.ELO.Remove(name);
 
-                roundData.Add(new MatchData(MatchFormat.A4321) {
+                roundData.Add(new MatchData() {
+                    MatchFormat = MatchFormat.A4321,
                     Lane = roundData.Count,
                     Ends = this.EventData.DefaultEnds
                 });
@@ -77,7 +78,8 @@ namespace Leagueinator.GUI.Controllers.Modules.Motley {
 
             RoundData newRound = [];
             for (int i = 0; i < orderdTeams.Count; i += 2) {
-                MatchData matchData = new(MatchFormat.VS2) {
+                MatchData matchData = new() {
+                    MatchFormat = MatchFormat.VS2,
                     Lane = newRound.Count,
                     Ends = this.EventData.DefaultEnds
                 };
@@ -117,7 +119,8 @@ namespace Leagueinator.GUI.Controllers.Modules.Motley {
             if (best == null) throw new Exception("No pairings generated");
 
             for (int i = 0; i < best!.Count; i += 2) {
-                MatchData match = new(MatchFormat.VS2) {
+                MatchData match = new() {
+                    MatchFormat = MatchFormat.VS2,
                     Lane = roundData.Count,
                     Ends = this.EventData.DefaultEnds
                 };

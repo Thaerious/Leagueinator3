@@ -1,11 +1,11 @@
 ﻿using Leagueinator.GUI.Controllers.NamedEvents;
 using Leagueinator.GUI.Model;
+using Leagueinator.Utility.Extensions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using Leagueinator.Utility.Extensions;
 
-namespace Leagueinator.GUI.Controls {
+namespace Leagueinator.GUI.Controls.MatchCards {
 
     /// <summary>
     /// Abstract base class for a user control that represents a match card UI element.

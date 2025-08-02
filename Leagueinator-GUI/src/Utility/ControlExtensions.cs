@@ -5,6 +5,21 @@ using System.Windows.Media;
 namespace Leagueinator.Utility.Extensions {
     public static class ControlExtensions {
 
+        public static void AddMenuItem(this ContextMenu contextMenu, string header, RoutedEventHandler hnd) {
+            var menuItem = new MenuItem { Header = header };
+            menuItem.Click += hnd;
+            contextMenu.Items.Add(menuItem);
+        }
+
+        public static Color ToMediaColor(this System.Drawing.Color color) {
+             return System.Windows.Media.Color.FromArgb(
+                color.A,
+                color.R,
+                color.G,
+                color.B
+             );
+        }
+
         public static MenuItem AddMenuItem(this Menu menu, string[] headers, RoutedEventHandler hnd) {
             if (headers.Length == 0) throw new Exception("Must include at least 1 header");
             ItemsControl current = menu;

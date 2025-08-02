@@ -12,7 +12,7 @@ namespace Leagueinator.GUI.Model {
         /// Gets or sets the match format, which determines the number of teams and team size.
         /// Changing the format resets the teams and scores.
         /// </summary>
-        public MatchFormat MatchFormat {
+        public required MatchFormat MatchFormat {
             get => this._matchFormat;
             set {
                 var teamCount = value.TeamCount();
@@ -64,16 +64,6 @@ namespace Leagueinator.GUI.Model {
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="MatchData"/> class with the specified match format.
-        /// </summary>
-        /// <param name="matchFormat">The format of the match (number of teams and team size).</param>
-        public MatchData(MatchFormat matchFormat) {
-            var teamCount = matchFormat.TeamCount();
-            var teamSize = matchFormat.TeamSize();
-            this.MatchFormat = matchFormat;
-        }
-
-        /// <summary>
         /// CopyRound the team to the specified index in the match.
         /// </summary>
         /// <param name="teamIndex">The index of the team to set.</param>
@@ -91,7 +81,8 @@ namespace Leagueinator.GUI.Model {
         /// </summary>
         /// <returns>A new <see cref="MatchData"/> object with the same data.</returns>
         public MatchData Copy() {
-            MatchData matchCopy = new(this.MatchFormat) {
+            MatchData matchCopy = new() {
+                MatchFormat = this.MatchFormat,
                 Lane = this.Lane,
                 Ends = this.Ends,
             };
@@ -191,11 +182,25 @@ namespace Leagueinator.GUI.Model {
         }
 
         public static MatchData FromRecord(MatchRecord record) {
-            return new MatchData(record.MatchFormat) {
+            return new MatchData() {
+                MatchFormat = record.MatchFormat,
                 Ends = record.Ends,
                 TieBreaker = record.TieBreaker,
                 Lane = record.Lane,
                 Score = record.Score
+            };
+        }
+
+        public static MatchData FromString(string s) {
+            var parts = s.Split('|');
+            if (parts.Length != 5) throw new FormatException("Invalid MatchRecord string format");
+
+            return new MatchData {
+                MatchFormat = Enum.Parse<MatchFormat>(parts[0]),
+                Ends = int.Parse(parts[1]),
+                TieBreaker = int.Parse(parts[2]),
+                Lane = int.Parse(parts[3]),
+                Score = [.. parts[4].Split(',').Select(int.Parse)]
             };
         }
     }

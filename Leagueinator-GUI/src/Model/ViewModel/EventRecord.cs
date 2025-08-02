@@ -6,8 +6,7 @@
         int LaneCount,
         int DefaultEnds,
         EventType EventType,
-        int RoundCount,
-        int UID
+        int RoundCount
     ) {
 
         public override string ToString() {
@@ -19,7 +18,6 @@
                 DefaultEnds.ToString(),
                 EventType.ToString(),
                 RoundCount.ToString(),
-                UID.ToString()
             });
         }
 
@@ -34,8 +32,7 @@
                 LaneCount: int.Parse(parts[3]),
                 DefaultEnds: int.Parse(parts[4]),
                 EventType: Enum.Parse<EventType>(parts[5]),
-                RoundCount: int.Parse(parts[6]),
-                UID: int.Parse(parts[7])
+                RoundCount: int.Parse(parts[6])
             );
         }
     }

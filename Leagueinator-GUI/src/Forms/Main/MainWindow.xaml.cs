@@ -1,12 +1,11 @@
 ﻿using Leagueinator.GUI.Controllers.NamedEvents;
-using Leagueinator.GUI.Controls;
 using Leagueinator.GUI.Model;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using System.Windows.Media;
 using System.Windows.Threading;
 using Leagueinator.Utility.Extensions;
+using Leagueinator.GUI.Controls.MatchCards;
 
 namespace Leagueinator.GUI.Forms.Main {
     /// <summary>
@@ -17,24 +16,16 @@ namespace Leagueinator.GUI.Forms.Main {
         public MainWindow() {
             this.InitializeComponent();
             this.Title = "Leagueinator []";
-            var button = this.AddRoundButton();
-            button.Focus();
-
-            this.Loaded += this.OnLoadDo;
+            this.Loaded += this.OnLoaded;
         }
 
-        private void OnLoadDo(object sender, RoutedEventArgs e) {
-            this.RoundButtonStackPanel.PreviewMouseDown += (s, e) => {
+        private void OnLoaded(object sender, RoutedEventArgs e) {
+            this.RoundPanel.PreviewMouseDown += (s, e) => {
                 Keyboard.ClearFocus();
             };
             this.MatchCardStackPanel.PreviewMouseDown += (s, e) => {
                 Keyboard.ClearFocus();
             };
-        }
-
-        public void Ready() {
-            this.DispatchEvent(EventName.NewLeague);
-            this.InvokeRoundButton();
         }
 
         public void ClearFocus() {
@@ -102,28 +93,8 @@ namespace Leagueinator.GUI.Forms.Main {
             foreach (var textBox in elements) textBox.TabIndex = nextTabIndex++;
         }
 
-        public void RemoveRound(int index) {
-            // Remove the button
-            this.RoundButtonStackPanel.Children.RemoveAt(index);
-
-            // Rename buttons
-            int i = 1;
-            foreach (Button button in this.RoundButtonStackPanel.Children) {
-                button.Content = $"Round {i++}";
-            }
-        }
-
         public void RemoveMatch(int index) {
             this.MatchCardStackPanel.Children.RemoveAt(index);
-        }
-
-        internal void HighLightRound(int index) {
-            foreach (Button button in this.RoundButtonStackPanel.Children) {
-                button.Background = Brushes.LightGray;
-            }
-
-            Button selected = (Button)this.RoundButtonStackPanel.Children[index];
-            selected.Background = Brushes.Green;
         }
     }
 }

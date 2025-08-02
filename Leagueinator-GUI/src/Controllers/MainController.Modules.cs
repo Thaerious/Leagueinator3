@@ -13,7 +13,7 @@ namespace Leagueinator.GUI.Controllers {
 
             currentModule = module;
             module.LoadModule(this.Window, this);
-            NamedEvent.AddHandler(module);
+            NamedEvent.RegisterHandler(module);
         }
     }
 }

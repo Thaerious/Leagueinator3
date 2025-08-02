@@ -1,6 +1,6 @@
 ﻿using Leagueinator.GUI.Model;
 
-namespace Leagueinator.GUI.Controls {
+namespace Leagueinator.GUI.Controls.MatchCards {
     public static class MatchCardFactory {
         public static MatchCard GenerateMatchCard(MatchFormat matchFormat) {
             switch (matchFormat) {

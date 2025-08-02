@@ -9,7 +9,7 @@ namespace Utility {
             [CallerLineNumber] int line = 0
         ) {
             string filename = System.IO.Path.GetFileName(file);
-            Debug.WriteLine($"[{filename}:{line}] {message}");
+            Debug.WriteLine($"* {message}");
         }
 
         public static string GetInvocationLoc(

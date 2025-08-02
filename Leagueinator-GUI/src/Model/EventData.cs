@@ -8,15 +8,13 @@ namespace Leagueinator.GUI.Model {
             this.Stats = new(this);
         }
 
-        public string EventName { get; set; } = "Name Not Set";
+        public string EventName { get; set; } = DateTime.Now.ToString("MMMM d, yyyy");
         public DateTime Date { get; set; } = DateTime.Now;
         public MatchFormat MatchFormat { get; set; } = MatchFormat.VS2;
         public int LaneCount { get; set; } = 8;
         public int DefaultEnds { get; set; } = 10;
         public EventType EventType { get; set; } = EventType.RankedLadder;
         private List<RoundData> Rounds { get; set; } = [];
-
-        required public int UID { get; set; }
 
         public RoundData GetRound(int index) => this.Rounds[index];
 
@@ -32,8 +30,7 @@ namespace Leagueinator.GUI.Model {
                 data.LaneCount,
                 data.DefaultEnds,
                 data.EventType,
-                data.Rounds.Count,
-                data.UID
+                data.Rounds.Count
             );
         }
 
@@ -45,7 +42,6 @@ namespace Leagueinator.GUI.Model {
                 LaneCount = this.LaneCount,
                 DefaultEnds = this.DefaultEnds,
                 EventType = this.EventType,
-                UID = this.UID
             };
 
             foreach (var round in this.Rounds) {
@@ -59,8 +55,8 @@ namespace Leagueinator.GUI.Model {
             this.Rounds[index] = roundData;
         }
 
-        public RoundData AddRound(bool fill = true) {
-            RoundData newRound = new();
+        public RoundData AddRound(bool fill = true) { // Change to AddRound().Fill()
+            RoundData newRound = [];
             if (fill) newRound.Fill(this);
             this.Rounds.Add(newRound);
             return newRound;
@@ -153,7 +149,6 @@ namespace Leagueinator.GUI.Model {
 
         public static EventData FromRecord(EventRecord record) {
             return new() {
-                UID = record.UID,
                 EventName = record.Name,
                 Date = record.Created,
                 MatchFormat = record.MatchFormat,

@@ -1,6 +1,6 @@
-﻿using Leagueinator.GUI.Controllers.NamedEvents;
-using Utility;
+﻿using Utility;
 using System.Reflection;
+using System.Diagnostics;
 
 namespace Leagueinator.GUI.Controllers.NamedEvents {
     public static class NamedEvent {
@@ -9,10 +9,13 @@ namespace Leagueinator.GUI.Controllers.NamedEvents {
 
         private static readonly Dictionary<EventName, List<MethodRecord>> Handlers = [];
 
-        private static HashSet<object> Paused = [];
+        private static readonly HashSet<object> Paused = [];
 
-        public static void AddHandler(object receiver) {
-            var methods = receiver.GetType().GetMethods(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.DeclaredOnly);
+        public static void RegisterHandler(object receiver, bool startPaused = false) {
+            Logger.Log($"Register handler: '{receiver.GetType().Name}'");
+            if (startPaused) Paused.Add(receiver);
+
+            var methods = receiver.GetType().GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.DeclaredOnly);
 
             foreach (MethodInfo method in methods) {
                 var attr = method.GetCustomAttribute<NamedEventHandler>();
@@ -22,7 +25,8 @@ namespace Leagueinator.GUI.Controllers.NamedEvents {
                 }
 
                 Handlers[attr.EventName].Add(new(receiver, method));
-            }
+                Logger.Log($" - [{attr.EventName}, {method}]'");
+            }            
         }
 
         public static void RemoveHandler(object receiver) {
