@@ -11,7 +11,6 @@ namespace Leagueinator.GUI.Controls.RoundPanel {
     /// </summary>
     public partial class RoundPanel : UserControl {
 
-        private int ActiveEventButton = -1;
         private int ActiveRoundButton = -1;
         private List<Button> EventButtons = [];
         private List<Button> RoundButtons = [];
@@ -61,7 +60,13 @@ namespace Leagueinator.GUI.Controls.RoundPanel {
         }
 
         private void HndEventSettings(object sender, RoutedEventArgs e) {
-            this.DispatchEvent(EventName.ShowEventSettings, []);
+            if (sender is not MenuItem menuItem) throw new NotSupportedException();
+            if (menuItem.Parent is not ContextMenu contextMenu) throw new NotSupportedException();
+            if (contextMenu.PlacementTarget is not Button button) throw new NotSupportedException();
+
+            this.DispatchEvent(EventName.ShowEventSettings, new() {
+                ["eventName"] = (string)button.Content
+            });
         }
 
         private void HndDeleteEvent(object sender, RoutedEventArgs e) {
@@ -69,7 +74,7 @@ namespace Leagueinator.GUI.Controls.RoundPanel {
             if (menuItem.Parent is not ContextMenu contextMenu) throw new NotSupportedException();
             if (contextMenu.PlacementTarget is not Button button) throw new NotSupportedException();
 
-            this.DispatchEvent(EventName.DeleteEvent, new() { 
+            this.DispatchEvent(EventName.DeleteEvent, new() {
                 ["eventName"] = button.Content
             });
         }
@@ -171,7 +176,7 @@ namespace Leagueinator.GUI.Controls.RoundPanel {
                         }
                     }
                     this.InsertAddRoundButton();
-                }                
+                }
             }
 
             this.InsertAddEventButton();

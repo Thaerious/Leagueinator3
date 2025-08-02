@@ -5,6 +5,10 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Leagueinator.GUI.Forms.Event"
         mc:Ignorable="d"
+        WindowStyle="SingleBorderWindow" 
+        ShowInTaskbar="False"
+        WindowStartupLocation="CenterOwner"
+        ResizeMode="NoResize"
         Title="Event Manager" 
         Height="260" Width="250"
         MinHeight="260" MinWidth="250"
@@ -43,7 +47,10 @@
                 </ComboBox>
             </StackPanel>
 
-            <Button Content="Exit" Click="HndExit" Margin="10"/>
+            <StackPanel Margin="5" Orientation="Horizontal" HorizontalAlignment="Center">
+                <Button Width="100" Content="Ok" Click="HndOk" Margin="10"/>
+                <Button Width="100" Content="Cancel" Click="HndCancel" Margin="10"/>
+            </StackPanel>
 
         </StackPanel>
     </Border>

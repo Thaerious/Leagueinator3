@@ -1,11 +1,8 @@
-﻿using Leagueinator.GUI.Controllers;
-using Leagueinator.GUI.Controllers.NamedEvents;
+﻿using Leagueinator.GUI.Controllers.NamedEvents;
 using Leagueinator.GUI.Controls.MatchCards;
 using Leagueinator.GUI.Model;
-using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Windows;
-using System.Windows.Controls;
-using EventRecord = Leagueinator.GUI.Model.EventRecord;
 
 namespace Leagueinator.GUI.Forms.Event {
 
@@ -34,11 +31,10 @@ namespace Leagueinator.GUI.Forms.Event {
         public EventSettingsForm() : base() {
             InitializeComponent();
 
-            this.Loaded += (s, e) => {
-                this.TxtEnds.PreviewTextInput += InputHandlers.OnlyNumbers;
-                this.TxtLanes.PreviewTextInput += InputHandlers.OnlyNumbers;
+            this.TxtEnds.PreviewTextInput += InputHandlers.OnlyNumbers;
+            this.TxtLanes.PreviewTextInput += InputHandlers.OnlyNumbers;
 
-                this.ListMatchFormat.ItemsSource = new List<MatchFormatRecord> {
+            this.ListMatchFormat.ItemsSource = new List<MatchFormatRecord> {
                     new(MatchFormat.VS1, MatchFormat.VS1.ToString()),
                     new(MatchFormat.VS2, MatchFormat.VS2.ToString()),
                     new(MatchFormat.VS3, MatchFormat.VS3.ToString()),
@@ -46,23 +42,24 @@ namespace Leagueinator.GUI.Forms.Event {
                     new(MatchFormat.A4321, MatchFormat.A4321.ToString()),
                 };
 
-                this.ListEventType.ItemsSource = new List<EventTypeRecord> {
+            this.ListEventType.ItemsSource = new List<EventTypeRecord> {
                     new(EventType.RankedLadder, "Ranked Ladder"),
                     new(EventType.Motley, "Motley"),
                     //new(EventType.RoundRobin, "Round Robin"), TODO ENABLE
                 };
 
-                this.ListMatchFormat.SelectedValuePath = "MatchFormat";
-                this.ListMatchFormat.DisplayMemberPath = "DisplayName";
+            this.ListMatchFormat.SelectedValuePath = "MatchFormat";
+            this.ListMatchFormat.DisplayMemberPath = "DisplayName";
 
-                this.ListEventType.SelectedValuePath = "EventType";
-                this.ListEventType.DisplayMemberPath = "DisplayName";
-            };
+            this.ListEventType.SelectedValuePath = "EventType";
+            this.ListEventType.DisplayMemberPath = "DisplayName";
+
         }
 
         public MatchFormat MatchFormat => (MatchFormat)this.ListMatchFormat.SelectedValue;
 
-        public void ShowDialog(EventData eventData) {
+        public bool? ShowDialog(EventData eventData) {
+            Debug.WriteLine("SHOW");
             this.TxtName.Text = eventData.EventName;
             this.TxtLanes.Text = eventData.LaneCount.ToString();
             this.TxtEnds.Text = eventData.DefaultEnds.ToString();
@@ -70,10 +67,15 @@ namespace Leagueinator.GUI.Forms.Event {
             this.ListEventType.SelectedValue = eventData.EventType;
 
             this.ResumeEvents();
-            this.ShowDialog();
+            return this.ShowDialog();
         }
 
-        private void HndExit(object sender, EventArgs e) {
+        private void HndOk(object sender, RoutedEventArgs e) {
+            this.DialogResult = true;   
+            this.Close();
+        }
+        private void HndCancel(object sender, RoutedEventArgs e) {
+            this.DialogResult = false;  
             this.Close();
         }
     }

@@ -6,6 +6,7 @@ using Leagueinator.GUI.Forms.Event;
 using Leagueinator.GUI.Forms.Main;
 using Leagueinator.GUI.Model;
 using Microsoft.Win32;
+using System;
 using System.IO;
 using System.Windows;
 using System.Xml.Linq;
@@ -84,7 +85,7 @@ namespace Leagueinator.GUI.Controllers {
         #region Event Handlers
         [NamedEventHandler(EventName.RenameEvent)]
         internal void DoRenameEvent(string from, string to) {
-            if (this.LeagueData.Select(e => e.EventName).Where(name => name == to).Any()){
+            if (this.LeagueData.Select(e => e.EventName).Where(name => name == to).Any()) {
                 this.DispatchEvent(EventName.Notification, new() {
                     ["message"] = $"Event name '{to}' already exits."
                 });
@@ -126,6 +127,9 @@ namespace Leagueinator.GUI.Controllers {
             eventData.EventType = this.EventData.EventType;
             eventData.AddRound();
 
+            this.EventData = eventData;
+            this.CurrentRoundIndex = this.EventData.Count() - 1;
+
             this.DispatchEventNames();
         }
 
@@ -146,7 +150,7 @@ namespace Leagueinator.GUI.Controllers {
         }
 
         [NamedEventHandler(EventName.ShowEventSettings)]
-        internal void DoShowEventSettings() {
+        internal void DoShowEventSettings(string eventName) {
             var form = new EventSettingsForm() {
                 Owner = this.Window,
                 WindowStartupLocation = WindowStartupLocation.CenterOwner
@@ -155,19 +159,21 @@ namespace Leagueinator.GUI.Controllers {
             List<EventRecord> records = [.. this.LeagueData.Select(data => EventData.ToRecord(data))];
             form.PauseEvents();
             NamedEvent.RegisterHandler(form);
-            form.ShowDialog(this.EventData);
 
-            // After form closes.
-            this.DispatchEventNames();
-            NamedEvent.RemoveHandler(form);
+            EventData eventData = this.LeagueData.Where(e => e.EventName == eventName).First();
 
-            this.EventData.EventName = form.TxtName.Text;
-            this.EventData.DefaultEnds = int.Parse(form.TxtEnds.Text);
-            this.EventData.LaneCount = int.Parse(form.TxtLanes.Text); ;
-            this.EventData.MatchFormat = form.MatchFormat;
+            if (form.ShowDialog(eventData) ?? false) {
+                this.DispatchEventNames();
+                NamedEvent.RemoveHandler(form);
 
-            SyncRoundData(this.RoundData, this.EventData);
-            this.DispatchEventNames();
+                eventData.EventName = form.TxtName.Text;
+                eventData.DefaultEnds = int.Parse(form.TxtEnds.Text);
+                eventData.LaneCount = int.Parse(form.TxtLanes.Text); ;
+                eventData.MatchFormat = form.MatchFormat;
+
+                //SyncRoundData(this.RoundData, this.EventData); // ??? DO I STILL NEED THIS
+                this.DispatchEventNames();
+            }
         }
 
         #endregion
