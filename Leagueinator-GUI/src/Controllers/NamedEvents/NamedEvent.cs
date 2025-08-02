@@ -18,14 +18,17 @@ namespace Leagueinator.GUI.Controllers.NamedEvents {
             var methods = receiver.GetType().GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.DeclaredOnly);
 
             foreach (MethodInfo method in methods) {
-                var attr = method.GetCustomAttribute<NamedEventHandler>();
-                if (attr is null) continue;
-                if (Handlers.ContainsKey(attr.EventName) == false) {
-                    Handlers[attr.EventName] = [];
-                }
+                var attrs = method.GetCustomAttributes<NamedEventHandler>();
 
-                Handlers[attr.EventName].Add(new(receiver, method));
-                Logger.Log($" - [{attr.EventName}, {method}]'");
+                foreach (var attr in attrs) {
+                    if (attr is null) continue;
+                    if (Handlers.ContainsKey(attr.EventName) == false) {
+                        Handlers[attr.EventName] = [];
+                    }
+
+                    Handlers[attr.EventName].Add(new(receiver, method));
+                    Logger.Log($" - [{attr.EventName}, {method}]'");
+                }
             }            
         }
 

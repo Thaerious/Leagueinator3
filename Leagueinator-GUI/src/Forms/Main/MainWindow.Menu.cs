@@ -24,7 +24,7 @@ namespace Leagueinator.GUI.Forms.Main {
         /// <param name="e"></param>
         private void HndDeleteRnd(object sender, RoutedEventArgs e) {
             this.ClearFocus();
-            this.DispatchEvent(EventName.RemoveRound);
+            this.DispatchEvent(EventName.DeleteRound);
         }
 
         private void HndNewLeagueClick(object sender, RoutedEventArgs e) {
@@ -82,7 +82,7 @@ namespace Leagueinator.GUI.Forms.Main {
 
         private void HndEventManagerClick(object sender, RoutedEventArgs e) {
             this.ClearFocus();
-            this.DispatchEvent(EventName.ShowEventManager);
+            this.DispatchEvent(EventName.ShowEventSettings);
         }
 
         private void HndSelectEventClick(object sender, RoutedEventArgs e) {

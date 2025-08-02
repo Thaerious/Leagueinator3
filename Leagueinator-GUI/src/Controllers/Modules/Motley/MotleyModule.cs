@@ -45,7 +45,7 @@ namespace Leagueinator.GUI.Controllers.Modules.Motley {
                     ["message"] = ex.Message
                 });
 
-                this.MainController.DoRemoveRound();
+                this.MainController.DoDeleteRound();
                 this.MainController.AddRound(matchesAssigned);
             }
         }

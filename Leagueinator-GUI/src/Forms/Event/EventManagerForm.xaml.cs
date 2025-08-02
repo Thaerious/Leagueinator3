@@ -15,10 +15,10 @@ namespace Leagueinator.GUI.Forms.Event {
             this.DisplayName = DisplayName;
         }
 
-        public MatchFormat MatchFormat { get;}
+        public MatchFormat MatchFormat { get; }
         public string DisplayName { get; }
     }
-    public record EventTypeRecord{
+    public record EventTypeRecord {
         public EventTypeRecord(EventType EventType, string DisplayName) {
             this.EventType = EventType;
             this.DisplayName = DisplayName;
@@ -28,13 +28,10 @@ namespace Leagueinator.GUI.Forms.Event {
     }
 
     /// <summary>
-    /// Interaction logic for EventManagerForm.xaml
+    /// Interaction logic for EventSettingsForm.xaml
     /// </summary>
-    public partial class EventManagerForm : Window {
-
-        public ObservableCollection<EventRecord> EventRecords { get; set; } = [];
-
-        public EventManagerForm() {
+    public partial class EventSettingsForm : Window {
+        public EventSettingsForm() : base() {
             InitializeComponent();
 
             this.Loaded += (s, e) => {
@@ -63,85 +60,21 @@ namespace Leagueinator.GUI.Forms.Event {
             };
         }
 
-        public void ShowDialog(MainController mainController, List<EventRecord> eventRecords, EventRecord selected) {
-            foreach (var record in eventRecords) this.EventRecords.Add(record);
-            this.DataContext = this;
+        public MatchFormat MatchFormat => (MatchFormat)this.ListMatchFormat.SelectedValue;
 
-            this.Loaded += (s, e) => {
-                this.DoEventChanged(selected);
-                this.ResumeEvents();
-            };
+        public void ShowDialog(EventData eventData) {
+            this.TxtName.Text = eventData.EventName;
+            this.TxtLanes.Text = eventData.LaneCount.ToString();
+            this.TxtEnds.Text = eventData.DefaultEnds.ToString();
+            this.ListMatchFormat.SelectedValue = eventData.MatchFormat;
+            this.ListEventType.SelectedValue = eventData.EventType;
 
-            this.ShowDialog();            
-        }
-
-        #region Button Handlers
-
-        private void HndNew(object sender, EventArgs e) {
-            this.DispatchEvent(EventName.AddEvent);
+            this.ResumeEvents();
+            this.ShowDialog();
         }
 
         private void HndExit(object sender, EventArgs e) {
             this.Close();
-        }
-
-        #endregion
-
-        #region Named Event Handlers
-
-        [NamedEventHandler(EventName.EventAdded)]
-        internal void DoEventAdded(EventRecord eventRecord) {
-            this.EventRecords.Add(eventRecord);
-        }
-
-
-        [NamedEventHandler(EventName.EventSelected)]
-        internal void DoEventChanged(EventRecord eventRecord) {
-            this.PauseEvents();
-            this.EventData.SelectedItem = eventRecord;
-            this.TxtName.Text = eventRecord.Name;
-            this.TxtEnds.Text = eventRecord.DefaultEnds.ToString();
-            this.TxtLanes.Text = eventRecord.LaneCount.ToString();
-            this.ListMatchFormat.SelectedValue = eventRecord.MatchFormat;
-            this.ListEventType.SelectedValue = eventRecord.EventType;
-            this.ResumeEvents();
-        }
-
-        #endregion
-
-        #region Component Handlers
-        private void TxtChanged(object sender, TextChangedEventArgs args) {
-            this.InvokeChangeEventArg();
-        }
-
-        private void EventTypeChanged(object sender, SelectionChangedEventArgs e) {
-            if (this.IsLoaded == false) return;
-
-            EventTypeRecord etf = (EventTypeRecord)this.ListEventType.SelectedItem;
-            if (etf is null) return;
-
-            this.DispatchEvent(EventName.ChangeEventType, new() {
-                ["eventType"] = etf.EventType
-            });
-        }
-
-        private void MatchFormatChanged(object sender, SelectionChangedEventArgs e) {
-            this.InvokeChangeEventArg();
-        }
-        #endregion
-
-        private void InvokeChangeEventArg() {
-            if (this.IsLoaded == false) return;
-
-            MatchFormatRecord? mfr = (MatchFormatRecord)this.ListMatchFormat.SelectedItem;
-            if (mfr is null) return;
-
-            this.DispatchEvent(EventName.ChangeEventArg, new() {
-                ["name"] = this.TxtName.Text,
-                ["laneCount"] = int.Parse(this.TxtLanes.Text),
-                ["ends"] = int.Parse(this.TxtEnds.Text),
-                ["matchFormat"] = mfr.MatchFormat
-            });
         }
     }
 }

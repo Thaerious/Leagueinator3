@@ -52,8 +52,8 @@ namespace Leagueinator.GUI.Controls.RoundPanel {
             };
 
             var menu = new ContextMenu();
-            menu.AddMenuItem("Delete", this.HndDeleteEvent);
-            menu.AddMenuItem("Duplicate", this.HndEventSettings);
+            menu.AddMenuItem("Delete", this.HndDeleteRound);
+            menu.AddMenuItem("Duplicate", this.HndDuplicateRound);
             button.ContextMenu = menu;
             button.Click += this.HndClickRoundButton;
 
@@ -61,7 +61,7 @@ namespace Leagueinator.GUI.Controls.RoundPanel {
         }
 
         private void HndEventSettings(object sender, RoutedEventArgs e) {
-            throw new NotImplementedException();
+            this.DispatchEvent(EventName.ShowEventSettings, []);
         }
 
         private void HndDeleteEvent(object sender, RoutedEventArgs e) {
@@ -98,8 +98,12 @@ namespace Leagueinator.GUI.Controls.RoundPanel {
             };
         }
 
+        [NamedEventHandler(EventName.RoundChanged)]
+        [NamedEventHandler(EventName.UpdateRoundCount)]
+        [NamedEventHandler(EventName.RoundDeleted)]
         [NamedEventHandler(EventName.RoundAdded)]
-        public void DoRoundAdded(int roundCount) {
+        public void DoRoundUpdated(int roundCount, int roundIndex) {
+            this.ActiveRoundButton = roundIndex;
             this.RefreshButtons(roundCount);
         }
 
@@ -126,29 +130,10 @@ namespace Leagueinator.GUI.Controls.RoundPanel {
         }
 
         [NamedEventHandler(EventName.SetEventNames)]
-        public void DoSetEventNames(List<string> eventNames, string selectedEvent, int roundCount) {
+        public void DoSetEventNames(List<string> eventNames, string selectedEvent, int roundCount, int roundIndex) {
+            this.ActiveRoundButton = roundIndex;
             this.EventButtons.Clear();
             this.RefreshButtons(eventNames, selectedEvent, roundCount);
-        }
-
-        [NamedEventHandler(EventName.UpdateRoundCount)]
-        internal void DoUpdateRoundCount(int count) {
-            this.RefreshButtons(count);
-        }
-
-        [NamedEventHandler(EventName.RoundChanged)]
-        internal void DoRoundChanged(int roundIndex) {
-            for (int i = 0; i < this.RoundButtons.Count; i++) {
-                var button = this.RoundButtons[i];
-                if (button.DataContext is not RoundButtonViewModel vm) throw new NotSupportedException();
-                if (i == roundIndex) {
-                    vm.IsSelected = true;
-                    this.ActiveRoundButton = roundIndex;
-                }
-                else {
-                    vm.IsSelected = false;
-                }
-            }
         }
 
         private void RefreshButtons(List<string> eventNames, string selectedEvent, int roundCount) {
@@ -204,6 +189,14 @@ namespace Leagueinator.GUI.Controls.RoundPanel {
             this.DispatchEvent(EventName.SelectEvent, new() {
                 ["index"] = this.EventButtons.IndexOf(button)
             });
+        }
+
+        private void HndDuplicateRound(object sender, RoutedEventArgs e) {
+            this.DispatchEvent(EventName.CopyRound, []);
+        }
+
+        private void HndDeleteRound(object sender, RoutedEventArgs e) {
+            this.DispatchEvent(EventName.DeleteRound, []);
         }
     }
 }

@@ -69,7 +69,7 @@ namespace Leagueinator.GUI.src.Controllers {
                 var tempTo = this.MainController.RoundData[to.Lane].Teams[to.TeamIndex];
                 this.MainController.RoundData[from.Lane].Teams[from.TeamIndex] = tempTo;
                 this.MainController.RoundData[to.Lane].Teams[to.TeamIndex] = tempFrom;
-                this.MainController.DispatchRoundUpdate();
+                this.MainController.DispatchRoundUpdated(EventName.RoundChanged);
 
                 from = to;
             }
