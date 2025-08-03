@@ -2,7 +2,6 @@
 using Leagueinator.GUI.Controls.MatchCards;
 using Leagueinator.GUI.Model;
 using Leagueinator.Utility.Extensions;
-using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Threading;

@@ -4,6 +4,9 @@ using Leagueinator.GUI.Model;
 using System.Windows.Controls;
 
 namespace Leagueinator.GUI.Controls.MatchPanel {
+    /// <summary>
+    /// Control logic for MatchPanel.xaml
+    /// </summary>
     public partial class MatchPanel : UserControl {
         [NamedEventHandler(EventName.MatchRemoved)]
         internal void DoMatchRemoved(int lane) {
@@ -36,6 +39,9 @@ namespace Leagueinator.GUI.Controls.MatchPanel {
             teamCard[position] = name;
         }
 
+        [NamedEventHandler(EventName.RoundDeleted)]
+        [NamedEventHandler(EventName.RoundAdded)]
+        [NamedEventHandler(EventName.RoundChanged)]
         [NamedEventHandler(EventName.SetEventNames)]
         internal void DoSetEventNames(RoundRecordList roundRecords) {
             this.DoPopulateMatchCards(roundRecords);

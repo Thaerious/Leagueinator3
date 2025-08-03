@@ -1,7 +1,6 @@
 ﻿using Leagueinator.GUI.Controllers.NamedEvents;
 using Leagueinator.GUI.Model;
 using Leagueinator.Utility.Extensions;
-using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -10,7 +9,6 @@ namespace Leagueinator.GUI.Controls.RoundPanel {
     /// Interaction logic for RoundPanel.xaml
     /// </summary>
     public partial class RoundPanel : UserControl {
-
         private int ActiveRoundButton = -1;
         private List<Button> EventButtons = [];
         private List<Button> RoundButtons = [];
@@ -56,26 +54,6 @@ namespace Leagueinator.GUI.Controls.RoundPanel {
             button.Click += this.HndClickRoundButton;
 
             return button;
-        }
-
-        private void HndEventSettings(object sender, RoutedEventArgs e) {
-            if (sender is not MenuItem menuItem) throw new NotSupportedException();
-            if (menuItem.Parent is not ContextMenu contextMenu) throw new NotSupportedException();
-            if (contextMenu.PlacementTarget is not Button button) throw new NotSupportedException();
-
-            this.DispatchEvent(EventName.ShowEventSettings, new() {
-                ["eventName"] = (string)button.Content
-            });
-        }
-
-        private void HndDeleteEvent(object sender, RoutedEventArgs e) {
-            if (sender is not MenuItem menuItem) throw new NotSupportedException();
-            if (menuItem.Parent is not ContextMenu contextMenu) throw new NotSupportedException();
-            if (contextMenu.PlacementTarget is not Button button) throw new NotSupportedException();
-
-            this.DispatchEvent(EventName.DeleteEvent, new() {
-                ["eventName"] = button.Content
-            });
         }
 
         public void InsertAddRoundButton() {
@@ -200,7 +178,34 @@ namespace Leagueinator.GUI.Controls.RoundPanel {
         }
 
         private void HndDeleteRound(object sender, RoutedEventArgs e) {
-            this.DispatchEvent(EventName.DeleteRound, []);
+            if (sender is not MenuItem menuItem) throw new NotSupportedException();
+            if (menuItem.Parent is not ContextMenu contextMenu) throw new NotSupportedException();
+            if (contextMenu.PlacementTarget is not Button button) throw new NotSupportedException();
+
+            int index = this.RoundButtons.IndexOf(button);
+            this.DispatchEvent(EventName.DeleteRound, new() {
+                ["roundIndex"] = index
+            });
+        }
+
+        private void HndEventSettings(object sender, RoutedEventArgs e) {
+            if (sender is not MenuItem menuItem) throw new NotSupportedException();
+            if (menuItem.Parent is not ContextMenu contextMenu) throw new NotSupportedException();
+            if (contextMenu.PlacementTarget is not Button button) throw new NotSupportedException();
+
+            this.DispatchEvent(EventName.ShowEventSettings, new() {
+                ["eventName"] = (string)button.Content
+            });
+        }
+
+        private void HndDeleteEvent(object sender, RoutedEventArgs e) {
+            if (sender is not MenuItem menuItem) throw new NotSupportedException();
+            if (menuItem.Parent is not ContextMenu contextMenu) throw new NotSupportedException();
+            if (contextMenu.PlacementTarget is not Button button) throw new NotSupportedException();
+
+            this.DispatchEvent(EventName.DeleteEvent, new() {
+                ["eventName"] = button.Content
+            });
         }
     }
 }

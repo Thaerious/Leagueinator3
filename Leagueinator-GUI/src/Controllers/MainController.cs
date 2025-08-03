@@ -8,6 +8,7 @@ using Leagueinator.GUI.Model;
 using Microsoft.Win32;
 using System;
 using System.IO;
+using System.Text.RegularExpressions;
 using System.Windows;
 using System.Xml.Linq;
 
@@ -66,9 +67,9 @@ namespace Leagueinator.GUI.Controllers {
 
         public void DispatchRoundUpdated(EventName eventName) {
             this.DispatchEvent(eventName, new() {
-                ["roundIndex"] = this.CurrentRoundIndex,
-                ["roundCount"] = this.EventData.Count(),
-                ["matches"] = this.RoundData.Select(m => new MatchRecord(m))
+                ["roundIndex"]   = this.CurrentRoundIndex,
+                ["roundCount"]   = this.EventData.Count(),
+                ["roundRecords"] = new RoundRecordList(this.EventData, this.RoundData),
             });
         }
 
@@ -231,9 +232,9 @@ namespace Leagueinator.GUI.Controllers {
         }
 
         [NamedEventHandler(EventName.DeleteRound)]
-        internal void DoDeleteRound() {
-            var removedIndex = this.CurrentRoundIndex;
-            this.RemoveRound(this.CurrentRoundIndex);
+        internal void DoDeleteRound(int? roundIndex = null) {
+            int index = roundIndex ?? this.CurrentRoundIndex;
+            this.RemoveRound(index);
             this.DispatchRoundUpdated(EventName.RoundDeleted);
             this.DispatchSetTitle(this.FileName, false);
         }
@@ -409,6 +410,9 @@ namespace Leagueinator.GUI.Controllers {
 
         private void RemoveRound(int index) {
             this.EventData.RemoveRound(index);
+            //if (this.CurrentRoundIndex > index) {
+            //    this.CurrentRoundIndex--;
+            //}
 
             if (this.EventData.CountRounds() == 0) {
                 this.EventData.AddRound();

@@ -21,8 +21,6 @@
             this.Name = name;
         }
 
-
-
         public string ToCSV() {
             if (this.EventData == null) throw new NotSupportedException("Record must have event data to export CSV");
 
