@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Leagueinator.GUI.Forms.Main" 
         xmlns:roundpanel="clr-namespace:Leagueinator.GUI.Controls.RoundPanel"
+        xmlns:matchpanel="clr-namespace:Leagueinator.GUI.Controls.MatchPanel"
         x:Class="Leagueinator.GUI.Forms.Main.MainWindow"
         mc:Ignorable="d"
         Title="MainWindow" Height="800" Width="1000" MinWidth="800"
@@ -75,11 +76,7 @@
 
         <!-- Match Cards (Get put into CardStackPanel) -->
         <Border BorderBrush="Black" BorderThickness="1 2 2 2" Grid.Column="2"  Grid.Row="1">
-            <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
-                <StackPanel 
-                    MouseLeftButtonDown="HndClearFocus"
-                    x:Name="MatchCardStackPanel"/>
-            </ScrollViewer>
+            <matchpanel:MatchPanel x:Name="MatchPanel"/>
         </Border>
     </Grid>
 

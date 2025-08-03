@@ -43,37 +43,6 @@ namespace Leagueinator.GUI.Forms.Main {
             }
         }
 
-        [NamedEventHandler(EventName.MatchRemoved)]
-        internal void DoMatchRemoved(int lane) {
-            this.MainWindow.RemoveMatch(lane);
-        }
-
-        [NamedEventHandler(EventName.BowlsUpdated)]
-        internal void DoBowlsUpdated(int lane, int[] bowls) {
-            MatchCard matchCard = this.MainWindow.GetMatchCard(lane);
-            matchCard.SetBowls(bowls);
-        }
-
-        [NamedEventHandler(EventName.EndsUpdated)]
-        internal void DoEndsUpdated(int lane, int ends) {
-            MatchCard matchCard = this.MainWindow.GetMatchCard(lane);
-            matchCard.SetEnds(ends);
-        }
-
-        [NamedEventHandler(EventName.TieBreakerUpdated)]
-        internal void DoTieBreakerUpdated(int lane, int teamIndex) {
-            MatchCard matchCard = this.MainWindow.GetMatchCard(lane);
-            matchCard.SetTieBreaker(teamIndex);
-        }
-
-
-        [NamedEventHandler(EventName.NameUpdated)]
-        internal void DoTieBreakerUpdated(int lane, int teamIndex, int position, string name) {
-            MatchCard matchCard = this.MainWindow.GetMatchCard(lane);
-            TeamCard teamCard = matchCard.GetTeamCard(teamIndex);
-            teamCard[position] = name;
-        }
-
         [NamedEventHandler(EventName.Notification)]
         internal void DoNotification(string message) {
             MessageBox.Show(message, "Notification", MessageBoxButton.OK, MessageBoxImage.Information);

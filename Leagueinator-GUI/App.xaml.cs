@@ -34,7 +34,7 @@ namespace Leagueinator.GUI {
 
                     NamedEvent.RegisterHandler(mainController);
                     NamedEvent.RegisterHandler(focusController);
-                    NamedEvent.RegisterHandler(new MainWindowReceiver(mainWindow));
+                    //NamedEvent.RegisterHandler(new MainWindowReceiver(mainWindow));
 
                     this.DispatchEvent(EventName.NewLeague);
                 };
