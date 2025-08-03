@@ -22,8 +22,7 @@ namespace Leagueinator.GUI.Controls.RoundPanel {
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e) {
-            Debug.WriteLine("Round Panel Loaded");
-            NamedEvent.ResumeEvents(this);
+            this.ResumeEvents();
         }
 
         public Button AddEventButton(string text) {

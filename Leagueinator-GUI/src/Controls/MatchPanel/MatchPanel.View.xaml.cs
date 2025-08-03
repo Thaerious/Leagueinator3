@@ -2,18 +2,27 @@
 using Leagueinator.GUI.Controls.MatchCards;
 using Leagueinator.GUI.Model;
 using Leagueinator.Utility.Extensions;
+using System.Diagnostics;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Threading;
 
 namespace Leagueinator.GUI.Controls.MatchPanel {
     /// <summary>
-    /// Interaction logic for MatchPanel.xaml
+    /// View logic for MatchPanel.xaml
     /// </summary>
     public partial class MatchPanel : UserControl {
+
+
         public MatchPanel() {
+            NamedEvent.RegisterHandler(this, true);
             InitializeComponent();
+            this.Loaded += this.OnLoaded;
         }
 
+        private void OnLoaded(object sender, RoutedEventArgs e) {
+            this.ResumeEvents();
+        }
 
         public void HndClearFocus(object sender, EventArgs e) {
             throw new NotImplementedException();
