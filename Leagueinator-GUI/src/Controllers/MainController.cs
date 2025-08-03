@@ -184,7 +184,6 @@ namespace Leagueinator.GUI.Controllers {
         [NamedEventHandler(EventName.LoadLeague)]
         internal void DoLoad() {
             this.Load();
-
             this.DispatchEventNames();
             this.DispatchSetTitle(this.FileName, true);
         }
@@ -381,7 +380,7 @@ namespace Leagueinator.GUI.Controllers {
                 string contents = File.ReadAllText(dialog.FileName);
                 this.LeagueData = LeagueData.FromString(contents);
                 this.EventData = this.LeagueData.Last();
-                this.CurrentRoundIndex = 0;
+                this.CurrentRoundIndex = this.EventData.Count() - 1;
                 this.FileName = dialog.FileName;
                 this.IsSaved = true;
             }
