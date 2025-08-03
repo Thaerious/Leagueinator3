@@ -275,6 +275,7 @@ namespace Leagueinator.GUI.Controllers {
         # region Match, Team, Player Handlers  
         [NamedEventHandler(EventName.ChangePlayerName)]
         internal void DoPlayerName(string name, int lane, int teamIndex, int position) {
+            name = name.Trim();
 
             if (this.UpdateName(name, lane, teamIndex, position)) {
                 this.DispatchSetTitle(this.FileName, false);

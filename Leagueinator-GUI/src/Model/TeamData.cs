@@ -7,7 +7,6 @@ namespace Leagueinator.GUI.Model {
         public string[] Names { get; }
         public int Length => this.Names.Length;
         public int Index { get; }
-
         public Players Players => [.. this.Names]; // TODO Names should not be public.
 
         public TeamData(int size, int index) {
