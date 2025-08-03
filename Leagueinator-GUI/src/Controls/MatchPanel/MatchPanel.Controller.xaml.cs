@@ -1,5 +1,6 @@
 ﻿using Leagueinator.GUI.Controllers.NamedEvents;
 using Leagueinator.GUI.Controls.MatchCards;
+using Leagueinator.GUI.Model;
 using System.Windows.Controls;
 
 namespace Leagueinator.GUI.Controls.MatchPanel {
@@ -33,6 +34,11 @@ namespace Leagueinator.GUI.Controls.MatchPanel {
             MatchCard matchCard = this.GetMatchCard(lane);
             TeamCard teamCard = matchCard.GetTeamCard(teamIndex);
             teamCard[position] = name;
+        }
+
+        [NamedEventHandler(EventName.SetEventNames)]
+        internal void DoSetEventNames(RoundRecordList roundRecords) {
+            this.DoPopulateMatchCards(roundRecords);
         }
     }
 }

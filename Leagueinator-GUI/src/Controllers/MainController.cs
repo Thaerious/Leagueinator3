@@ -55,12 +55,12 @@ namespace Leagueinator.GUI.Controllers {
 
         public void DispatchEventNames() {
             this.DispatchEvent(EventName.SetEventNames, new() {
-                ["eventNames"] = this.LeagueData.Select(e => e.EventName).ToList(),
+                ["eventNames"]    = this.LeagueData.Select(e => e.EventName).ToList(),
                 ["selectedEvent"] = EventData.EventName,
-                ["eventRecord"] = EventData.ToRecord(this.EventData),
-                ["roundIndex"] = this.CurrentRoundIndex,
-                ["roundRecords"] = new RoundRecordList(this.EventData, this.RoundData),
-                ["roundCount"] = this.EventData.Count(),
+                ["eventRecord"]   = EventData.ToRecord(this.EventData),
+                ["roundIndex"]    = this.CurrentRoundIndex,
+                ["roundRecords"]  = new RoundRecordList(this.EventData, this.RoundData),
+                ["roundCount"]    = this.EventData.Count(),
             });
         }
 
