@@ -12,11 +12,6 @@ namespace Leagueinator.GUI.Forms.Main {
             this.DispatchEvent(EventName.Settings);
         }
 
-        public void HndSwap(object? sender, RoutedEventArgs e) {
-            this.ClearFocus();
-            this.DispatchEvent(EventName.SwapTeams);
-        }
-
         /// <summary>
         /// Triggered when the delete round button is clicked.
         /// </summary>

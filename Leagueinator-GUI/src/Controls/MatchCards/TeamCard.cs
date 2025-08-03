@@ -1,4 +1,5 @@
 ﻿using Leagueinator.GUI.Controllers;
+using Leagueinator.GUI.Controllers.DragDropManager;
 using Leagueinator.GUI.Controllers.NamedEvents;
 using Leagueinator.Utility.Extensions;
 using System.Windows;
@@ -7,7 +8,7 @@ using System.Windows.Input;
 using System.Xml.Linq;
 
 namespace Leagueinator.GUI.Controls.MatchCards {
-    public class TeamCard : Border {
+    public class TeamCard : Border, IDragDrop {
 
         public TeamCard() {
             this.AllowDrop = true;
@@ -42,12 +43,7 @@ namespace Leagueinator.GUI.Controls.MatchCards {
         #region Handles
 
         private void HndLoaded(object sender, RoutedEventArgs e) {
-            DragDropController controller = new DragDropController(this);
-
-            this.PreviewMouseDown += this.HndRequestFocus;
-            this.PreviewMouseDown += controller.HndPreMouseDown;
-            this.DragEnter        += controller.HndDragEnter;
-            this.Drop             += controller.HndDrop;
+            DragDropManager<TeamCard> controller = new (this);
 
             foreach (TextBox textBox in this.FindByTag("PlayerName").Cast<TextBox>()) {
                 textBox.KeyUp             += this.NameTextBoxChange;
@@ -56,14 +52,6 @@ namespace Leagueinator.GUI.Controls.MatchCards {
                 textBox.PreviewDragOver   += controller.HndPreviewDragOver;
                 textBox.AllowDrop = true;
             }
-        }
-
-        private void HndRequestFocus(object sender, MouseButtonEventArgs e) {
-            this.DispatchEvent(EventName.RequestFocus, new() {
-                ["lane"]      = this.MatchCard.Lane,
-                ["teamIndex"] = this.TeamIndex,
-                ["append"]    = Keyboard.Modifiers.HasFlag(ModifierKeys.Shift)
-            });
         }
 
         protected void DispatchChangeName(object sender, RoutedEventArgs e) {
@@ -87,6 +75,18 @@ namespace Leagueinator.GUI.Controls.MatchCards {
                     TraversalRequest request = new TraversalRequest(FocusNavigationDirection.Next);
                     textBox.MoveFocus(request);
                 }
+            }
+        }
+
+        public void DoDrop(object dragSource) {
+            if (dragSource == this) return;
+            if (dragSource is TeamCard that) {
+                this.DispatchEvent(EventName.SwapTeams, new() {
+                    ["fromLane"]  = that.MatchCard.Lane,
+                    ["toLane"]    = this.MatchCard.Lane,
+                    ["fromIndex"] = that.TeamIndex,
+                    ["toIndex"]   = this.TeamIndex,
+                });
             }
         }
 

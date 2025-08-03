@@ -168,6 +168,20 @@ namespace Leagueinator.Utility.Extensions {
             }
         }
 
+        public static IEnumerable<DependencyObject> Descendants(this DependencyObject root) {
+            if (root == null) yield break;
+
+            int count = VisualTreeHelper.GetChildrenCount(root);
+            for (int i = 0; i < count; i++) {
+                var child = VisualTreeHelper.GetChild(root, i);
+                yield return child;
+
+                foreach (var grandChild in Descendants(child)) {
+                    yield return grandChild;
+                }
+            }
+        }
+
         public static MenuItem? FindMenuItemByHeader(this Menu menu, string header) {
             return FindMenuItemByHeader(menu.Items, header);
         }

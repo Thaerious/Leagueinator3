@@ -20,8 +20,11 @@ namespace Leagueinator.GUI.Model {
 
                 this._matchFormat = value;
                 this.Score = new int[teamCount];
-                var OldPlayers = this.Teams;
-                this.Teams = TeamData.Collection(teamCount, teamSize);
+
+                this.Teams = new TeamData[teamCount];
+                for (int i = 0; i < teamCount; i++) {
+                    this.Teams[i] = new TeamData(teamSize, i);
+                }
 
                 for (int i = 0; i < this.Score.Length; i++) {
                     this.Score[i] = 0;

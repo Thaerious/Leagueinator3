@@ -2,6 +2,7 @@
 using Leagueinator.GUI.Controls.MatchCards;
 using Leagueinator.GUI.Model;
 using Leagueinator.Utility.Extensions;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Threading;
@@ -53,6 +54,7 @@ namespace Leagueinator.GUI.Controls.MatchPanel {
                     matchCard.SetBowls(matchRecord.Score);
                     cardsLoaded++;
 
+                    // When all of the match cards are loaded
                     if (cardsLoaded == cardsToLoad) {
                         this.AssignTabOrder();
                         this.SetPlayerNames(roundRecords);
@@ -79,11 +81,10 @@ namespace Leagueinator.GUI.Controls.MatchPanel {
             }), DispatcherPriority.Background);
         }
 
-
-
         private void SetPlayerNames(RoundRecordList roundRecords) {
             for (int i = 0; i < roundRecords.Players.Count; i++) {
                 RoundRecord roundRecord = roundRecords.Players[i];
+                Debug.WriteLine(roundRecord);
                 MatchCard matchCard = (MatchCard)this.OuterPanel.Children[roundRecord.Lane];
                 TeamCard teamCard = matchCard.GetTeamCard(roundRecord.Team);
                 teamCard[roundRecord.Pos] = roundRecord.Name;

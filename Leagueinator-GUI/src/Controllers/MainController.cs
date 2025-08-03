@@ -6,11 +6,8 @@ using Leagueinator.GUI.Forms.Event;
 using Leagueinator.GUI.Forms.Main;
 using Leagueinator.GUI.Model;
 using Microsoft.Win32;
-using System;
 using System.IO;
-using System.Text.RegularExpressions;
 using System.Windows;
-using System.Xml.Linq;
 
 namespace Leagueinator.GUI.Controllers {
 
@@ -49,7 +46,7 @@ namespace Leagueinator.GUI.Controllers {
 
         public MainController(MainWindow window) {
             this.Window = window;
-            this.NewLeague();
+            NamedEvent.RegisterHandler(this);
         }
 
         #region Dispatch Methods
@@ -340,6 +337,16 @@ namespace Leagueinator.GUI.Controllers {
             });
             this.DispatchSetTitle(this.FileName, false);
         }
+
+        [NamedEventHandler(EventName.SwapTeams)]
+        internal void DoSwap(int fromLane, int toLane, int fromIndex, int toIndex) {
+            List<string> namesFrom = [.. this.RoundData[fromLane].Teams[fromIndex].Names];
+            List<string> namesTo = [.. this.RoundData[toLane].Teams[toIndex].Names];
+            this.RoundData[fromLane].Teams[fromIndex].SetNames(namesTo);
+            this.RoundData[toLane].Teams[toIndex].SetNames(namesFrom);
+            this.DispatchRoundUpdated(EventName.RoundChanged);
+        }
+
         #endregion
 
         #region Private Methods

@@ -50,7 +50,6 @@
                 <MenuItem Header="Add Round" Click="HndGenEmptyRound"/>
                 <MenuItem Header="Copy Round" Click="HndCopyRnd"/>
                 <MenuItem Header="Delete Round" Click="HndDeleteRnd"/>
-                <MenuItem Header="Swap" Click="HndSwap"/>
             </MenuItem>
 
             <!-- Action Menu -->

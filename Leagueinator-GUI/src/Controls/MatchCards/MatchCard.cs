@@ -1,9 +1,12 @@
 ﻿using Leagueinator.GUI.Controllers.NamedEvents;
 using Leagueinator.GUI.Model;
 using Leagueinator.Utility.Extensions;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
+using Utility.Extensions;
 
 namespace Leagueinator.GUI.Controls.MatchCards {
 
@@ -139,11 +142,9 @@ namespace Leagueinator.GUI.Controls.MatchCards {
         /// <returns>The matching <see cref="TeamCard"/>.</returns>
         /// <exception cref="NullReferenceException">If the card is not found.</exception>
         public TeamCard GetTeamCard(int teamIndex) {
-            return this
-                .GetDescendantsOfType<TeamCard>()
-                .Where(teamCard => teamCard.TeamIndex == teamIndex)
-                .FirstOrDefault()
-                ?? throw new NullReferenceException("TeamCard not found.");
+            var iterator = this.Descendants().Where(d => d.GetType() == typeof(TeamCard)).Cast<TeamCard>();
+            TeamCard teamCard = iterator.ToList()[teamIndex];
+            return teamCard;
         }
 
         /// <summary>

@@ -1,14 +1,14 @@
 ﻿using Leagueinator.GUI.Controllers;
-using Utility.Extensions;
 using System.Windows;
 using System.Windows.Controls;
 using Leagueinator.Utility.Extensions;
+using Leagueinator.GUI.Controllers.DragDropManager;
 
 namespace Leagueinator.GUI.Controls.MatchCards {
     /// <summary>
     /// Interaction logic for InfoCard.xaml
     /// </summary>
-    public partial class InfoCard : UserControl {
+    public partial class InfoCard : UserControl, IDragDrop {
         public InfoCard() {
             this.AllowDrop = true;
             this.InitializeComponent();
@@ -20,14 +20,14 @@ namespace Leagueinator.GUI.Controls.MatchCards {
             set => this.LblLane.Text = (value + 1).ToString();
         }
 
+        public void DoDrop(object dragSource) {
+            throw new NotImplementedException();
+        }
+
         #region Handles
 
         private void HndLoaded(object sender, RoutedEventArgs e) {
-            DragDropController controller = new DragDropController(this);
-
-            this.PreviewMouseDown += controller.HndPreMouseDown;
-            this.DragEnter += controller.HndDragEnter;
-            this.Drop += controller.HndDrop;
+            DragDropManager<InfoCard> controller = new (this);
             this.TxtEnds.PreviewTextInput += InputHandlers.OnlyNumbers;
 
             this.GetDescendantsOfType<TextBox>()

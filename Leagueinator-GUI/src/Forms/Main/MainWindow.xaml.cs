@@ -1,11 +1,6 @@
 ﻿using Leagueinator.GUI.Controllers.NamedEvents;
-using Leagueinator.GUI.Model;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Input;
-using System.Windows.Threading;
-using Leagueinator.Utility.Extensions;
-using Leagueinator.GUI.Controls.MatchCards;
 
 namespace Leagueinator.GUI.Forms.Main {
     /// <summary>

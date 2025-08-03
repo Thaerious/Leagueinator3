@@ -30,12 +30,6 @@ namespace Leagueinator.GUI {
                 mainWindow.ContentRendered += (s, e) => {
                     Debug.WriteLine("Main Window Loaded");
                     MainController mainController = new(mainWindow);
-                    FocusController focusController = new(mainController);
-
-                    NamedEvent.RegisterHandler(mainController);
-                    NamedEvent.RegisterHandler(focusController);
-                    //NamedEvent.RegisterHandler(new MainWindowReceiver(mainWindow));
-
                     this.DispatchEvent(EventName.NewLeague);
                 };
             });

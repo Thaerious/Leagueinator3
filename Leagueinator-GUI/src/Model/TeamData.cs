@@ -1,18 +1,19 @@
 ﻿
-using System.Collections;
-using System.Diagnostics;
 using System.Text.Json.Serialization;
 
 namespace Leagueinator.GUI.Model {
     public class TeamData : IEquatable<TeamData> {
 
         public string[] Names { get; }
+        public int Length => this.Names.Length;
+        public int Index { get; }
 
         public Players Players => [.. this.Names]; // TODO Names should not be public.
 
-        public TeamData(int size) {
+        public TeamData(int size, int index) {
             this.Names = new string[size];
             Array.Fill(this.Names, string.Empty);
+            this.Index = index;
         }
 
         [JsonConstructor]
@@ -96,14 +97,6 @@ namespace Leagueinator.GUI.Model {
             return string.Join(", ", Names);
         }
 
-        public static TeamData[] Collection(int teamCount, int teamSize) {
-            TeamData[] teams = new TeamData[teamCount];
-            for (int i = 0; i < teamCount; i++) {
-                teams[i] = new TeamData(teamSize);
-            }
-            return teams;
-        }
-
         internal int CountPlayers() {
             int count = 0;
             foreach (string name in this.Names) {
@@ -114,7 +107,7 @@ namespace Leagueinator.GUI.Model {
             return count;
         }
 
-        public int Length => this.Names.Length;
+
 
         public IEnumerator<string> GetEnumerator() {
             foreach (string name in this.Names) {
@@ -137,6 +130,11 @@ namespace Leagueinator.GUI.Model {
 
         internal bool IsFull() {
             return this.CountPlayers() == this.Names.Length;
+        }
+
+        internal void SetNames(List<string> names) {
+            this.Clear();
+            names.CopyTo(this.Names);   
         }
     }
 }
