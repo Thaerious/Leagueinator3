@@ -1,8 +1,4 @@
-﻿using System.Diagnostics;
-using System.Reflection.Metadata.Ecma335;
-using System.Text;
-
-namespace Leagueinator.GUI.Model.Results.BowlsPlus {
+﻿namespace Leagueinator.GUI.Model.Results.BowlsPlus {
     public class TeamResult : List<SingleResult>, IComparable<TeamResult>{
         public readonly Players Players;
 

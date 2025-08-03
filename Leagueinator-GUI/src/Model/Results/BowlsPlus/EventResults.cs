@@ -37,6 +37,7 @@ namespace Leagueinator.GUI.Model.Results.BowlsPlus {
             // Sort teams by performance and assign ranks
             List<TeamResult> results = [.. ByTeam.Values];
             results.Sort();
+            results.Reverse();
 
             for (int i = 0; i < results.Count; i++) {
                 TeamResult teamResult = results[i];

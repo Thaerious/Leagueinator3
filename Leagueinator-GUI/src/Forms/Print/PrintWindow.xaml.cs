@@ -12,14 +12,15 @@ namespace Leagueinator.GUI.Forms.Print {
     /// Interaction logic for PrintWindow.xaml
     /// </summary>
     public partial class PrintWindow : Window {
-        public PrintWindow(EventData eventData) {           
+        public PrintWindow(EventData eventData) {
             InitializeComponent();
             EventResults eventResults = new EventResults(eventData);
 
             this.Loaded += (s, e) => {
-                foreach (TeamResult teamResult in eventResults.ByTeam.Values) {
+                eventResults.ByTeam.Values.OrderBy(v => v.Rank).ToList().ForEach(teamResult => {
+                    Debug.WriteLine(teamResult.Rank);
                     this.AddTeam(teamResult);
-                }
+                });
             };
         }
 
@@ -123,31 +124,18 @@ namespace Leagueinator.GUI.Forms.Print {
             };
         }
 
-        private FlowDocument CloneFlowDocument(FlowDocument original) {
-            var range = new TextRange(original.ContentStart, original.ContentEnd);
-            using (var ms = new MemoryStream()) {
-                range.Save(ms, DataFormats.XamlPackage);
-                ms.Position = 0;
-                var clone = new FlowDocument();
-                var cloneRange = new TextRange(clone.ContentStart, clone.ContentEnd);
-                cloneRange.Load(ms, DataFormats.XamlPackage);
-                return clone;
-            }
-        }
+        private void Hnd_Print(object sender, RoutedEventArgs e) {
+            PrintDialog printDialog = new PrintDialog();
 
-        public void Hnd_Print(object sender, RoutedEventArgs e) {
-            var printDialog = new PrintDialog();
             if (printDialog.ShowDialog() == true) {
-                try {
-                    // CopyRound the FlowDocument to avoid printing the live one
-                    FlowDocument clonedDoc = CloneFlowDocument(this.DocViewer);
+                // Set the document to match printer page size
+                DocViewer.PageHeight = printDialog.PrintableAreaHeight;
+                DocViewer.PageWidth = printDialog.PrintableAreaWidth;
+                DocViewer.ColumnWidth = printDialog.PrintableAreaWidth; // prevent column wrapping
 
-                    IDocumentPaginatorSource docSource = clonedDoc as IDocumentPaginatorSource;
-                    printDialog.PrintDocument(docSource.DocumentPaginator, "Leagueinator Print Job");
-                }
-                catch (Exception ex) {
-                    MessageBox.Show("Print failed: " + ex.Message);
-                }
+                // Print the document
+                IDocumentPaginatorSource idpSource = DocViewer;
+                printDialog.PrintDocument(idpSource.DocumentPaginator, "Leagueinator Print");
             }
         }
 
