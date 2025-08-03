@@ -39,6 +39,7 @@ namespace Leagueinator.GUI.Controls.MatchPanel {
             teamCard[position] = name;
         }
 
+        [NamedEventHandler(EventName.EventSelected)]
         [NamedEventHandler(EventName.RoundDeleted)]
         [NamedEventHandler(EventName.RoundAdded)]
         [NamedEventHandler(EventName.RoundChanged)]
