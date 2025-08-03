@@ -14,6 +14,7 @@ namespace Leagueinator.GUI.Forms.Main {
     public partial class MainWindow : Window {
 
         public MainWindow() {
+            NamedEvent.RegisterHandler(this, true);
             this.InitializeComponent();
             this.Title = "Leagueinator []";
             this.Loaded += this.OnLoaded;
@@ -26,10 +27,21 @@ namespace Leagueinator.GUI.Forms.Main {
             this.MatchPanel.PreviewMouseDown += (s, e) => {
                 Keyboard.ClearFocus();
             };
+            this.ResumeEvents();
         }
 
         public void ClearFocus() {
             FocusManager.SetFocusedElement(this, null);
+        }
+
+        [NamedEventHandler(EventName.SetTitle)]
+        internal void DoSetTitle(string title, bool saved) {
+            if (saved) {
+                this.Title = $"{title} [✔]";
+            }
+            else {
+                this.Title = $"{title} [✘]";
+            }
         }
     }
 }
