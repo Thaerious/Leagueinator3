@@ -1,4 +1,4 @@
-﻿namespace Leagueinator.GUI.Model {
+﻿namespace Leagueinator.GUI.Model.ViewModel {
     public record EventRecord(
         string Name,
         DateTime Created,

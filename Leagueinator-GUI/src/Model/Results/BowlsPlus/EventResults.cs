@@ -3,7 +3,7 @@ using Utility;
 
 namespace Leagueinator.GUI.Model.Results.BowlsPlus {
     /// <summary>
-    /// Aggregates results across all rounds of an event.
+    /// Aggregates results across all _rounds of an event.
     /// </summary>
     public class EventResults {
 
@@ -13,7 +13,7 @@ namespace Leagueinator.GUI.Model.Results.BowlsPlus {
         public List<RoundResults> ByRound { get; } = [];
 
         /// <summary>
-        /// AllResults aggregated by each unique team across all rounds.
+        /// AllResults aggregated by each unique team across all _rounds.
         /// The results are sorted in descending order of performance.
         /// </summary>
         public DefaultDictionary<Players, TeamResult> ByTeam { get; } = new((players)=>new(players));
@@ -21,7 +21,7 @@ namespace Leagueinator.GUI.Model.Results.BowlsPlus {
         /// <summary>
         /// Constructs event-level results from a collection of round data.
         /// </summary>
-        /// <param name="roundDataCollection">The collection of rounds to analyze.</param>
+        /// <param name="roundDataCollection">The collection of _rounds to analyze.</param>
         public EventResults(IEnumerable<RoundData> rounds) {
             // Compute round-level results
             foreach (var round in rounds) {

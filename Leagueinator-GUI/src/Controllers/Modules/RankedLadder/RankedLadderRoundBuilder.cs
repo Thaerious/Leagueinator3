@@ -10,7 +10,7 @@ namespace Leagueinator.GUI.Controllers.Modules.RankedLadder {
         }
 
         /// <summary>
-        /// Generates a new round based on the results of the previous rounds.
+        /// Generates a new round based on the results of the previous _rounds.
         /// Ignores any match that des not have any players or bowls.
         /// </summary>
         /// <returns></returns>
@@ -25,7 +25,7 @@ namespace Leagueinator.GUI.Controllers.Modules.RankedLadder {
                 results.Remove(nextResult);
 
                 MatchData matchData = new() {
-                    MatchFormat = this.EventData.MatchFormat,
+                    MatchFormat = this.EventData.DefaultMatchFormat,
                     Lane = newRound.Count,
                     Ends = this.EventData.DefaultEnds,
                 };

@@ -158,7 +158,7 @@ namespace Leagueinator.GUI.Controls.MatchCards {
 
         /// <summary>
         /// Handles the context menu action to change the match format.
-        /// Expects the sender to be a MenuItem with a string Tag representing a MatchFormat enum value.
+        /// Expects the sender to be a MenuItem with a string Tag representing a DefaultMatchFormat enum value.
         /// </summary>
         /// <exception cref="NullReferenceException">Thrown if tag is missing.</exception>
         /// <exception cref="ArgumentException">Thrown if tag is invalid.</exception>

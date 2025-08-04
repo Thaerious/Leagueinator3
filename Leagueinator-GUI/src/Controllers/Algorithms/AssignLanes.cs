@@ -1,17 +1,18 @@
 ﻿using Algorithms;
 using Leagueinator.GUI.Model;
+using Leagueinator.GUI.Model.ViewModel;
 using Utility;
 
 namespace Leagueinator.GUI.Controllers.Algorithms {
     /// <summary>
-    /// Provides logic to assign lanes to matches in a round, ensuring that teams are not repeatedly assigned to the same lanes across rounds.
+    /// Provides logic to assign lanes to matches in a round, ensuring that teams are not repeatedly assigned to the same lanes across _rounds.
     /// </summary>
     public class AssignLanes {
         /// <summary>
         /// Initializes a new instance of the <see cref="AssignLanes"/> class.
         /// </summary>
         /// <param name="eventData">The event configuration data.</param>
-        /// <param name="rounds">The collection of all rounds in the event.</param>
+        /// <param name="rounds">The collection of all _rounds in the event.</param>
         /// <param name="roundData">The round to assign lanes for.</param>
         public AssignLanes(EventData eventData, RoundData roundData) {
             this.EventData = eventData;
@@ -31,15 +32,15 @@ namespace Leagueinator.GUI.Controllers.Algorithms {
         public RoundData Run() {
             DefaultDictionary<string, List<int>> playerPlayedLanes = new(key => []);
 
-            foreach (Record record in this.EventData.Records()) {
+            foreach (PlayerRecord record in this.EventData.Records()) {
                 playerPlayedLanes[record.Name].Add(record.MatchData.Lane);
             }
 
-            DefaultDictionary<MatchData, List<int>> permittedLanes = new(key => [.. Enumerable.Range(1, this.EventData.LaneCount)]);
+            DefaultDictionary<MatchData, List<int>> permittedLanes = new(key => [.. Enumerable.Range(1, this.EventData.DefaultLaneCount)]);
 
             var recordsForRound = this.RoundData.Records().Where(r => r.RoundData == this.RoundData);
 
-            foreach (Record record in recordsForRound) {
+            foreach (PlayerRecord record in recordsForRound) {
                 List<int> allowedLanes = permittedLanes[record.MatchData];
                 allowedLanes.RemoveAll(lane => playerPlayedLanes[record.Name].Contains(lane));
             }

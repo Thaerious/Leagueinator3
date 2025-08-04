@@ -1,91 +1,42 @@
-﻿using Utility.Extensions;
-using System.Diagnostics;
+﻿using Leagueinator.GUI.Model.ViewModel;
+using Utility.Extensions;
 
 namespace Leagueinator.GUI.Model {
     public class LeagueData : List<EventData> {
 
-        private int NextUID = 1;
-        public int GetNextUID() {
-            return this.NextUID++;
-        }
+        private readonly List<EventData> events = [];
+        public IReadOnlyList<EventData> Events => events;
 
         internal EventData AddEvent(string? name = null) {
             name = name ?? DateTime.Now.ToString("MMMM d, yyyy");
-            int count = this.Select(e => e.EventName.StartsWith(name)).Count();
+            int count = this.Count(e => e.EventName.StartsWith(name));
             if (count > 0) name = $"{name} [{count}]";
 
-            EventData eventData = new() {
+            EventData eventData = new(this) {
                 EventName = name
             };
+
             this.Add(eventData);
             return eventData;
         }
 
-        public static LeagueData FromString(string s) {
-            LeagueData leagueData = [];
-            List<string> srcLines = [.. s.Split('\n')];
-
-            string line = srcLines.Dequeue();
-            var parts = line.Split('|');
-            if (parts.Length != 2) throw new FormatException($"Invalid LeagueData string format: {line}.'");
-
-            int eventCount = int.Parse(parts[0]);
-            leagueData.NextUID = int.Parse(parts[1]);
-
-            AddEvents(eventCount, srcLines, leagueData);
-            return leagueData;
-        }
-
-        private static void AddEvents(int eventCount, List<string> srcLines, LeagueData leagueData) {
-            for (int i = 0; i < eventCount; i++) {
-                EventRecord eventRecord = EventRecord.FromString(srcLines.Dequeue());
-                EventData eventData = EventData.FromRecord(eventRecord);
-                leagueData.Add(eventData);
-                AddRounds(srcLines, eventData, eventRecord);
-            }
-        }
-
-        private static void AddRounds(List<string> srcLines, EventData eventData, EventRecord eventRecord) {
-            for (int i = 0; i < eventRecord.RoundCount; i++) {
-                RoundData roundData = eventData.AddRound(false);
-
-                int matchCount = NextInt(srcLines);
-                for (int j = 0; j < matchCount; j++) {
-                    MatchData matchData = MatchData.FromString(srcLines.Dequeue());
-                    roundData.Add(matchData);
-                }
-
-                int playerCount = NextInt(srcLines);
-                for (int j = 0; j < playerCount; j++) {
-                    RoundRecord roundRecord = RoundRecord.FromString(srcLines.Dequeue());
-                    MatchData matchData = roundData[roundRecord.Lane];
-                    TeamData teamData = matchData[roundRecord.Team];
-                    teamData[roundRecord.Pos] = roundRecord.Name;
-                }
-            }
-        }
-
-        private static int NextInt(List<string> lines) {
-            string line = lines.Dequeue();
-            return int.Parse(line);
-        }
-
         public override string ToString() {
-            string sb = $"{this.Count}|{this.NextUID}\n";
+            string sb = $"{this.Count}\n";
 
             foreach (EventData @event in this) {
                 sb += EventData.ToRecord(@event).ToString() + "\n";
 
                 foreach (RoundData round in @event) {
-                    RoundRecordList roundRecordList = new RoundRecordList(@event, round);
+                    var matchRecords = MatchRecord.MatchRecordList(round);
+                    var records = round.Records();
 
-                    sb += $"{roundRecordList.Matches.Count}\n";
-                    foreach (MatchRecord matchRecord in roundRecordList.Matches) {
+                    sb += $"{matchRecords.Count}\n";
+                    foreach (MatchRecord matchRecord in matchRecords) {
                         sb += matchRecord.ToString() + "\n";
                     }
 
-                    sb += $"{roundRecordList.Players.Count}\n";
-                    foreach (RoundRecord roundRecord in roundRecordList.Players) {
+                    sb += $"{records.Count()}\n";
+                    foreach (PlayerRecord roundRecord in records) {
                         sb += roundRecord.ToString() + "\n";
                     }
                 }
@@ -94,18 +45,8 @@ namespace Leagueinator.GUI.Model {
             return sb;
         }
 
-        public IEnumerable<Record> Records() {
-            foreach (EventData evenData in this) {
-                foreach (RoundData roundData in evenData) {
-                    foreach (MatchData matchData in roundData) {
-                        foreach (TeamData teamData in matchData.Teams) {
-                            foreach (string name in teamData) {
-                                yield return new Record(evenData, roundData, matchData, teamData, name);
-                            }
-                        }
-                    }
-                }
-            }
+        public IEnumerable<PlayerRecord> Records() {
+            return this.Events.SelectMany(round => round.Records());
         }
     }
 }

@@ -61,7 +61,9 @@ namespace Leagueinator.GUI.Controllers.Modules.Motley {
         private RoundData AssignMatches(RoundData roundData) {
             Dictionary<TeamData, int> teamELO = [];
 
-            foreach (TeamData team in roundData.Teams) {
+            var teams = roundData.Matches.SelectMany(match => match.Teams);
+
+            foreach (TeamData team in teams) {
                 if (team.IsEmpty()) continue;
                 int elo = 0;
                 foreach (string name in team) {
@@ -121,7 +123,7 @@ namespace Leagueinator.GUI.Controllers.Modules.Motley {
             for (int i = 0; i < best!.Count; i += 2) {
                 MatchData match = new() {
                     MatchFormat = MatchFormat.VS2,
-                    Lane = roundData.Count,
+                    Lane = roundData.Matches.Count(),
                     Ends = this.EventData.DefaultEnds
                 };
 

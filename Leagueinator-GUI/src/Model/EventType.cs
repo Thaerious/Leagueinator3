@@ -3,7 +3,7 @@ using Leagueinator.GUI.Controllers.Modules;
 using Leagueinator.GUI.Controllers.Modules.Motley;
 
 namespace Leagueinator.GUI.Model {
-    public enum EventType { RankedLadder, RoundRobin, Motley };
+    public enum EventType { RankedLadder, Motley };
 
     public static class EventTypeMeta {
         public static IModule GetModule(EventType eventType) {

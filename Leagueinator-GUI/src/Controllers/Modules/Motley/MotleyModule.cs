@@ -2,6 +2,7 @@
 using Leagueinator.GUI.Controllers.NamedEvents;
 using Leagueinator.GUI.Dialogs;
 using Leagueinator.GUI.Model;
+using Leagueinator.GUI.Model.ViewModel;
 using Leagueinator.Utility.Extensions;
 using System.Windows;
 
@@ -25,7 +26,10 @@ namespace Leagueinator.GUI.Controllers.Modules.Motley {
         private void ExportCSV(object sender, RoutedEventArgs e) {
             string sb = "";
             sb += $"date,name,round,lane,team,score,tb,ends,name\n";
-            foreach (Record record in this.MainController.LeagueData.Records()) sb += $"{record.ToCSV()}";
+            var recrods = this.MainController.LeagueData
+                              .SelectMany(eventData => eventData.Records());
+
+            foreach (PlayerRecord record in this.MainController.LeagueData.Records()) sb += $"{record.ToCSV()}";
 
             TextViewer tv = new();
             tv.Append(sb);

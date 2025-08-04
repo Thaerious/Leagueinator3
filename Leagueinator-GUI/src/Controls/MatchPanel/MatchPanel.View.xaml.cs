@@ -83,7 +83,7 @@ namespace Leagueinator.GUI.Controls.MatchPanel {
 
         private void SetPlayerNames(RoundRecordList roundRecords) {
             for (int i = 0; i < roundRecords.Players.Count; i++) {
-                RoundRecord roundRecord = roundRecords.Players[i];
+                PlayerRecord roundRecord = roundRecords.Players[i];
                 Debug.WriteLine(roundRecord);
                 MatchCard matchCard = (MatchCard)this.OuterPanel.Children[roundRecord.Lane];
                 TeamCard teamCard = matchCard.GetTeamCard(roundRecord.Team);

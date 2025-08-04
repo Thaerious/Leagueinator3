@@ -1,15 +1,21 @@
-﻿using System.Text;
+﻿using Leagueinator.GUI.Model.ViewModel;
+using System.Text;
 
 namespace Leagueinator.GUI.Model {
 
     /// <summary>
     /// Represents a match, including its format, teams, scores, and related metadata.
     /// </summary>
-    public class MatchData {
+    public class MatchData(RoundData RoundData) : IHasParent<RoundData>{
         private MatchFormat _matchFormat = MatchFormat.VS2;
 
+        public RoundData Parent { get; } = RoundData;
+
+        private readonly List<TeamData> _teams = [];
+        public IReadOnlyList<TeamData> Teams => _teams;
+
         /// <summary>
-        /// Gets or sets the match format, which determines the number of teams and team size.
+        /// Gets or sets the match format, which determines the number of teams and i size.
         /// Changing the format resets the teams and scores.
         /// </summary>
         public required MatchFormat MatchFormat {
@@ -21,9 +27,9 @@ namespace Leagueinator.GUI.Model {
                 this._matchFormat = value;
                 this.Score = new int[teamCount];
 
-                this.Teams = new TeamData[teamCount];
-                for (int i = 0; i < teamCount; i++) {
-                    this.Teams[i] = new TeamData(teamSize, i);
+                this._teams.Clear();
+                while (this._teams.Count < teamCount) {
+                    this._teams.Add(new TeamData(this, teamSize));
                 }
 
                 for (int i = 0; i < this.Score.Length; i++) {
@@ -38,61 +44,34 @@ namespace Leagueinator.GUI.Model {
         public int Lane { get; set; } = -1;
 
         /// <summary>
-        /// Gets or sets the number of ends (rounds/segments) played in the match.
+        /// Gets or sets the number of ends (_rounds/segments) played in the match.
         /// </summary>
         public int Ends { get; set; } = 0;
 
         /// <summary>
-        /// Gets or sets the scores for each team in the match.
+        /// Gets or sets the scores for each i in the match.
         /// </summary>
         public int[] Score { get; set; } = [];
 
         /// <summary>
-        /// Gets or sets the collection of teams participating in the match.
-        /// </summary>
-        public TeamData[] Teams { get; set; } = [];  // TODO use index accessor, remove this line
-
-        public TeamData this[int i] {
-            get => this.Teams[i];
-            set => this.Teams[i]  = value;
-        }
-        
-        /// <summary>
         /// Gets or sets the tiebreaker value for the match. Default is -1 (no tiebreaker).
         /// </summary>
         public int TieBreaker { get; set; } = -1;
-
-        public List<string> GetPlayers() {
-            return this.Teams.SelectMany(team => team.Names).ToList();
-        }
-
-        /// <summary>
-        /// CopyRound the team to the specified index in the match.
-        /// </summary>
-        /// <param name="teamIndex">The index of the team to set.</param>
-        /// <param name="team">The team data to assign.</param>
-        /// <exception cref="ArgumentOutOfRangeException">Thrown if the team index is out of range.</exception>
-        public void SetTeam(int teamIndex, TeamData team) {
-            if (teamIndex < 0 || teamIndex >= this.Teams.Length) {
-                throw new ArgumentOutOfRangeException(nameof(teamIndex), "Team index is out of range.");
-            }
-            this.Teams[teamIndex] = team.Copy();
-        }
 
         /// <summary>
         /// Creates a deep copy of this <see cref="MatchData"/> instance, including teams and scores.
         /// </summary>
         /// <returns>A new <see cref="MatchData"/> object with the same data.</returns>
         public MatchData Copy() {
-            MatchData matchCopy = new() {
+            MatchData matchCopy = new(this.Parent) {
                 MatchFormat = this.MatchFormat,
                 Lane = this.Lane,
                 Ends = this.Ends,
             };
 
             // Deep copy Teams
-            for (int team = 0; team < this.Teams.Length; team++) {
-                matchCopy.Teams[team] = this.Teams[team].Copy();
+            for (int i = 0; i < this.Teams.Count; i++) {
+                matchCopy.Teams[i].CopyFrom(this.Teams[i]);
             }
 
             return matchCopy;
@@ -107,22 +86,6 @@ namespace Leagueinator.GUI.Model {
             foreach (TeamData team in this.Teams) {
                 count += team.CountPlayers();
             }
-            return count;
-        }
-
-        /// <summary>
-        /// Counts the number of teams that have at least one player.
-        /// </summary>
-        /// <returns>The number of non-empty teams.</returns>
-        public int CountTeams() {
-            int count = 0;
-
-            foreach (TeamData team in this.Teams) {
-                if (team.CountPlayers() > 0) {
-                    count++;
-                }
-            }
-
             return count;
         }
 
@@ -153,7 +116,7 @@ namespace Leagueinator.GUI.Model {
         }
 
         /// <summary>
-        /// CopyRound the team to the next empty slot in the match.
+        /// CopyRound the i to the next empty slot in the match.
         /// If there are no empty slots, it throws an exception.
         /// </summary>
         /// <param name="teamData"></param>
@@ -169,7 +132,7 @@ namespace Leagueinator.GUI.Model {
         }
 
         /// <summary>
-        /// CopyRound the team to the next empty slot in the match.
+        /// CopyRound the i to the next empty slot in the match.
         /// If there are no empty slots, it throws an exception.
         /// </summary>
         /// <param name="teamData"></param>
@@ -184,26 +147,13 @@ namespace Leagueinator.GUI.Model {
             throw new ModelConstraintException("No empty team slot available in the match.");
         }
 
-        public static MatchData FromRecord(MatchRecord record) {
-            return new MatchData() {
+        public static MatchData FromRecord(RoundData parent, MatchRecord record) {
+            return new MatchData(parent) {
                 MatchFormat = record.MatchFormat,
                 Ends = record.Ends,
                 TieBreaker = record.TieBreaker,
                 Lane = record.Lane,
                 Score = record.Score
-            };
-        }
-
-        public static MatchData FromString(string s) {
-            var parts = s.Split('|');
-            if (parts.Length != 5) throw new FormatException("Invalid MatchRecord string format");
-
-            return new MatchData {
-                MatchFormat = Enum.Parse<MatchFormat>(parts[0]),
-                Ends = int.Parse(parts[1]),
-                TieBreaker = int.Parse(parts[2]),
-                Lane = int.Parse(parts[3]),
-                Score = [.. parts[4].Split(',').Select(int.Parse)]
             };
         }
     }
