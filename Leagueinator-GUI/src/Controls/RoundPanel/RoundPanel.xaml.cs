@@ -1,5 +1,6 @@
 ﻿using Leagueinator.GUI.Controllers.NamedEvents;
 using Leagueinator.GUI.Model;
+using Leagueinator.GUI.Model.ViewModel;
 using Leagueinator.Utility.Extensions;
 using System.Windows;
 using System.Windows.Controls;
@@ -90,7 +91,7 @@ namespace Leagueinator.GUI.Controls.RoundPanel {
         }
 
         [NamedEventHandler(EventName.EventSelected)]
-        internal void DoEventSelected(EventRecord eventRecord, int roundIndex, RoundRecordList roundRecords) {
+        internal void DoEventSelected(EventRecord eventRecord, int roundIndex) {
             foreach (Button button in this.EventButtons) {
                 if (button.DataContext is not EventButtonViewModel vme) throw new NotSupportedException();
                 if ((string)button.Content == eventRecord.Name) {

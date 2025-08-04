@@ -48,21 +48,27 @@ namespace Leagueinator.GUI.Model {
             }
         }
 
-        public bool Equals(TeamData? other) {
-            if (other is null) {
-                return false;
+        /// <summary>
+        /// Return true if the names in this team matches the enumerable exactly without
+        /// leftover, and w/o consideration to order.
+        /// </summary>
+        /// <param name="names"></param>
+        /// <returns></returns>
+        public bool Equals(IEnumerable<string> names) {
+            if (names is null)  return false;            
+
+            if (this._names.Length != names.Count()) return false;
+
+            foreach (string name in names) {
+                if (!this._names.Contains(name)) return false;
             }
 
-            if (this._names.Length != other._names.Length) {
-                return false;
-            }
-
-            foreach (string name in Names) {
-                if (!other.Names.Contains(name)) {
-                    return false;
-                }
-            }
             return true;
+        }
+
+        public bool Equals(TeamData? other) {
+            if (other is null) return false;
+            return this.Equals(other.Names);
         }
 
         public override int GetHashCode() {

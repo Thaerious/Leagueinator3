@@ -1,6 +1,7 @@
 ﻿using Leagueinator.GUI.Controllers.NamedEvents;
 using Leagueinator.GUI.Controls.MatchCards;
 using Leagueinator.GUI.Model;
+using Leagueinator.GUI.Model.ViewModel;
 using Leagueinator.Utility.Extensions;
 using System.Diagnostics;
 using System.Windows;
@@ -33,13 +34,13 @@ namespace Leagueinator.GUI.Controls.MatchPanel {
         /// Clears all matchRow cards that does not have a value in "roundRow".
         /// </summary>
         /// <param name="roundRow"></param>
-        private void DoPopulateMatchCards(RoundRecordList roundRecords) {
+        private void DoPopulateMatchCards(List<MatchRecord> matchRecords, List<PlayerRecord> playerRecords) {
             int cardsToLoad = 0;
             int cardsLoaded = 0;
 
             this.OuterPanel.Children.Clear();
 
-            foreach (MatchRecord matchRecord in roundRecords.Matches) {
+            foreach (MatchRecord matchRecord in matchRecords) {
                 var matchCard = MatchCardFactory.GenerateMatchCard(matchRecord.MatchFormat);
 
                 this.OuterPanel.Children.Add(matchCard);
@@ -57,7 +58,7 @@ namespace Leagueinator.GUI.Controls.MatchPanel {
                     // When all of the match cards are loaded
                     if (cardsLoaded == cardsToLoad) {
                         this.AssignTabOrder();
-                        this.SetPlayerNames(roundRecords);
+                        this.SetPlayerNames(playerRecords);
                         this.ResumeEvents();
                     }
                 };
@@ -75,16 +76,14 @@ namespace Leagueinator.GUI.Controls.MatchPanel {
             return this.GetDescendantsOfType<MatchCard>().First(MatchCard => MatchCard.Lane == lane);
         }
 
-        public void PopulateMatchCards(RoundRecordList roundRecords) {
+        public void PopulateMatchCards(List<MatchRecord> matchRecords, List<PlayerRecord> playerRecords) {
             this.Dispatcher.InvokeAsync(new Action(() => {
-                this.DoPopulateMatchCards(roundRecords);
+                this.DoPopulateMatchCards(matchRecords, playerRecords);
             }), DispatcherPriority.Background);
         }
 
-        private void SetPlayerNames(RoundRecordList roundRecords) {
-            for (int i = 0; i < roundRecords.Players.Count; i++) {
-                PlayerRecord roundRecord = roundRecords.Players[i];
-                Debug.WriteLine(roundRecord);
+        private void SetPlayerNames(IEnumerable<PlayerRecord> playerRecords) {
+            foreach (PlayerRecord roundRecord in playerRecords) {
                 MatchCard matchCard = (MatchCard)this.OuterPanel.Children[roundRecord.Lane];
                 TeamCard teamCard = matchCard.GetTeamCard(roundRecord.Team);
                 teamCard[roundRecord.Pos] = roundRecord.Name;

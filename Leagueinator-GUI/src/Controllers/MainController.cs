@@ -28,8 +28,9 @@ namespace Leagueinator.GUI.Controllers {
             }
             set {
                 this._eventData = value;
-                var module = EventTypeMeta.GetModule(this._eventData.EventType);
-                this.LoadModule(module);
+                // TODO REnable
+                //var module = EventTypeMeta.GetModule(this._eventData.EventType);
+                //this.LoadModule(module);
             }
         }
 
@@ -397,12 +398,12 @@ namespace Leagueinator.GUI.Controllers {
             };
 
             if (dialog.ShowDialog() == true) {
-                string contents = File.ReadAllText(dialog.FileName);
-                this.LeagueData = LeagueData.FromString(contents);
-                this.EventData = this.LeagueData.Last();
-                this.CurrentRoundIndex = this.EventData.Count() - 1;
-                this.FileName = dialog.FileName;
-                this.IsSaved = true;
+                //string contents = File.ReadAllText(dialog.FileName);
+                //this.LeagueData = LeagueData.FromString(contents);
+                //this.EventData = this.LeagueData.Last();
+                //this.CurrentRoundIndex = this.EventData.Count() - 1;
+                //this.FileName = dialog.FileName;
+                //this.IsSaved = true;
             }
         }
 
@@ -439,34 +440,35 @@ namespace Leagueinator.GUI.Controllers {
         }
 
         private bool UpdateName(string name, int lane, int teamIndex, int position) {
-            if (name == string.Empty && this.RoundData.Matches[lane].Teams[teamIndex].Names[position] == string.Empty) {
-                // If the eventName is empty and the player is already empty, do nothing.
-                return false;
-            }
+            throw new NotImplementedException();
+            //if (name == string.Empty && this.RoundData.Matches[lane].Teams[teamIndex].Names[position] == string.Empty) {
+            //    // If the eventName is empty and the player is already empty, do nothing.
+            //    return false;
+            //}
 
-            if (
+            //if (
 
-            PlayerLocation poll = this.RoundData.PollPlayer(name);
-            if (poll == new PlayerLocation(lane, teamIndex, position)) {
-                return false;
-            }
+            //PlayerLocation poll = this.RoundData.PollPlayer(name);
+            //if (poll == new PlayerLocation(lane, teamIndex, position)) {
+            //    return false;
+            //}
 
-            // If the player already exists in the round LeagueData, remove them from their current position
-            // and remove their eventName from the previous match card.
-            if (this.RoundData.HasPlayer(name)) {
-                var existing = this.RoundData.PollPlayer(name);
-                this.RoundData.RemovePlayer(name);
+            //// If the player already exists in the round LeagueData, remove them from their current position
+            //// and remove their eventName from the previous match card.
+            //if (this.RoundData.HasPlayer(name)) {
+            //    var existing = this.RoundData.PollPlayer(name);
+            //    this.RoundData.RemovePlayer(name);
 
-                this.DispatchEvent(EventName.NameUpdated, new() {
-                    ["lane"] = existing.Lane,
-                    ["teamIndex"] = existing.TeamIndex,
-                    ["position"] = existing.Position,
-                    ["name"] = ""
-                });
-            }
+            //    this.DispatchEvent(EventName.NameUpdated, new() {
+            //        ["lane"] = existing.Lane,
+            //        ["teamIndex"] = existing.TeamIndex,
+            //        ["position"] = existing.Position,
+            //        ["name"] = ""
+            //    });
+            //}
 
-            this.RoundData.Matches[lane].SetPlayer(name, teamIndex, position);
-            return true;
+            //this.RoundData.Matches[lane].SetPlayer(name, teamIndex, position);
+            //return true;
         }
 
         /// <summary>
