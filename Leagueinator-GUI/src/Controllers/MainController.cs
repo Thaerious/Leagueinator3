@@ -6,10 +6,8 @@ using Leagueinator.GUI.Forms.Main;
 using Leagueinator.GUI.Model;
 using Leagueinator.GUI.Model.ViewModel;
 using Microsoft.Win32;
-using System.Diagnostics;
 using System.IO;
 using System.Windows;
-using Utility.Extensions;
 
 namespace Leagueinator.GUI.Controllers {
 
@@ -29,7 +27,7 @@ namespace Leagueinator.GUI.Controllers {
             }
             set {
                 this._eventData = value;
-                // TODO REnable
+                // TODO Renable when modules are back
                 //var module = EventTypeMeta.GetModule(this._eventData.EventType);
                 //this.LoadModule(module);
             }
@@ -56,21 +54,21 @@ namespace Leagueinator.GUI.Controllers {
 
         public void DispatchModel(EventName eventName) {
             this.DispatchEvent(eventName, new() {
-                ["eventNames"]    = this.LeagueData.Events.Select(e => e.EventName).ToList(),
+                ["eventNames"] = this.LeagueData.Events.Select(e => e.EventName).ToList(),
                 ["selectedEvent"] = EventData.EventName,
-                ["eventRecord"]   = EventData.ToRecord(this.EventData), // TODO obselete?
-                ["roundIndex"]    = this.CurrentRoundIndex,
-                ["matchRecords"]  = MatchRecord.MatchRecordList(this.RoundData),
+                ["eventRecord"] = EventData.ToRecord(this.EventData), // TODO obselete?
+                ["roundIndex"] = this.CurrentRoundIndex,
+                ["matchRecords"] = MatchRecord.MatchRecordList(this.RoundData),
                 ["playerRecords"] = this.RoundData.Records().ToList(),
-                ["roundCount"]    = this.EventData.Count(),
+                ["roundCount"] = this.EventData.Count(),
             });
         }
 
         public void DispatchRoundUpdated(EventName eventName) {
             this.DispatchEvent(eventName, new() {
-                ["roundIndex"]    = this.CurrentRoundIndex,
-                ["roundCount"]    = this.EventData.Count(),
-                ["matchRecords"]  = MatchRecord.MatchRecordList(this.RoundData),
+                ["roundIndex"] = this.CurrentRoundIndex,
+                ["roundCount"] = this.EventData.Count(),
+                ["matchRecords"] = MatchRecord.MatchRecordList(this.RoundData),
                 ["playerRecords"] = this.RoundData.Records().ToList(),
             });
         }
@@ -180,9 +178,28 @@ namespace Leagueinator.GUI.Controllers {
 
         [NamedEventHandler(EventName.LoadLeague)]
         internal void DoLoad() {
-            this.Load();
-            this.DispatchModel(EventName.SetModel);
-            this.DispatchSetTitle(this.FileName, true);
+            if (!this.IsSaved) {
+                ConfirmationDialog confDialog = new() {
+                    Owner = this.Window,
+                    WindowStartupLocation = WindowStartupLocation.CenterOwner,
+                    Text = "League not saved. Do you still want to load?"
+                };
+
+                if (confDialog.ShowDialog() == false) return;
+            }
+
+            OpenFileDialog dialog = new OpenFileDialog {
+                Filter = "League Files (*.league)|*.league"
+            };
+
+            if (dialog.ShowDialog() == true) {
+                StreamReader reader = new StreamReader(dialog.FileName);
+                this.LeagueData = LeagueData.ReadIn(reader);
+                this.EventData = this.LeagueData.Events[^1];
+                this.CurrentRoundIndex = this.EventData.Rounds.Count - 1;
+                this.DispatchSetTitle(this.FileName, true);
+                this.DispatchModel(EventName.SetModel);
+            }
         }
 
         [NamedEventHandler(EventName.SaveLeague)]
@@ -208,19 +225,22 @@ namespace Leagueinator.GUI.Controllers {
             this.DispatchModel(EventName.SetModel);
             this.DispatchSetTitle("Leagueinator", true);
             this.FileName = "Leagueinator";
+            this.DispatchSetTitle(this.FileName, true);
         }
         #endregion
 
         #region Round Handlers
-        [NamedEventHandler(EventName.AssignLanes)]
-        internal void DoAssignLanes() {
-            throw new NotImplementedException();
-            //AssignLanes assignLanes = new(this.EventData, this.RoundData);
-            //RoundData newRound = assignLanes.Run();
-            //this.EventData.ReplaceRound(this.CurrentRoundIndex, newRound);
-            //this.DispatchRoundUpdated(EventName.RoundChanged);
-            //this.DispatchSetTitle(this.FileName, false);
-        }
+
+        // TODO Move to Module
+        //[NamedEventHandler(EventName.AssignLanes)]
+        //internal void DoAssignLanes() {
+        //    throw new NotImplementedException();
+        //    //AssignLanes assignLanes = new(this.EventData, this.RoundData);
+        //    //RoundData newRound = assignLanes.Run();
+        //    //this.EventData.ReplaceRound(this.CurrentRoundIndex, newRound);
+        //    //this.DispatchRoundUpdated(EventName.RoundChanged);
+        //    //this.DispatchSetTitle(this.FileName, false);
+        //}
 
         [NamedEventHandler(EventName.AddRound)]
         internal void DoAddRound() {
@@ -253,6 +273,7 @@ namespace Leagueinator.GUI.Controllers {
             RoundData newRound = this.RoundData.Copy();
             this.EventData.AddRound(newRound);
             this.AddRound(newRound);
+            this.DispatchSetTitle(this.FileName, false);
         }
         #endregion
 
@@ -297,6 +318,7 @@ namespace Leagueinator.GUI.Controllers {
                 ["position"] = position,
                 ["name"] = name
             });
+
             this.DispatchSetTitle(this.FileName, false);
         }
 
@@ -307,32 +329,35 @@ namespace Leagueinator.GUI.Controllers {
             }
 
             this.RoundData.Matches[lane].Ends = ends;
-            this.DispatchSetTitle(this.FileName, false);
             this.DispatchEvent(EventName.EndsUpdated, new() {
                 ["lane"] = lane,
                 ["ends"] = ends,
             });
+
+            this.DispatchSetTitle(this.FileName, false);
         }
 
         [NamedEventHandler(EventName.ChangeTieBreaker)]
         internal void DoTieBreaker(int lane, int teamIndex) {
             this.RoundData.Matches[lane].TieBreaker = teamIndex;
-            this.DispatchSetTitle(this.FileName, false);
             this.DispatchEvent(EventName.TieBreakerUpdated, new() {
                 ["lane"] = lane,
                 ["teamIndex"] = teamIndex,
             });
+
+            this.DispatchSetTitle(this.FileName, false);
         }
 
         [NamedEventHandler(EventName.ChangeBowls)]
         internal void DoBowls(int lane, int teamIndex, int bowls) {
             this.RoundData.Matches[lane].Score[teamIndex] = bowls;
-            this.DispatchSetTitle(this.FileName, false);
 
             this.DispatchEvent(EventName.BowlsUpdated, new() {
                 ["lane"] = lane,
                 ["bowls"] = (int[])this.RoundData.Matches[lane].Score.Clone()
             });
+
+            this.DispatchSetTitle(this.FileName, false);
         }
 
         [NamedEventHandler(EventName.ChangeMatchFormat)]
@@ -340,11 +365,6 @@ namespace Leagueinator.GUI.Controllers {
             this.RoundData.Matches[lane].MatchFormat = format;
             this.DispatchRoundUpdated(EventName.RoundChanged);
             this.DispatchSetTitle(this.FileName, false);
-        }
-
-        [NamedEventHandler(EventName.RemoveMatch)]
-        internal void DoRemoveMatch(int lane) {
-            throw new NotImplementedException("Discontinued");
         }
 
         [NamedEventHandler(EventName.SwapTeams)]
@@ -355,6 +375,7 @@ namespace Leagueinator.GUI.Controllers {
             this.RoundData.Matches[fromLane].Teams[fromIndex].CopyFrom(namesTo);
             this.RoundData.Matches[toLane].Teams[toIndex].CopyFrom(namesFrom);
             this.DispatchRoundUpdated(EventName.RoundChanged);
+            this.DispatchSetTitle(this.FileName, false);
         }
 
         #endregion
@@ -376,30 +397,6 @@ namespace Leagueinator.GUI.Controllers {
             this.EventData = this.LeagueData.Events[0];
             RoundData newRound = this.EventData.AddRound();
             this.CurrentRoundIndex = 0;
-        }
-
-        private void Load() {
-            if (!this.IsSaved) {
-                ConfirmationDialog confDialog = new() {
-                    Owner = this.Window,
-                    WindowStartupLocation = WindowStartupLocation.CenterOwner,
-                    Text = "League not saved. Do you still want to load?"
-                };
-
-                if (confDialog.ShowDialog() == false) return;
-            }
-
-            OpenFileDialog dialog = new OpenFileDialog {
-                Filter = "League Files (*.league)|*.league"
-            };
-
-            if (dialog.ShowDialog() == true) {
-                StreamReader reader = new StreamReader(dialog.FileName);
-                this.LeagueData = LeagueData.ReadIn(reader);
-                this.EventData = this.LeagueData.Events[^1];
-                this.CurrentRoundIndex = this.EventData.Rounds.Count - 1;
-                this.DispatchModel(EventName.SetModel);
-            }
         }
 
         private void SaveAs() {
