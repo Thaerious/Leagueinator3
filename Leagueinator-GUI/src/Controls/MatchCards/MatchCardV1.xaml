@@ -15,7 +15,6 @@
                 <MenuItem Header="3 vs 3" Click="HndChangeFormat" Tag="VS3"/>
                 <MenuItem Header="4 vs 4" Click="HndChangeFormat" Tag="VS4"/>
                 <MenuItem Header="4321"   Click="HndChangeFormat" Tag="A4321"/>
-                <MenuItem Header="Remove Match" Click="HndRemoveMatch" Tag=""/>
             </ContextMenu>
         </Border.ContextMenu>
 

@@ -1,5 +1,6 @@
 ﻿using Leagueinator.GUI.Model.ViewModel;
 using System.Collections;
+using System.IO;
 
 namespace Leagueinator.GUI.Model {
 
@@ -15,7 +16,7 @@ namespace Leagueinator.GUI.Model {
         private readonly List<RoundData> _rounds = [];
         public IReadOnlyList<RoundData> Rounds => _rounds;
 
-        public static EventRecord ToRecord(EventData data) {
+        public static EventRecord ToRecord(EventData data) { // TODO Get rid of
             return new EventRecord(
                 data.EventName,
                 data.Date,
@@ -52,7 +53,7 @@ namespace Leagueinator.GUI.Model {
                 HashSet<TeamData> teams = [];
 
                 foreach (RoundData round in this) {
-                    foreach (MatchData match in round) {
+                    foreach (MatchData match in round.Matches) {
                         foreach (TeamData team in match.Teams) {
                             teams.Add(team);
                         }
@@ -69,10 +70,10 @@ namespace Leagueinator.GUI.Model {
         /// <param name="players"></param>
         /// <returns></returns>
         public List<MatchData> GetMatchesForTeam(IEnumerable<string> players) {
-            List<MatchData> matches = [];
+            List<MatchData> matches = [.. this.Rounds.SelectMany(r => r.Matches)];
 
             foreach (RoundData round in this) {
-                foreach (MatchData match in round) {
+                foreach (MatchData match in round.Matches) {
                     foreach (TeamData consideringTeam in match.Teams) {
                         if (consideringTeam.Equals(players)) {
                             matches.Add(match);
@@ -125,19 +126,49 @@ namespace Leagueinator.GUI.Model {
             return false;
         }
 
-        public static EventData FromRecord(LeagueData leagueData, EventRecord record) {
-            return new(leagueData) {
-                EventName = record.Name,
-                Date = record.Created,
-                DefaultMatchFormat = record.MatchFormat,
-                DefaultEnds = record.DefaultEnds,
-                DefaultLaneCount = record.LaneCount,
-                EventType = record.EventType,
-            };
-        }
-
         public IEnumerable<PlayerRecord> Records() {
             return this.SelectMany(roundData => roundData.Records());
+        }
+
+        internal void WriteOut(StreamWriter writer) {
+            writer.WriteLine(
+                string.Join("|",
+                    this.EventName,
+                    this.Date.ToString("o"),
+                    this.DefaultMatchFormat,
+                    this.DefaultEnds,
+                    this.DefaultLaneCount,
+                    this.EventType,
+                    this.Rounds.Count
+                )
+            );
+
+            foreach (RoundData roundData in this.Rounds) {
+                roundData.WriteOut(writer);
+            }
+        }
+
+        public static EventData ReadIn(LeagueData leagueData, StreamReader reader) {
+            string? line = reader.ReadLine() ?? throw new EndOfStreamException("Unexpected end of file while reading EventData");
+            string[] parts = line.Split('|');
+            if (parts.Length != 7) throw new FormatException($"Invalid EventData format: '{line}'");
+
+            EventData eventData = new (leagueData) {
+                EventName = parts[0],
+                Date = DateTime.Parse(parts[1], null, System.Globalization.DateTimeStyles.RoundtripKind),
+                DefaultMatchFormat = Enum.Parse<MatchFormat>(parts[2]),
+                DefaultEnds = int.Parse(parts[3]),
+                DefaultLaneCount = int.Parse(parts[4]),
+                EventType = Enum.Parse<EventType>(parts[5])
+            };
+
+            int roundCount = int.Parse(parts[6]);
+            for (int i = 0; i < roundCount; i++) {
+                RoundData roundData = RoundData.ReadIn(eventData, reader);
+                eventData._rounds.Add(roundData);
+            }
+
+            return eventData;
         }
     }
 }

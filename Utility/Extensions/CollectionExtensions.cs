@@ -1,6 +1,17 @@
 ﻿
 namespace Utility.Extensions {
     public static class CollectionExtensions {
+        public static IEnumerable<TSource> DistinctBy<TSource, TKey>(
+            this IEnumerable<TSource> source,
+            Func<TSource, TKey> keySelector
+        ){
+            var seen = new HashSet<TKey>();
+            foreach (var element in source) {
+                if (seen.Add(keySelector(element))) {
+                    yield return element;
+                }
+            }
+        }
 
         public static string JoinString<K, V>(this IEnumerable<KeyValuePair<K, V>> collection, string delim = ",") {
             if (!collection.Any()) return "";
@@ -13,7 +24,7 @@ namespace Utility.Extensions {
             string[] array = collection.Select(item => item.ToString()).Select(s => $"{wrapper}{s}{wrapper}").ToArray();
             return string.Join(delim, array);
         }
-        
+
         public static T Dequeue<T>(this List<T> list) {
             T t = list.First();
             list.RemoveAt(0);

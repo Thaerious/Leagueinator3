@@ -15,7 +15,7 @@ namespace Leagueinator.GUI.Controllers.NamedEvents {
             Logger.Log($"Register handler: '{receiver.GetType().Name}'");
             if (startPaused) Paused.Add(receiver);
 
-            var methods = receiver.GetType().GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.DeclaredOnly);
+            var methods = receiver.GetType().GetMethods(BindingFlags.Static | BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.DeclaredOnly);
 
             foreach (MethodInfo method in methods) {
                 var attrs = method.GetCustomAttributes<NamedEventHandler>();
@@ -60,7 +60,7 @@ namespace Leagueinator.GUI.Controllers.NamedEvents {
                     orderedArgs.Add(p.DefaultValue!);
                 }
                 else {
-                    throw new KeyNotFoundException($"Parameter '{p.Name}' for '{method.DeclaringType!.GetType().Name}.{method.Name}' not found in event data {args.Trace}.");
+                    throw new KeyNotFoundException($"Method argument '{p.Name}' for '{receiver.GetType().Name}.{method.Name}' not found for event '{args.EventName}' dispatched by '{args.Source.GetType().Name}'.");
                 }
             }
 

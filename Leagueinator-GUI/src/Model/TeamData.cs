@@ -1,4 +1,7 @@
 ﻿
+using Leagueinator.GUI.Model.ViewModel;
+using System.Diagnostics;
+using System.IO;
 using System.Text.Json.Serialization;
 
 namespace Leagueinator.GUI.Model {
@@ -6,7 +9,7 @@ namespace Leagueinator.GUI.Model {
 
         private readonly string[] _names = [.. Enumerable.Repeat(string.Empty, size)];
         public IReadOnlyList<string> Names => _names;
-                
+
         public int Index => this.Parent.Teams.ToList().IndexOf(this);
 
         public MatchData Parent { get; } = matchData;
@@ -35,7 +38,7 @@ namespace Leagueinator.GUI.Model {
         public TeamData Copy() {
             var teamData = new TeamData(this.Parent, this._names.Length);
             for (int i = 0; i < this._names.Length; i++) {
-                teamData._names[i] = this._names[i]; 
+                teamData._names[i] = this._names[i];
             }
             return teamData;
         }
@@ -55,7 +58,7 @@ namespace Leagueinator.GUI.Model {
         /// <param name="names"></param>
         /// <returns></returns>
         public bool Equals(IEnumerable<string> names) {
-            if (names is null)  return false;            
+            if (names is null) return false;
 
             if (this._names.Length != names.Count()) return false;
 
@@ -113,6 +116,34 @@ namespace Leagueinator.GUI.Model {
 
         internal bool IsFull() {
             return this.CountPlayers() == this._names.Length;
+        }
+
+        public IEnumerable<PlayerRecord> Records() {
+            for (int i = 0; i < this._names.Length; i++) {
+                string name = this._names[i];
+                if (string.IsNullOrEmpty(name)) continue;
+                yield return new PlayerRecord(this, i);
+            }
+        }
+
+        internal void WriteOut(StreamWriter writer) {
+            string[] s = [this.Parent.Score[this.Index].ToString(), ..this.Names];
+            writer.WriteLine(string.Join("|", s));
+        }
+
+        internal static TeamData ReadIn(MatchData matchData, int index, StreamReader reader) {
+            string? line = reader.ReadLine() ?? throw new EndOfStreamException("Unexpected end of file while reading EventData");
+            string[] parts = line.Split('|');
+            if (parts.Length != matchData.MatchFormat.TeamSize() + 1) throw new FormatException("Invalid EventData format");
+
+            TeamData teamData = new(matchData, matchData.MatchFormat.TeamSize());
+
+            for (int i = 1; i < parts.Length; i++) {
+                teamData.Set(i - 1, parts[i]);
+            }
+
+            matchData.Score[index] = int.Parse(parts[0]);
+            return teamData;
         }
     }
 }

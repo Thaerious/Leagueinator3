@@ -22,12 +22,12 @@ namespace Leagueinator.GUI.Model.Results.BowlsPlus {
         public RoundResults(RoundData RoundData) {
             List<SingleResult> results = [];
 
-            foreach (MatchData matchData in RoundData) {
+            foreach (MatchData matchData in RoundData.Matches) {
                 if (matchData.CountPlayers() == 0) continue;
 
                 MatchResult matchResult = new() {Lane = matchData.Lane };
 
-                for (int team = 0; team < matchData.Teams.Length; team++) {
+                for (int team = 0; team < matchData.Teams.Count; team++) {
                     SingleResult result = new(matchData, team);
                     results.Add(result);
                     matchResult.Add(result);

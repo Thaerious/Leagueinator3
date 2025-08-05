@@ -40,21 +40,14 @@
                 <MenuItem Header="Load" Click="HndLoadLeagueClick"/>
                 <MenuItem Header="Save" Command="Save" InputGestureText="Ctrl+S"/>
                 <MenuItem Header="Save As" Command="SaveAs" InputGestureText="Ctrl+Shift+S"/>
-                <MenuItem Header="Event Manager" Click="HndEventManagerClick"/>
                 <MenuItem Header="Exit" Click="HndExitClick"/>
             </MenuItem>
 
             <!-- Edit Menu -->
             <MenuItem Header="Edit">
-                <MenuItem Header="Settings" Click="HndSettings"/>
                 <MenuItem Header="Add Round" Click="HndGenEmptyRound"/>
                 <MenuItem Header="Copy Round" Click="HndCopyRnd"/>
                 <MenuItem Header="Delete Round" Click="HndDeleteRnd"/>
-            </MenuItem>
-
-            <!-- Action Menu -->
-            <MenuItem Header="Action">
-                <MenuItem Header="Assign Lanes" Click="HndAssignLanes"/>
             </MenuItem>
 
             <!-- Result (Report) Menu -->

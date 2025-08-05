@@ -1,4 +1,6 @@
 ﻿using Leagueinator.GUI.Model.ViewModel;
+using System.Diagnostics;
+using System.IO;
 using System.Text;
 
 namespace Leagueinator.GUI.Model {
@@ -6,7 +8,7 @@ namespace Leagueinator.GUI.Model {
     /// <summary>
     /// Represents a match, including its format, teams, scores, and related metadata.
     /// </summary>
-    public class MatchData(RoundData RoundData) : IHasParent<RoundData>{
+    public class MatchData(RoundData RoundData) : IHasParent<RoundData> {
         private MatchFormat _matchFormat = MatchFormat.VS2;
 
         public RoundData Parent { get; } = RoundData;
@@ -51,7 +53,7 @@ namespace Leagueinator.GUI.Model {
         /// <summary>
         /// Gets or sets the scores for each i in the match.
         /// </summary>
-        public int[] Score { get; set; } = [];
+        public int[] Score { get; set; } = [];  // TODO Probably should be on team data, can create this in Linq
 
         /// <summary>
         /// Gets or sets the tiebreaker value for the match. Default is -1 (no tiebreaker).
@@ -101,7 +103,7 @@ namespace Leagueinator.GUI.Model {
                 sb.Append($"[{team}]");
             }
 
-            sb.Append($"Score: {string.Join(", ", this.Score)} | TB: {this.TieBreaker} | Ends: {this.Ends}");
+            sb.Append($" | Score: {string.Join(", ", this.Score)} | TB: {this.TieBreaker} | Ends: {this.Ends}");
             return sb.ToString();
         }
 
@@ -115,46 +117,50 @@ namespace Leagueinator.GUI.Model {
             }
         }
 
-        /// <summary>
-        /// CopyRound the i to the next empty slot in the match.
-        /// If there are no empty slots, it throws an exception.
-        /// </summary>
-        /// <param name="teamData"></param>
-        /// <exception cref="NotImplementedException"></exception>
-        internal void AddTeam(TeamData teamData) {
-            foreach (TeamData team in this.Teams) {
-                if (team.IsEmpty()) {
-                    team.CopyFrom(teamData);
-                    return;
-                }
-            }
-            throw new ModelConstraintException("No empty team slot available in the match.");
+        internal List<string> PlayerNames() {
+            return [.. this.Teams.SelectMany(t => t.Names).Where(name => !string.IsNullOrEmpty(name))];
         }
 
-        /// <summary>
-        /// CopyRound the i to the next empty slot in the match.
-        /// If there are no empty slots, it throws an exception.
-        /// </summary>
-        /// <param name="teamData"></param>
-        /// <exception cref="NotImplementedException"></exception>
-        internal void AddTeam(IEnumerable<string> players) {
-            foreach (TeamData team in this.Teams) {
-                if (team.IsEmpty()) {
-                    team.CopyFrom(players);
-                    return;
-                }
-            }
-            throw new ModelConstraintException("No empty team slot available in the match.");
+        public IEnumerable<PlayerRecord> Records() {
+            return this.Teams.SelectMany(team => team.Records());
         }
 
-        public static MatchData FromRecord(RoundData parent, MatchRecord record) {
-            return new MatchData(parent) {
-                MatchFormat = record.MatchFormat,
-                Ends = record.Ends,
-                TieBreaker = record.TieBreaker,
-                Lane = record.Lane,
-                Score = record.Score
+        internal void WriteOut(StreamWriter writer) {
+            writer.WriteLine(
+                string.Join("|",
+                    this.MatchFormat,
+                    this.Ends,
+                    this.Lane,
+                    this.TieBreaker,
+                    this.Teams.Count
+                )
+            );
+
+            foreach (TeamData teamData in this.Teams) {
+                teamData.WriteOut(writer);
+            }
+        }
+
+        internal static MatchData ReadIn(RoundData roundData, StreamReader reader) {
+            string? line = reader.ReadLine() ?? throw new EndOfStreamException("Unexpected end of file while reading EventData");
+            string[] parts = line.Split('|');
+            if (parts.Length != 5) throw new FormatException("Invalid EventData format");
+
+            MatchData matchData = new(roundData) {
+                MatchFormat = Enum.Parse<MatchFormat>(parts[0]),
+                Ends        = int.Parse(parts[1]),
+                Lane        = int.Parse(parts[2]),
+                TieBreaker  = int.Parse(parts[3]),
             };
+
+            int teamCount = int.Parse(parts[4]);
+            for (int i = 0; i < teamCount; i++) {
+                TeamData teamData = TeamData.ReadIn(matchData, i, reader);
+                matchData._teams[i] = teamData;
+            }
+
+            return matchData;
         }
     }
 }
+

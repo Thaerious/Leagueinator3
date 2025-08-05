@@ -51,7 +51,7 @@
         SwapTeams,
         TieBreakerUpdated,
         Update,
-        SetEventNames,
+        SetModel,
         UpdateRoundCount,
         SetSelectedEvent,
     }

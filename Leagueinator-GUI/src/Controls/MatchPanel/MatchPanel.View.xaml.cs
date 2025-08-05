@@ -7,6 +7,7 @@ using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Threading;
+using Utility.Extensions;
 
 namespace Leagueinator.GUI.Controls.MatchPanel {
     /// <summary>
@@ -86,10 +87,9 @@ namespace Leagueinator.GUI.Controls.MatchPanel {
             foreach (PlayerRecord roundRecord in playerRecords) {
                 MatchCard matchCard = (MatchCard)this.OuterPanel.Children[roundRecord.Lane];
                 TeamCard teamCard = matchCard.GetTeamCard(roundRecord.Team);
-                teamCard[roundRecord.Pos] = roundRecord.Name;
+                teamCard[roundRecord.PlayerPos] = roundRecord.Name;
             }
         }
-
 
         public void RemoveMatch(int index) {
             this.OuterPanel.Children.RemoveAt(index);

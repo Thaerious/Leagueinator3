@@ -1,10 +1,8 @@
-﻿using Utility.Extensions;
-using System.Diagnostics;
-using System.Text;
+﻿using System.Text;
 using Leagueinator.GUI.Model.ViewModel;
+using System.IO;
 
 namespace Leagueinator.GUI.Model {
-    public record PlayerLocation(int Lane, int TeamIndex, int Position);
 
     public class RoundData(EventData EventData) : object(), IHasParent<EventData> {
 
@@ -63,7 +61,7 @@ namespace Leagueinator.GUI.Model {
         }
 
         public IEnumerable<PlayerRecord> Records() {
-            return this.Parent.Records().Where(r => r.Round == this.Index);
+            return this.Matches.SelectMany(match => match.Records());
         }
 
         public override string ToString() {
@@ -73,6 +71,24 @@ namespace Leagueinator.GUI.Model {
                 sb.Append('\n');
             }
             return sb.ToString();
+        }
+
+        internal void WriteOut(StreamWriter writer) {
+            writer.WriteLine(this.Matches.Count);
+            foreach (MatchData match in this._matches) {
+                match.WriteOut(writer);
+            }
+        }
+
+        internal static RoundData ReadIn(EventData eventData, StreamReader reader) {
+            RoundData roundData = new(eventData);
+            int matchCount = int.Parse(reader?.ReadLine() ?? throw new FormatException("Invalid save format"));
+            
+            for (int i = 0; i < matchCount; i++) {
+                MatchData matchData = MatchData.ReadIn(roundData, reader);
+                roundData._matches.Add(matchData);
+            }
+            return roundData;
         }
     }
 }

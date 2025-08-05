@@ -38,5 +38,10 @@ namespace Leagueinator.GUI.Forms.Main {
                 this.Title = $"{title} [✘]";
             }
         }
+
+        [NamedEventHandler(EventName.Notification)]
+        internal static void DoNotification(string message) {
+            MessageBox.Show(message, "Notification", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
     }
 }

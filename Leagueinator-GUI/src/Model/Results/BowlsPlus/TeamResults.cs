@@ -10,7 +10,7 @@
         public TeamResults(MatchData matchData, int teamIndex) {
             this.Result = this.CalcResult(matchData);
             this.TeamIndex = teamIndex;
-            this.Players = new(matchData.GetPlayers());
+            this.Players = matchData.PlayerNames();
             this.Ends = matchData.Ends;
             this.Bowls = matchData.Score[teamIndex];
             this.Against = matchData.Score.Sum() - this.Bowls;
@@ -44,7 +44,7 @@
 
         public readonly int Against;
 
-        public readonly Players Players;
+        public readonly List<string> Players;
 
         public readonly int TeamIndex;
 

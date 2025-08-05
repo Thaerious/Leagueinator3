@@ -112,7 +112,7 @@ namespace Leagueinator.GUI.Controls.RoundPanel {
             this.EventButtons.Remove(button);
         }
 
-        [NamedEventHandler(EventName.SetEventNames)]
+        [NamedEventHandler(EventName.SetModel)]
         public void DoSetEventNames(List<string> eventNames, string selectedEvent, int roundCount, int roundIndex) {
             this.ActiveRoundButton = roundIndex;
             this.EventButtons.Clear();

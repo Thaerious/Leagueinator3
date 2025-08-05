@@ -106,22 +106,25 @@ namespace Leagueinator.GUI.Forms.Print {
         }
 
         private TableRow AddResult(SingleResult result) {
-            List<string> names = [..result.MatchData.GetPlayers()];
-            names = [.. names.Except(result.Players)];
-            var joinNames = string.Join(", ", names);
+            throw new NotImplementedException();
+            //List<string> names = [.. result.MatchData.Teams.SelectMany(t => t.Names).Select(name  => !string.IsNullOrEmpty(name))];
 
 
-            return new TableRow {
-                Cells = {
-                    new TableCell(new Paragraph(new Run(result.Result.ToString()))),
-                    new TableCell(new Paragraph(new Run($"{result.BowlsFor}+{result.PlusFor}"))),
-                    new TableCell(new Paragraph(new Run($"{result.BowlsAgainst}+{result.PlusAgainst}"))),
-                    new TableCell(new Paragraph(new Run(result.MatchData.TieBreaker == result.TeamIndex ? "✓" : " "))),
-                    new TableCell(new Paragraph(new Run($"{result.MatchData.Ends}"))),
-                    new TableCell(new Paragraph(new Run($"{result.MatchData.Lane + 1}"))),
-                    new TableCell(new Paragraph(new Run($"{joinNames}"))),
-                }
-            };
+            //names = [.. names.Except(result.Players)];
+            //var joinNames = string.Join(", ", names);
+
+
+            //return new TableRow {
+            //    Cells = {
+            //        new TableCell(new Paragraph(new Run(result.Result.ToString()))),
+            //        new TableCell(new Paragraph(new Run($"{result.BowlsFor}+{result.PlusFor}"))),
+            //        new TableCell(new Paragraph(new Run($"{result.BowlsAgainst}+{result.PlusAgainst}"))),
+            //        new TableCell(new Paragraph(new Run(result.MatchData.TieBreaker == result.TeamIndex ? "✓" : " "))),
+            //        new TableCell(new Paragraph(new Run($"{result.MatchData.Ends}"))),
+            //        new TableCell(new Paragraph(new Run($"{result.MatchData.Lane + 1}"))),
+            //        new TableCell(new Paragraph(new Run($"{joinNames}"))),
+            //    }
+            //};
         }
 
         private void Hnd_Print(object sender, RoutedEventArgs e) {

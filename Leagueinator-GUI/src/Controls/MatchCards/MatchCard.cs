@@ -12,7 +12,7 @@ namespace Leagueinator.GUI.Controls.MatchCards {
 
     /// <summary>
     /// Abstract base class for a user control that represents a match card UI element.
-    /// Handles match-related UI and dispatches named events for interactions.
+    /// Handles match-related UI and dispatches named _events for interactions.
     /// </summary>
     public abstract partial class MatchCard : UserControl {
         /// <summary>
