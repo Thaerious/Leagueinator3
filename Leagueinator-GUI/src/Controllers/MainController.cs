@@ -382,6 +382,8 @@ namespace Leagueinator.GUI.Controllers {
             this.RoundData.Matches[toLane].Teams[toIndex].CopyFrom(namesFrom);
             this.DispatchRoundUpdated(EventName.RoundChanged);
             this.DispatchSetTitle(this.Title, false);
+
+            Debug.WriteLine(this.GetShow());
         }
 
         #endregion
@@ -412,7 +414,6 @@ namespace Leagueinator.GUI.Controllers {
 
             if (dialog.ShowDialog() == true) {
                 this.Save(dialog.FileName);
-                this.DispatchSetTitle(this.Title, true);
             }
         }
 
@@ -420,7 +421,7 @@ namespace Leagueinator.GUI.Controllers {
             StreamWriter writer = new(filename);
             this.LeagueData.WriteOut(writer);
             writer.Close();
-            this.DispatchSetTitle(this.Title, true);
+            this.DispatchSetTitle(filename, true);
         }
 
         private void RemoveRound(int index) {

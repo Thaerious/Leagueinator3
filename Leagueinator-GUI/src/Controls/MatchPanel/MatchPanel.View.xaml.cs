@@ -49,7 +49,6 @@ namespace Leagueinator.GUI.Controls.MatchPanel {
 
                 // Assign tab order & set data when loaded
                 matchCard.Loaded += (s, e) => {
-                    matchCard.PauseEvents();
                     matchCard.Lane = matchRecord.Lane;
                     matchCard.SetEnds(matchRecord.Ends);
                     matchCard.SetTieBreaker(matchRecord.TieBreaker);
@@ -60,7 +59,6 @@ namespace Leagueinator.GUI.Controls.MatchPanel {
                     if (cardsLoaded == cardsToLoad) {
                         this.AssignTabOrder();
                         this.SetPlayerNames(playerRecords);
-                        matchCard.ResumeEvents();
                     }
                 };
             }

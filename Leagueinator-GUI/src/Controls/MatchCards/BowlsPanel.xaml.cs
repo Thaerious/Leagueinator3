@@ -1,7 +1,6 @@
-﻿using Utility.Extensions;
+﻿using System.Diagnostics;
 using System.Windows.Controls;
 using Leagueinator.Utility.Extensions;
-using Leagueinator.GUI.Controls.MatchCards;
 
 namespace Leagueinator.GUI.Controls.MatchCards {
     /// <summary>
@@ -12,13 +11,12 @@ namespace Leagueinator.GUI.Controls.MatchCards {
         public BowlsPanel() {
             InitializeComponent();
             this.Loaded += (s, e) => {
-                this.CheckTie.Checked       += this.MatchCard.HndTieValueChanged;
-                this.CheckTie.Unchecked     += this.MatchCard.HndTieValueChanged;
+                MatchCard matchCard = this.Ancestors<MatchCard>().First() ?? throw new NullReferenceException(); ;
+                this.CheckTie.Checked += matchCard.HndTieValueChanged;
+                this.CheckTie.Unchecked += matchCard.HndTieValueChanged;
                 this.Bowls.PreviewTextInput += InputHandlers.OnlyNumbers;
-                this.Bowls.KeyDown          += InputHandlers.NextControlOnEnter;
+                this.Bowls.KeyDown += InputHandlers.NextControlOnEnter;
             };
         }
-
-        public MatchCard MatchCard => this.Ancestors<MatchCard>().First();
     }
 }

@@ -14,12 +14,12 @@ namespace Leagueinator.GUI.Controls.MatchCards {
         public TeamCard() {
             this.AllowDrop = true;
             this.Loaded += this.HndLoaded;
-
             this.LostFocus += this.TeamCard_LostFocus;
         }
 
         private void TeamCard_LostFocus(object sender, RoutedEventArgs e) {
             if (e.OriginalSource is TextBox textBox) {
+                if (!textBox.Tag.Equals("PlayerName")) return;
                 this.DispatchChangeName(textBox);
             }
         }
@@ -57,8 +57,6 @@ namespace Leagueinator.GUI.Controls.MatchCards {
             foreach (TextBox textBox in this.FindByTag("PlayerName").Cast<TextBox>()) {
                 textBox.KeyUp             += this.NameTextBoxChange;
                 textBox.LostKeyboardFocus += this.DispatchChangeName;
-                textBox.DragEnter         += controller.HndDragEnter;
-                textBox.PreviewDragOver   += controller.HndPreviewDragOver;
                 textBox.AllowDrop = true;
             }
         }
