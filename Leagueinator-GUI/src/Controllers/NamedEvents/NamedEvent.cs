@@ -1,6 +1,5 @@
 ﻿using Utility;
 using System.Reflection;
-using System.Diagnostics;
 
 namespace Leagueinator.GUI.Controllers.NamedEvents {
     public static class NamedEvent {
@@ -66,7 +65,7 @@ namespace Leagueinator.GUI.Controllers.NamedEvents {
 
             try {
                 string argstring = string.Join(", ", args.Data.Select(kv => $"{kv.Key}={kv.Value}"));
-                Logger.Log($"Event <- '{args.EventName}'({argstring}) from '{args.Source.GetType().Name}' handled by '{receiver.GetType().Name}'.");
+                Logger.Log($"         '{args.EventName}'({argstring}) from '{args.Source.GetType().Name}' handled by '{receiver.GetType().Name}'.");
                 method.Invoke(receiver, [.. orderedArgs]);
                 args.Handled = true;
             }
@@ -97,7 +96,7 @@ namespace Leagueinator.GUI.Controllers.NamedEvents {
             InvokeHandlers(args);
 
             if (args.Handled == false) {
-                Logger.Log($"Event <> '{eventName}' dispatched by '{source.GetType().Name} not handled.");
+                Logger.Log($"         '{eventName}' dispatched by '{source.GetType().Name} not handled.");
             }
         }
 

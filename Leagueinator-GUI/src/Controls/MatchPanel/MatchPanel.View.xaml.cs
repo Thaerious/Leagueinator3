@@ -15,7 +15,6 @@ namespace Leagueinator.GUI.Controls.MatchPanel {
     /// </summary>
     public partial class MatchPanel : UserControl {
 
-
         public MatchPanel() {
             NamedEvent.RegisterHandler(this, true);
             InitializeComponent();
@@ -27,6 +26,7 @@ namespace Leagueinator.GUI.Controls.MatchPanel {
         }
 
         public void HndClearFocus(object sender, EventArgs e) {
+            Debug.WriteLine("MatchPanel.HndClearFocus");
             throw new NotImplementedException();
         }
 
@@ -49,7 +49,7 @@ namespace Leagueinator.GUI.Controls.MatchPanel {
 
                 // Assign tab order & set data when loaded
                 matchCard.Loaded += (s, e) => {
-                    this.PauseEvents();
+                    matchCard.PauseEvents();
                     matchCard.Lane = matchRecord.Lane;
                     matchCard.SetEnds(matchRecord.Ends);
                     matchCard.SetTieBreaker(matchRecord.TieBreaker);
@@ -60,7 +60,7 @@ namespace Leagueinator.GUI.Controls.MatchPanel {
                     if (cardsLoaded == cardsToLoad) {
                         this.AssignTabOrder();
                         this.SetPlayerNames(playerRecords);
-                        this.ResumeEvents();
+                        matchCard.ResumeEvents();
                     }
                 };
             }

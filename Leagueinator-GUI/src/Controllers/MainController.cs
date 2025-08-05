@@ -6,6 +6,7 @@ using Leagueinator.GUI.Forms.Main;
 using Leagueinator.GUI.Model;
 using Leagueinator.GUI.Model.ViewModel;
 using Microsoft.Win32;
+using System.Diagnostics;
 using System.IO;
 using System.Windows;
 
@@ -37,7 +38,7 @@ namespace Leagueinator.GUI.Controllers {
 
         internal RoundData RoundData => this.EventData.Rounds[this.CurrentRoundIndex];
 
-        private string FileName { get; set; } = "Leagueinator";
+        private string Title { get; set; } = "Leagueinator";
 
         private bool IsSaved { get; set; } = true;
 
@@ -75,6 +76,8 @@ namespace Leagueinator.GUI.Controllers {
 
         public void DispatchSetTitle(string title, bool saved) {
             this.IsSaved = saved;
+            this.Title = title;
+
             this.DispatchEvent(EventName.SetTitle, new() {
                 ["title"] = title,
                 ["saved"] = saved
@@ -197,26 +200,25 @@ namespace Leagueinator.GUI.Controllers {
                 this.LeagueData = LeagueData.ReadIn(reader);
                 this.EventData = this.LeagueData.Events[^1];
                 this.CurrentRoundIndex = this.EventData.Rounds.Count - 1;
-                this.DispatchSetTitle(this.FileName, true);
+                this.DispatchSetTitle(dialog.FileName, true);
                 this.DispatchModel(EventName.SetModel);
             }
         }
 
         [NamedEventHandler(EventName.SaveLeague)]
         internal void DoSave() {
-            if (this.FileName != "Leagueinator") {
-                this.Save(this.FileName);
+            if (this.Title != "Leagueinator") {
+                this.Save(this.Title);
             }
             else {
                 this.SaveAs();
             }
-            this.DispatchSetTitle(this.FileName, true);
         }
 
         [NamedEventHandler(EventName.SaveLeagueAs)]
         internal void DoSaveAs() {
             this.SaveAs();
-            this.DispatchSetTitle(this.FileName, true);
+            this.DispatchSetTitle(this.Title, true);
         }
 
         [NamedEventHandler(EventName.NewLeague)]
@@ -224,8 +226,8 @@ namespace Leagueinator.GUI.Controllers {
             this.NewLeague();
             this.DispatchModel(EventName.SetModel);
             this.DispatchSetTitle("Leagueinator", true);
-            this.FileName = "Leagueinator";
-            this.DispatchSetTitle(this.FileName, true);
+            this.Title = "Leagueinator";
+            this.DispatchSetTitle(this.Title, true);
         }
         #endregion
 
@@ -239,7 +241,7 @@ namespace Leagueinator.GUI.Controllers {
         //    //RoundData newRound = assignLanes.Run();
         //    //this.EventData.ReplaceRound(this.CurrentRoundIndex, newRound);
         //    //this.DispatchRoundUpdated(EventName.RoundChanged);
-        //    //this.DispatchSetTitle(this.FileName, false);
+        //    //this.DispatchSetTitle(this.Title, false);
         //}
 
         [NamedEventHandler(EventName.AddRound)]
@@ -253,7 +255,7 @@ namespace Leagueinator.GUI.Controllers {
             int index = roundIndex ?? this.CurrentRoundIndex;
             this.RemoveRound(index);
             this.DispatchRoundUpdated(EventName.RoundDeleted);
-            this.DispatchSetTitle(this.FileName, false);
+            this.DispatchSetTitle(this.Title, false);
         }
 
         [NamedEventHandler(EventName.SelectRound)]
@@ -273,7 +275,7 @@ namespace Leagueinator.GUI.Controllers {
             RoundData newRound = this.RoundData.Copy();
             this.EventData.AddRound(newRound);
             this.AddRound(newRound);
-            this.DispatchSetTitle(this.FileName, false);
+            this.DispatchSetTitle(this.Title, false);
         }
         #endregion
 
@@ -297,6 +299,10 @@ namespace Leagueinator.GUI.Controllers {
         # region Match, Team, Player Handlers  
         [NamedEventHandler(EventName.ChangePlayerName)]
         internal void DoPlayerName(string name, int lane, int teamIndex, int position) {
+            if (this.RoundData.Matches[lane].Teams[teamIndex].Names[position].Equals(name)){
+                return;
+            }
+
             name = name.Trim();
 
             if (this.RoundData.HasPlayer(name)) {
@@ -319,7 +325,7 @@ namespace Leagueinator.GUI.Controllers {
                 ["name"] = name
             });
 
-            this.DispatchSetTitle(this.FileName, false);
+            this.DispatchSetTitle(this.Title, false);
         }
 
         [NamedEventHandler(EventName.ChangeEnds)]
@@ -334,7 +340,7 @@ namespace Leagueinator.GUI.Controllers {
                 ["ends"] = ends,
             });
 
-            this.DispatchSetTitle(this.FileName, false);
+            this.DispatchSetTitle(this.Title, false);
         }
 
         [NamedEventHandler(EventName.ChangeTieBreaker)]
@@ -345,7 +351,7 @@ namespace Leagueinator.GUI.Controllers {
                 ["teamIndex"] = teamIndex,
             });
 
-            this.DispatchSetTitle(this.FileName, false);
+            this.DispatchSetTitle(this.Title, false);
         }
 
         [NamedEventHandler(EventName.ChangeBowls)]
@@ -357,14 +363,14 @@ namespace Leagueinator.GUI.Controllers {
                 ["bowls"] = (int[])this.RoundData.Matches[lane].Score.Clone()
             });
 
-            this.DispatchSetTitle(this.FileName, false);
+            this.DispatchSetTitle(this.Title, false);
         }
 
         [NamedEventHandler(EventName.ChangeMatchFormat)]
         internal void DoMatchFormat(int lane, MatchFormat format) {
             this.RoundData.Matches[lane].MatchFormat = format;
             this.DispatchRoundUpdated(EventName.RoundChanged);
-            this.DispatchSetTitle(this.FileName, false);
+            this.DispatchSetTitle(this.Title, false);
         }
 
         [NamedEventHandler(EventName.SwapTeams)]
@@ -375,7 +381,7 @@ namespace Leagueinator.GUI.Controllers {
             this.RoundData.Matches[fromLane].Teams[fromIndex].CopyFrom(namesTo);
             this.RoundData.Matches[toLane].Teams[toIndex].CopyFrom(namesFrom);
             this.DispatchRoundUpdated(EventName.RoundChanged);
-            this.DispatchSetTitle(this.FileName, false);
+            this.DispatchSetTitle(this.Title, false);
         }
 
         #endregion
@@ -406,6 +412,7 @@ namespace Leagueinator.GUI.Controllers {
 
             if (dialog.ShowDialog() == true) {
                 this.Save(dialog.FileName);
+                this.DispatchSetTitle(this.Title, true);
             }
         }
 
@@ -413,8 +420,7 @@ namespace Leagueinator.GUI.Controllers {
             StreamWriter writer = new(filename);
             this.LeagueData.WriteOut(writer);
             writer.Close();
-            this.FileName = filename;
-            this.IsSaved = true;
+            this.DispatchSetTitle(this.Title, true);
         }
 
         private void RemoveRound(int index) {
@@ -431,7 +437,7 @@ namespace Leagueinator.GUI.Controllers {
         private string GetShow() {
             string sb = string.Empty;
             sb += "Controller Data\n";
-            sb += $"File Name: {this.FileName}\n";
+            sb += $"File Name: {this.Title}\n";
             sb += $"Is Saved: {this.IsSaved}\n";
             sb += $"Current Round Index: {this.CurrentRoundIndex}/{this.EventData.Count()}\n";
             sb += $"No. of Events: {this.LeagueData.Events.Count}\n";
@@ -462,7 +468,7 @@ namespace Leagueinator.GUI.Controllers {
 
             this.CurrentRoundIndex = this.EventData.Rounds.Count - 1;
             this.DispatchRoundUpdated(EventName.RoundAdded);
-            this.DispatchSetTitle(this.FileName, false);
+            this.DispatchSetTitle(this.Title, false);
         }
         #endregion
     }

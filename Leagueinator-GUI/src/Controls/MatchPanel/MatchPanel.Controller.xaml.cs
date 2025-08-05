@@ -47,8 +47,10 @@ namespace Leagueinator.GUI.Controls.MatchPanel {
         [NamedEventHandler(EventName.RoundAdded)]
         [NamedEventHandler(EventName.RoundChanged)]
         [NamedEventHandler(EventName.SetModel)]
-        internal void DoSetEventNames(List<MatchRecord> matchRecords, List<PlayerRecord> playerRecords) {            
+        internal void DoSetModel(List<MatchRecord> matchRecords, List<PlayerRecord> playerRecords) {            
+            this.PauseEvents();
             this.DoPopulateMatchCards(matchRecords, playerRecords);
+            this.ResumeEvents();
         }
     }
 }

@@ -2,6 +2,7 @@
 using Leagueinator.GUI.Controllers.DragDropManager;
 using Leagueinator.GUI.Controllers.NamedEvents;
 using Leagueinator.Utility.Extensions;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -13,6 +14,14 @@ namespace Leagueinator.GUI.Controls.MatchCards {
         public TeamCard() {
             this.AllowDrop = true;
             this.Loaded += this.HndLoaded;
+
+            this.LostFocus += this.TeamCard_LostFocus;
+        }
+
+        private void TeamCard_LostFocus(object sender, RoutedEventArgs e) {
+            if (e.OriginalSource is TextBox textBox) {
+                this.DispatchChangeName(textBox);
+            }
         }
 
         #region Properties
@@ -54,7 +63,7 @@ namespace Leagueinator.GUI.Controls.MatchCards {
             }
         }
 
-        protected void DispatchChangeName(object sender, RoutedEventArgs e) {
+        protected void DispatchChangeName(object sender, RoutedEventArgs? _ = null) {
             if (sender is not TextBox textBox) return;
             var parent = (StackPanel)textBox.Parent ?? throw new NullReferenceException("Parent is not a StackPanel.");
 
@@ -72,6 +81,8 @@ namespace Leagueinator.GUI.Controls.MatchCards {
             if (e is KeyEventArgs keyArgs) {
                 if (keyArgs.Key == Key.Enter) {
                     this.DispatchChangeName(sender, e);
+
+                    // Focus the next element.
                     TraversalRequest request = new TraversalRequest(FocusNavigationDirection.Next);
                     textBox.MoveFocus(request);
                 }

@@ -12,12 +12,12 @@
     >
 
     <Window.CommandBindings>
-        <CommandBinding Command="Save" Executed="HndSaveLeagueClick"/>
+        <CommandBinding Command="Save"   Executed="HndSaveLeagueClick"/>
         <CommandBinding Command="SaveAs" Executed="HndSaveAsLeagueClick"/>
     </Window.CommandBindings>
 
     <Window.InputBindings>
-        <KeyBinding Key="S" Modifiers="Control" Command="Save"/>
+        <KeyBinding Key="S" Modifiers="Control"       Command="Save"/>
         <KeyBinding Key="S" Modifiers="Control+Shift" Command="SaveAs"/>
     </Window.InputBindings>
 
@@ -36,17 +36,17 @@
         <Menu Name="MainMenu" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3">
             <!-- File Menu -->
             <MenuItem Header="File">
-                <MenuItem Header="New" Click="HndNewLeagueClick"/>
-                <MenuItem Header="Load" Click="HndLoadLeagueClick"/>
-                <MenuItem Header="Save" Command="Save" InputGestureText="Ctrl+S"/>
+                <MenuItem Header="New"     Click="HndNewLeagueClick"/>
+                <MenuItem Header="Load"    Click="HndLoadLeagueClick"/>
+                <MenuItem Header="Save"    Command="Save" InputGestureText="Ctrl+S"/>
                 <MenuItem Header="Save As" Command="SaveAs" InputGestureText="Ctrl+Shift+S"/>
-                <MenuItem Header="Exit" Click="HndExitClick"/>
+                <MenuItem Header="Exit"    Click="HndExitClick"/>
             </MenuItem>
 
             <!-- Edit Menu -->
             <MenuItem Header="Edit">
-                <MenuItem Header="Add Round" Click="HndGenEmptyRound"/>
-                <MenuItem Header="Copy Round" Click="HndCopyRnd"/>
+                <MenuItem Header="Add Round"    Click="HndGenEmptyRound"/>
+                <MenuItem Header="Copy Round"   Click="HndCopyRnd"/>
                 <MenuItem Header="Delete Round" Click="HndDeleteRnd"/>
             </MenuItem>
 

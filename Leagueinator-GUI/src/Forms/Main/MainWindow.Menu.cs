@@ -34,11 +34,15 @@ namespace Leagueinator.GUI.Forms.Main {
         private void HndAssignPlayersRandomly(object sender, RoutedEventArgs e) {
             this.ClearFocus();
             this.DispatchEvent(EventName.AssignPlayersRandomly);
-        }   
+        }
 
         private void HndSaveLeagueClick(object sender, RoutedEventArgs e) {
             this.ClearFocus();
             this.DispatchEvent(EventName.SaveLeague);
+        }
+
+        private void HndClearFocus(object sender, RoutedEventArgs e) {
+            this.ClearFocus();
         }
 
         private void HndSaveAsLeagueClick(object sender, RoutedEventArgs e) {
