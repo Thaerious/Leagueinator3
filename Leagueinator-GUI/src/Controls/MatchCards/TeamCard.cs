@@ -38,11 +38,11 @@ namespace Leagueinator.GUI.Controls.MatchCards {
 
         public string this[int i] {
             get {
-                TextBox[] boxes = [.. this.FindByTag("PlayerName").OfType<TextBox>()];
+                TextBox[] boxes = [.. this.IsTagged("PlayerName").OfType<TextBox>()];
                 return boxes[i].Text;
             }
             set {
-                TextBox[] boxes = [.. this.FindByTag("PlayerName").OfType<TextBox>()];
+                TextBox[] boxes = [.. this.IsTagged("PlayerName").OfType<TextBox>()];
                 boxes[i].Text = value;
             }
         }
@@ -54,7 +54,7 @@ namespace Leagueinator.GUI.Controls.MatchCards {
         private void HndLoaded(object sender, RoutedEventArgs e) {
             DragDropManager<TeamCard> controller = new (this);
 
-            foreach (TextBox textBox in this.FindByTag("PlayerName").Cast<TextBox>()) {
+            foreach (TextBox textBox in this.IsTagged("PlayerName").Cast<TextBox>()) {
                 textBox.KeyUp             += this.NameTextBoxChange;
                 textBox.LostKeyboardFocus += this.DispatchChangeName;
                 textBox.AllowDrop = true;

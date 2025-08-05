@@ -28,7 +28,7 @@ namespace Leagueinator.GUI.Controls.MatchCards {
                 infoCard.TxtEnds.PreviewMouseLeftButtonDown += this.PreventCaretBehaviour;
                 infoCard.TxtEnds.GotKeyboardFocus += this.TextBoxSelectAll;
 
-                foreach (TextBox textBox in this.FindByTag("Bowls").Cast<TextBox>()) {
+                foreach (TextBox textBox in this.IsTagged("Bowls").Cast<TextBox>()) {
                     textBox.TextChanged += this.BowlsTextChanged;
                     textBox.PreviewMouseLeftButtonDown += this.PreventCaretBehaviour;
                     textBox.GotKeyboardFocus += this.TextBoxSelectAll;
@@ -51,7 +51,7 @@ namespace Leagueinator.GUI.Controls.MatchCards {
         /// </summary>
         /// <param name="teamIndex">The team index to set as tie breaker.</param>
         internal void SetTieBreaker(int teamIndex) {
-            foreach (CheckBox cb in this.FindByTag("CheckTie").Cast<CheckBox>()) {
+            foreach (CheckBox cb in this.IsTagged("CheckTie").Cast<CheckBox>()) {
                 var teamIndexForCB = cb.Ancestors<TeamCard>().FirstOrDefault()?.TeamIndex;
                 cb.IsChecked = teamIndexForCB == teamIndex;
             }
@@ -112,7 +112,7 @@ namespace Leagueinator.GUI.Controls.MatchCards {
             if (bowlsScored is null) throw new ArgumentNullException(nameof(bowlsScored));
 
             int i = 0;
-            TextBox[] bowlsTextBoxes = this.FindByTag("Bowls").Cast<TextBox>().ToArray();
+            TextBox[] bowlsTextBoxes = this.IsTagged("Bowls").Cast<TextBox>().ToArray();
             if (bowlsTextBoxes.Length != bowlsScored.Length) throw new Exception("Array length mismatch between score and textboxes.");
 
             foreach (TextBox textBox in bowlsTextBoxes) {
@@ -184,7 +184,7 @@ namespace Leagueinator.GUI.Controls.MatchCards {
         public void HndTieValueChanged(object sender, RoutedEventArgs _) {
             if (sender is not CheckBox checkBox) return;
 
-            var checkTie = this.FindByTag("CheckTie").OfType<CheckBox>().ToList();
+            var checkTie = this.IsTagged("CheckTie").OfType<CheckBox>().ToList();
             if (checkTie.Count != 2) return;
 
             int clickedIndex = checkTie.IndexOf(checkBox);

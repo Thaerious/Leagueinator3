@@ -29,8 +29,13 @@ namespace Leagueinator.GUI.Controllers.DragDropManager {
         /// </summary>
         /// <param name="_"></param>
         /// <param name="e"></param>
-        public void HndPreMouseDown(object _, MouseButtonEventArgs e) {
+        public void HndPreMouseDown(object s, MouseButtonEventArgs e) {
             if (e.LeftButton != MouseButtonState.Pressed) return;
+            if (s is not DependencyObject depo) return;
+
+            // This is needed to prevent unpredicatble focus changes when drag-drop is finished.
+            FocusManager.SetFocusedElement(FocusManager.GetFocusScope(depo), null);
+            Keyboard.ClearFocus();
 
             // If the clicked element is a TextBox or CheckBox terminate the drag operation.
             var clickedElement = e.OriginalSource as DependencyObject;

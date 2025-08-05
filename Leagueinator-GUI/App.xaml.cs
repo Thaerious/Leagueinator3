@@ -28,7 +28,6 @@ namespace Leagueinator.GUI {
                 var mainWindow = (MainWindow)this.MainWindow;
 
                 mainWindow.ContentRendered += (s, e) => {
-                    Debug.WriteLine("Main Window Loaded");
                     MainController mainController = new(mainWindow);
                     this.DispatchEvent(EventName.NewLeague);
                 };

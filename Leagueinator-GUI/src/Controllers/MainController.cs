@@ -382,8 +382,6 @@ namespace Leagueinator.GUI.Controllers {
             this.RoundData.Matches[toLane].Teams[toIndex].CopyFrom(namesFrom);
             this.DispatchRoundUpdated(EventName.RoundChanged);
             this.DispatchSetTitle(this.Title, false);
-
-            Debug.WriteLine(this.GetShow());
         }
 
         #endregion

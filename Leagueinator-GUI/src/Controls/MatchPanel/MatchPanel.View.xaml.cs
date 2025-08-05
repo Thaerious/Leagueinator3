@@ -25,11 +25,6 @@ namespace Leagueinator.GUI.Controls.MatchPanel {
             this.ResumeEvents();
         }
 
-        public void HndClearFocus(object sender, EventArgs e) {
-            Debug.WriteLine("MatchPanel.HndClearFocus");
-            throw new NotImplementedException();
-        }
-
         /// <summary>
         /// Fill matchRow cards with values from "roundRow".
         /// Clears all matchRow cards that does not have a value in "roundRow".
@@ -66,7 +61,7 @@ namespace Leagueinator.GUI.Controls.MatchPanel {
 
         private void AssignTabOrder() {
             int nextTabIndex = 0;
-            var elements = this.FindByTag("PlayerName").OfType<TextBox>();
+            var elements = this.IsTagged("PlayerName").OfType<TextBox>();
             foreach (var textBox in elements) textBox.TabIndex = nextTabIndex++;
         }
 

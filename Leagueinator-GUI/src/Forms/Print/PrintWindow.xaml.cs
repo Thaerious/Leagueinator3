@@ -18,7 +18,6 @@ namespace Leagueinator.GUI.Forms.Print {
 
             this.Loaded += (s, e) => {
                 eventResults.ByTeam.Values.OrderBy(v => v.Rank).ToList().ForEach(teamResult => {
-                    Debug.WriteLine(teamResult.Rank);
                     this.AddTeam(teamResult);
                 });
             };

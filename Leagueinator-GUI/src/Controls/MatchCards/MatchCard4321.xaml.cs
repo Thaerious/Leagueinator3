@@ -8,7 +8,7 @@ namespace Leagueinator.GUI.Controls.MatchCards {
             this.InitializeComponent();
 
             this.Loaded += (s, e) => {
-                foreach (TextBox textBox in this.FindByTag("Bowls").Cast<TextBox>()) {
+                foreach (TextBox textBox in this.IsTagged("Bowls").Cast<TextBox>()) {
                     textBox.PreviewTextInput += InputHandlers.OnlyNumbers;
                 }
             };

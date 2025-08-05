@@ -21,7 +21,7 @@ namespace Leagueinator.GUI.Controls.MatchCards {
         }
 
         public void DoDrop(object dragSource) {
-            throw new NotImplementedException();
+            /* do nothing */
         }
 
         #region Handles

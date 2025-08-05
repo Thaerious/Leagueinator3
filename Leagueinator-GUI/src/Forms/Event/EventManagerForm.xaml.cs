@@ -59,7 +59,6 @@ namespace Leagueinator.GUI.Forms.Event {
         public MatchFormat MatchFormat => (MatchFormat)this.ListMatchFormat.SelectedValue;
 
         public bool? ShowDialog(EventData eventData) {
-            Debug.WriteLine("SHOW");
             this.TxtName.Text = eventData.EventName;
             this.TxtLanes.Text = eventData.DefaultLaneCount.ToString();
             this.TxtEnds.Text = eventData.DefaultEnds.ToString();

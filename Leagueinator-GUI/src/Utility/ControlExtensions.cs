@@ -103,13 +103,13 @@ namespace Leagueinator.Utility.Extensions {
         /// <param name="root">The root element to start the search from.</param>
         /// <param name="tag">The tag value to match.</param>
         /// <returns>An <see cref="IEnumerable{FrameworkElement}"/> containing all matching elements.</returns>
-        public static IEnumerable<FrameworkElement> FindByTag(this DependencyObject root, string tag) {
+        public static IEnumerable<FrameworkElement> IsTagged(this DependencyObject root, string tag) {
             for (int i = 0; i < VisualTreeHelper.GetChildrenCount(root); i++) {
                 var child = VisualTreeHelper.GetChild(root, i);
                 if (child is FrameworkElement frameworkElement && frameworkElement.HasTag(tag))
                     yield return frameworkElement;
 
-                foreach (var match in FindByTag(child, tag))
+                foreach (var match in IsTagged(child, tag))
                     yield return match;
             }
         }
