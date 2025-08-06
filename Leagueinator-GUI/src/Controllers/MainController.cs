@@ -91,13 +91,15 @@ namespace Leagueinator.GUI.Controllers {
         internal void DoRenameEvent(string from, string to) {
             if (this.LeagueData.Events.Select(e => e.EventName).Where(name => name == to).Any()) {
                 this.DispatchEvent(EventName.Notification, new() {
-                    ["message"] = $"Event name '{to}' already exits."
+                    ["alertLevel"] = AlertLevel.Inform,
+                    ["message"]    = $"Event name '{to}' already exits."
                 });
                 return;
             }
 
             if (!this.LeagueData.Events.Select(e => e.EventName).Where(name => name == from).Any()) {
                 this.DispatchEvent(EventName.Notification, new() {
+                    ["alertLevel"] = AlertLevel.Inform,
                     ["message"] = $"Event name '{from}' does not exist."
                 });
                 return;
@@ -136,7 +138,8 @@ namespace Leagueinator.GUI.Controllers {
         internal void DoDeleteEvent(string eventName) {
             if (this.LeagueData.Events.Count < 2) {
                 this.DispatchEvent(EventName.Notification, new() {
-                    ["message"] = "Can not delete last event."
+                    ["alertLevel"] = AlertLevel.Inform,
+                    ["message"]    = "Can not delete last event."
                 });
                 return;
             }

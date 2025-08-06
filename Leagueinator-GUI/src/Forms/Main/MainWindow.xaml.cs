@@ -41,8 +41,27 @@ namespace Leagueinator.GUI.Forms.Main {
         }
 
         [NamedEventHandler(EventName.Notification)]
-        internal static void DoNotification(string message) {
-            MessageBox.Show(message, "Notification", MessageBoxButton.OK, MessageBoxImage.Information);
+        internal static void DoNotification(string message, AlertLevel alertLevel) {
+            var image = MessageBoxImage.Information;
+            string title = "Information";
+
+            switch (alertLevel) {
+                case AlertLevel.Inform:
+                    image = MessageBoxImage.Information;
+                    title = "Information";
+                    break;
+                case AlertLevel.Warning:
+                    image = MessageBoxImage.Exclamation;
+                    title = "Warning";
+                    break;
+                case AlertLevel.Error:
+                    image = MessageBoxImage.Error;
+                    title = "Error";
+                    break;
+            }
+
+
+            MessageBox.Show(message, title, MessageBoxButton.OK, image);
         }
     }
 }
