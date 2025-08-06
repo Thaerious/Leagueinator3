@@ -61,5 +61,6 @@
         SetModel,
         UpdateRoundCount,
         SetSelectedEvent,
+        SwapMatches,
     }
 }

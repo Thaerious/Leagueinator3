@@ -3,6 +3,7 @@ using System.Windows;
 using System.Windows.Controls;
 using Leagueinator.Utility.Extensions;
 using Leagueinator.GUI.Controllers.DragDropManager;
+using Leagueinator.GUI.Controllers.NamedEvents;
 
 namespace Leagueinator.GUI.Controls.MatchCards {
     /// <summary>
@@ -21,7 +22,11 @@ namespace Leagueinator.GUI.Controls.MatchCards {
         }
 
         public void DoDrop(object dragSource) {
-            /* do nothing */
+            if (dragSource is not InfoCard infoCard) return;
+            this.DispatchEvent(EventName.SwapMatches, new() {
+                ["lane1"] = this.Lane,
+                ["lane2"] = infoCard.Lane
+            });
         }
 
         #region Handles

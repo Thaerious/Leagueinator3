@@ -91,10 +91,10 @@ namespace Leagueinator.GUI.Controls.RoundPanel {
         }
 
         [NamedEventHandler(EventName.EventSelected)]
-        internal void DoEventSelected(EventRecord eventRecord, int roundIndex) {
+        internal void DoEventSelected(string selectedEvent, int roundIndex, int roundCount) {
             foreach (Button button in this.EventButtons) {
                 if (button.DataContext is not EventButtonViewModel vme) throw new NotSupportedException();
-                if ((string)button.Content == eventRecord.Name) {
+                if ((string)button.Content == selectedEvent) {
                     vme.IsSelected = true;
                 }
                 else {
@@ -103,7 +103,7 @@ namespace Leagueinator.GUI.Controls.RoundPanel {
             }
 
             this.ActiveRoundButton = roundIndex;
-            this.RefreshButtons(eventRecord.RoundCount);
+            this.RefreshButtons(roundCount);
         }
 
         [NamedEventHandler(EventName.EventDeleted)]

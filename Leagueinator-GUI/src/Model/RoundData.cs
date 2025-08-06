@@ -89,5 +89,9 @@ namespace Leagueinator.GUI.Model {
         internal void RemoveMatch(MatchData match) {
             this._matches.Remove(match);
         }
+
+        internal void SwapMatch(int lane1, int lane2) {
+            (this._matches[lane2], this._matches[lane1]) = (this._matches[lane1], this._matches[lane2]);
+        }
     }
 }

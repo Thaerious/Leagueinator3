@@ -57,20 +57,10 @@ namespace Leagueinator.GUI.Controllers {
             this.DispatchEvent(eventName, new() {
                 ["eventNames"] = this.LeagueData.Events.Select(e => e.EventName).ToList(),
                 ["selectedEvent"] = EventData.EventName,
-                ["eventRecord"] = EventData.ToRecord(this.EventData), // TODO obselete?
                 ["roundIndex"] = this.CurrentRoundIndex,
                 ["matchRecords"] = MatchRecord.MatchRecordList(this.RoundData),
                 ["playerRecords"] = this.RoundData.Records().ToList(),
                 ["roundCount"] = this.EventData.Count(),
-            });
-        }
-
-        public void DispatchRoundUpdated(EventName eventName) {
-            this.DispatchEvent(eventName, new() {
-                ["roundIndex"] = this.CurrentRoundIndex,
-                ["roundCount"] = this.EventData.Count(),
-                ["matchRecords"] = MatchRecord.MatchRecordList(this.RoundData),
-                ["playerRecords"] = this.RoundData.Records().ToList(),
             });
         }
 
@@ -158,7 +148,6 @@ namespace Leagueinator.GUI.Controllers {
                 WindowStartupLocation = WindowStartupLocation.CenterOwner
             };
 
-            List<EventRecord> records = [.. this.LeagueData.Events.Select(data => EventData.ToRecord(data))];
             form.PauseEvents();
             NamedEvent.RegisterHandler(form);
 
@@ -295,7 +284,7 @@ namespace Leagueinator.GUI.Controllers {
         //    //AssignLanes assignLanes = new(this.EventData, this.RoundData);
         //    //RoundData newRound = assignLanes.Run();
         //    //this.EventData.ReplaceRound(this.CurrentRoundIndex, newRound);
-        //    //this.DispatchRoundUpdated(EventName.RoundChanged);
+        //    //this.DispatchModel(EventName.RoundChanged);
         //    //this.DispatchSetTitle(this.Title, false);
         //}
 
@@ -309,7 +298,7 @@ namespace Leagueinator.GUI.Controllers {
         internal void DoDeleteRound(int? roundIndex = null) {
             int index = roundIndex ?? this.CurrentRoundIndex;
             this.RemoveRound(index);
-            this.DispatchRoundUpdated(EventName.RoundDeleted);
+            this.DispatchModel(EventName.RoundDeleted);
             this.DispatchSetTitle(this.Title, false);
         }
 
@@ -322,7 +311,7 @@ namespace Leagueinator.GUI.Controllers {
             else {
                 this.CurrentRoundIndex = index;
             }
-            this.DispatchRoundUpdated(EventName.RoundChanged);
+            this.DispatchModel(EventName.RoundChanged);
         }
 
         [NamedEventHandler(EventName.CopyRound)]
@@ -424,7 +413,7 @@ namespace Leagueinator.GUI.Controllers {
         [NamedEventHandler(EventName.ChangeMatchFormat)]
         internal void DoMatchFormat(int lane, MatchFormat format) {
             this.RoundData.Matches[lane].MatchFormat = format;
-            this.DispatchRoundUpdated(EventName.RoundChanged);
+            this.DispatchModel(EventName.RoundChanged);
             this.DispatchSetTitle(this.Title, false);
         }
 
@@ -435,8 +424,14 @@ namespace Leagueinator.GUI.Controllers {
 
             this.RoundData.Matches[fromLane].Teams[fromIndex].CopyFrom(namesTo);
             this.RoundData.Matches[toLane].Teams[toIndex].CopyFrom(namesFrom);
-            this.DispatchRoundUpdated(EventName.RoundChanged);
+            this.DispatchModel(EventName.RoundChanged);
             this.DispatchSetTitle(this.Title, false);
+        }
+
+        [NamedEventHandler(EventName.SwapMatches)]
+        internal void DoSwapMatch(int lane1, int lane2) {
+            this.RoundData.SwapMatch(lane1, lane2);
+            this.DispatchModel(EventName.RoundChanged);
         }
 
         #endregion
@@ -521,7 +516,7 @@ namespace Leagueinator.GUI.Controllers {
             }
 
             this.CurrentRoundIndex = this.EventData.Rounds.Count - 1;
-            this.DispatchRoundUpdated(EventName.RoundAdded);
+            this.DispatchModel(EventName.RoundAdded);
             this.DispatchSetTitle(this.Title, false);
         }
         #endregion
