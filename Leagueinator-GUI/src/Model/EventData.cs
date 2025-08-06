@@ -16,18 +16,6 @@ namespace Leagueinator.GUI.Model {
         private readonly List<RoundData> _rounds = [];
         public IReadOnlyList<RoundData> Rounds => _rounds;
 
-        public static EventRecord ToRecord(EventData data) { // TODO Get rid of
-            return new EventRecord(
-                data.EventName,
-                data.Date,
-                data.DefaultMatchFormat,
-                data.LaneCount,
-                data.DefaultEnds,
-                data.EventType,
-                data.Rounds.Count
-            );
-        }
-
         public RoundData AddRound(bool fill = true) {
             RoundData newRound = new(this);
             if (fill) newRound.Fill();
