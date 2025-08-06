@@ -121,7 +121,7 @@ namespace Leagueinator.GUI.Controllers {
         internal void DoAddEvent() {
             EventData eventData = this.LeagueData.AddEvent();
             eventData.DefaultEnds = this.EventData.DefaultEnds;
-            eventData.DefaultLaneCount = this.EventData.DefaultLaneCount;
+            eventData.LaneCount = this.EventData.LaneCount;
             eventData.DefaultMatchFormat = this.EventData.DefaultMatchFormat;
             eventData.EventType = this.EventData.EventType;
             eventData.AddRound();
@@ -167,11 +167,63 @@ namespace Leagueinator.GUI.Controllers {
 
                 eventData.EventName = form.TxtName.Text;
                 eventData.DefaultEnds = int.Parse(form.TxtEnds.Text);
-                eventData.DefaultLaneCount = int.Parse(form.TxtLanes.Text); ;
+                eventData.LaneCount = int.Parse(form.TxtLanes.Text);
                 eventData.DefaultMatchFormat = form.MatchFormat;
 
-                //SyncRoundData(this.RoundData, this.EventData); // ??? DO I STILL NEED THIS
+                this.CorrectEnds(eventData.DefaultEnds);
+                this.CorrectLanes(eventData.LaneCount);
+                this.CorrectFormat(eventData.DefaultMatchFormat);
                 this.DispatchModel(EventName.SetModel);
+            }
+        }
+
+        private void CorrectEnds(int value) {
+            // Each match w/o a player has it's ends changed to the new value.
+            this.EventData.Rounds
+                .SelectMany(r => r.Matches)
+                .Where(match => match.PlayerNames().Count == 0)
+                .ToList()
+                .ForEach(match => match.Ends = value);
+        }
+
+        private void CorrectLanes(int value) {
+            // Remove empty matches until the lane count matches.
+            foreach (RoundData round in this.EventData.Rounds) {
+                while (round.Matches.Count > value) {
+                    MatchData? match = round.Matches.Where(m => m.CountPlayers() == 0).FirstOrDefault();
+                    if (match != null) {
+                        round.RemoveMatch(match);
+                    }
+                    else {
+                        this.DispatchEvent(EventName.Notification, new() {
+                            ["alertLevel"] = AlertLevel.Warning,
+                            ["message"] = $"Removing matches with players."
+                        });
+                        break;
+                    }
+                }
+            }
+
+            // Remove any match until the lane count matches.
+            foreach (RoundData round in this.EventData.Rounds) {
+                while (round.Matches.Count > value) {
+                    round.RemoveMatch(round.Matches[0]);
+                }
+            }
+
+            // Add matches until the round has enough lanes.
+            foreach (RoundData round in this.EventData.Rounds) {
+                round.Fill();
+            }
+        }
+
+        private void CorrectFormat(MatchFormat defaultMatchFormat) {
+            foreach (RoundData round in this.EventData.Rounds) {
+                foreach (MatchData match in round.Matches) {
+                    if (match.CountPlayers() == 0) {
+                        match.MatchFormat = defaultMatchFormat;
+                    }
+                }
             }
         }
 
@@ -296,10 +348,10 @@ namespace Leagueinator.GUI.Controllers {
         }
         #endregion
 
-        # region Match, Team, Player Handlers  
+        #region Match, Team, Player Handlers  
         [NamedEventHandler(EventName.ChangePlayerName)]
         internal void DoPlayerName(string name, int lane, int teamIndex, int position) {
-            if (this.RoundData.Matches[lane].Teams[teamIndex].Names[position].Equals(name)){
+            if (this.RoundData.Matches[lane].Teams[teamIndex].Names[position].Equals(name)) {
                 return;
             }
 
@@ -442,7 +494,7 @@ namespace Leagueinator.GUI.Controllers {
             sb += $"No. of Events: {this.LeagueData.Events.Count}\n";
             sb += "\nEvent Data\n";
             sb += $"Event Name: {this.EventData.EventName}\n";
-            sb += $"Number of Lanes: {this.EventData.DefaultLaneCount}\n";
+            sb += $"Number of Lanes: {this.EventData.LaneCount}\n";
             sb += $"Default Ends: {this.EventData.DefaultEnds}\n";
             sb += $"Match Format: {this.EventData.DefaultMatchFormat}\n";
             sb += $"Event Type: {this.EventData.EventType}\n";

@@ -14,19 +14,14 @@ namespace Leagueinator.GUI.Model {
         public EventData Parent { get; } = EventData;
 
         public void Fill() {
-            for (int i = 0; i < this.Parent.DefaultLaneCount; i++) {
-                if (!this._matches.Any(m => m.Lane == i)) {
-                    this._matches.Add(
-                        new MatchData(this) {
-                            MatchFormat = this.Parent.DefaultMatchFormat,
-                            Lane = i,
-                            Ends = this.Parent.DefaultEnds
-                        }
-                    );
-                }
+            while (this._matches.Count < this.Parent.LaneCount) {
+                this._matches.Add(
+                    new MatchData(this) {
+                        MatchFormat = this.Parent.DefaultMatchFormat,
+                        Ends = this.Parent.DefaultEnds
+                    }
+                );
             }
-
-            this._matches.Sort((a, b) => a.Lane.CompareTo(b.Lane));
         }
 
         public RoundData Copy() {
@@ -83,12 +78,16 @@ namespace Leagueinator.GUI.Model {
         internal static RoundData ReadIn(EventData eventData, StreamReader reader) {
             RoundData roundData = new(eventData);
             int matchCount = int.Parse(reader?.ReadLine() ?? throw new FormatException("Invalid save format"));
-            
+
             for (int i = 0; i < matchCount; i++) {
                 MatchData matchData = MatchData.ReadIn(roundData, reader);
                 roundData._matches.Add(matchData);
             }
             return roundData;
+        }
+
+        internal void RemoveMatch(MatchData match) {
+            this._matches.Remove(match);
         }
     }
 }

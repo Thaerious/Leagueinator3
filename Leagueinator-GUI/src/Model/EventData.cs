@@ -9,7 +9,7 @@ namespace Leagueinator.GUI.Model {
         public string EventName { get; set; } = DateTime.Now.ToString("MMMM d, yyyy");
         public DateTime Date { get; set; } = DateTime.Now;
         public MatchFormat DefaultMatchFormat { get; set; } = MatchFormat.VS2;
-        public int DefaultLaneCount { get; set; } = 8;
+        public int LaneCount { get; set; } = 8;
         public int DefaultEnds { get; set; } = 10;
         public EventType EventType { get; set; } = EventType.RankedLadder;
 
@@ -21,16 +21,11 @@ namespace Leagueinator.GUI.Model {
                 data.EventName,
                 data.Date,
                 data.DefaultMatchFormat,
-                data.DefaultLaneCount,
+                data.LaneCount,
                 data.DefaultEnds,
                 data.EventType,
                 data.Rounds.Count
             );
-        }
-
-        public void ReplaceRound(int index, RoundData roundData) {
-            if (roundData.Parent != this) throw new InvalidParentException();
-            this._rounds[index] = roundData;
         }
 
         public RoundData AddRound(bool fill = true) {
@@ -84,6 +79,7 @@ namespace Leagueinator.GUI.Model {
             return matches;
         }
 
+        // TODO this should be event.rounds....
         public IEnumerator<RoundData> GetEnumerator() {
             return this._rounds.GetEnumerator();
         }
@@ -137,7 +133,7 @@ namespace Leagueinator.GUI.Model {
                     this.Date.ToString("o"),
                     this.DefaultMatchFormat,
                     this.DefaultEnds,
-                    this.DefaultLaneCount,
+                    this.LaneCount,
                     this.EventType,
                     this.Rounds.Count
                 )
@@ -158,7 +154,7 @@ namespace Leagueinator.GUI.Model {
                 Date = DateTime.Parse(parts[1], null, System.Globalization.DateTimeStyles.RoundtripKind),
                 DefaultMatchFormat = Enum.Parse<MatchFormat>(parts[2]),
                 DefaultEnds = int.Parse(parts[3]),
-                DefaultLaneCount = int.Parse(parts[4]),
+                LaneCount = int.Parse(parts[4]),
                 EventType = Enum.Parse<EventType>(parts[5])
             };
 

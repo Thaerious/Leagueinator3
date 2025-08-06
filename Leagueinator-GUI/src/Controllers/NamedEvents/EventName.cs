@@ -1,4 +1,11 @@
 ﻿namespace Leagueinator.GUI.Controllers.NamedEvents {
+
+    public enum AlertLevel {
+        Inform,
+        Warning,
+        Error
+    }
+    
     public enum EventName {
         AddEvent,
         AddMatch,

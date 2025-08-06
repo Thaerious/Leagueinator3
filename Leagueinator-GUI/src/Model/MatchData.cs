@@ -16,6 +16,8 @@ namespace Leagueinator.GUI.Model {
         private readonly List<TeamData> _teams = [];
         public IReadOnlyList<TeamData> Teams => _teams;
 
+        public int Lane => this.Parent.Matches.ToList().IndexOf(this);
+
         /// <summary>
         /// Gets or sets the match format, which determines the number of teams and i size.
         /// Changing the format resets the teams and scores.
@@ -41,11 +43,6 @@ namespace Leagueinator.GUI.Model {
         }
 
         /// <summary>
-        /// Gets or sets the lane number for the match. Default is -1 (unassigned).
-        /// </summary>
-        public int Lane { get; set; } = -1;
-
-        /// <summary>
         /// Gets or sets the number of ends (_rounds/segments) played in the match.
         /// </summary>
         public int Ends { get; set; } = 0;
@@ -67,7 +64,6 @@ namespace Leagueinator.GUI.Model {
         public MatchData Copy() {
             MatchData matchCopy = new(this.Parent) {
                 MatchFormat = this.MatchFormat,
-                Lane = this.Lane,
                 Ends = this.Ends,
             };
 
@@ -149,7 +145,6 @@ namespace Leagueinator.GUI.Model {
             MatchData matchData = new(roundData) {
                 MatchFormat = Enum.Parse<MatchFormat>(parts[0]),
                 Ends        = int.Parse(parts[1]),
-                Lane        = int.Parse(parts[2]),
                 TieBreaker  = int.Parse(parts[3]),
             };
 

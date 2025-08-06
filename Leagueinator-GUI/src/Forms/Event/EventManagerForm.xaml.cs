@@ -60,7 +60,7 @@ namespace Leagueinator.GUI.Forms.Event {
 
         public bool? ShowDialog(EventData eventData) {
             this.TxtName.Text = eventData.EventName;
-            this.TxtLanes.Text = eventData.DefaultLaneCount.ToString();
+            this.TxtLanes.Text = eventData.LaneCount.ToString();
             this.TxtEnds.Text = eventData.DefaultEnds.ToString();
             this.ListMatchFormat.SelectedValue = eventData.DefaultMatchFormat;
             this.ListEventType.SelectedValue = eventData.EventType;
