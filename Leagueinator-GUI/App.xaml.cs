@@ -1,4 +1,5 @@
 ﻿using Leagueinator.GUI.Controllers;
+using Leagueinator.GUI.Controllers.Modules.AssignLanes;
 using Leagueinator.GUI.Controllers.NamedEvents;
 using Leagueinator.GUI.Forms.Main;
 using Leagueinator.GUI.src.Controllers;
@@ -29,6 +30,10 @@ namespace Leagueinator.GUI {
 
                 mainWindow.ContentRendered += (s, e) => {
                     MainController mainController = new(mainWindow);
+
+                    // Add standard modules
+                    mainController.LoadModule(new AssignLanesModule());
+
                     this.DispatchEvent(EventName.NewLeague);
                 };
             });

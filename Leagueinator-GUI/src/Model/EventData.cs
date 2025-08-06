@@ -1,5 +1,6 @@
 ﻿using Leagueinator.GUI.Model.ViewModel;
 using System.Collections;
+using System.Diagnostics;
 using System.IO;
 
 namespace Leagueinator.GUI.Model {
@@ -153,6 +154,11 @@ namespace Leagueinator.GUI.Model {
             }
 
             return eventData;
+        }
+
+        internal void ReplaceRound(RoundData roundData, RoundData newRound) {
+            int index = this._rounds.IndexOf(roundData);        
+            this._rounds[index] = newRound;
         }
     }
 }

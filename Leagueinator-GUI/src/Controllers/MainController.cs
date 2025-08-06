@@ -103,6 +103,10 @@ namespace Leagueinator.GUI.Controllers {
             return newNames;
         }
 
+        public void DispatchSetTitle(bool saved) {
+            this.DispatchSetTitle(this.Title, saved);
+        }
+
         public void DispatchSetTitle(string title, bool saved) {
             this.IsSaved = saved;
             this.Title = title;
@@ -315,17 +319,6 @@ namespace Leagueinator.GUI.Controllers {
         #endregion
 
         #region Round Handlers
-
-        // TODO Move to Module
-        //[NamedEventHandler(EventName.AssignLanes)]
-        //internal void DoAssignLanes() {
-        //    throw new NotImplementedException();
-        //    //AssignLanes assignLanes = new(this.EventData, this.RoundData);
-        //    //RoundData newRound = assignLanes.Run();
-        //    //this.EventData.ReplaceRound(this.CurrentRoundIndex, newRound);
-        //    //this.DispatchModel(EventName.RoundChanged);
-        //    //this.DispatchSetTitle(this.Title, false);
-        //}
 
         [NamedEventHandler(EventName.AddRound)]
         internal void DoAddRound() {

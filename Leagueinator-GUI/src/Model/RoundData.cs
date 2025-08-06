@@ -93,5 +93,9 @@ namespace Leagueinator.GUI.Model {
         internal void SwapMatch(int lane1, int lane2) {
             (this._matches[lane2], this._matches[lane1]) = (this._matches[lane1], this._matches[lane2]);
         }
+
+        internal void InsertMatch(int index, MatchData match) {
+            this._matches[index] = match;
+        }
     }
 }

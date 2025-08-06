@@ -50,6 +50,9 @@
                 <MenuItem Header="Delete Round" Click="HndDeleteRnd"/>
             </MenuItem>
 
+            <MenuItem Header="Action">
+            </MenuItem>
+
             <!-- Result (Report) Menu -->
             <MenuItem Header="View">
                 <MenuItem Header="Show Data" Click="HndShowDataClick"/>
