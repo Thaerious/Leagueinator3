@@ -28,7 +28,7 @@ namespace Leagueinator.GUI.Model {
             RoundData roundCopy = new(this.Parent);
 
             foreach (MatchData match in this._matches) {
-                roundCopy._matches.Add(match.Copy());
+                roundCopy._matches.Add(match.Copy(roundCopy));
             }
 
             return roundCopy;

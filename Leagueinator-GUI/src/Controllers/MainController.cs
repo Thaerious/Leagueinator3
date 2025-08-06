@@ -9,6 +9,7 @@ using Microsoft.Win32;
 using System.Diagnostics;
 using System.IO;
 using System.Windows;
+using Utility;
 
 namespace Leagueinator.GUI.Controllers {
 
@@ -53,7 +54,7 @@ namespace Leagueinator.GUI.Controllers {
 
         #region Dispatch Methods
 
-        public void DispatchModel(EventName eventName) {
+        public void DispatchModel(EventName eventName = EventName.SetModel) {
             this.DispatchEvent(eventName, new() {
                 ["eventNames"] = this.LeagueData.Events.Select(e => e.EventName).ToList(),
                 ["selectedEvent"] = EventData.EventName,
@@ -61,7 +62,45 @@ namespace Leagueinator.GUI.Controllers {
                 ["matchRecords"] = MatchRecord.MatchRecordList(this.RoundData),
                 ["playerRecords"] = this.RoundData.Records().ToList(),
                 ["roundCount"] = this.EventData.Count(),
+                ["nameAlerts"] = this.BuildNameAlerts(),
+                ["laneAlerts"] = this.BuildLaneAlerts(),
             });
+        }
+
+        /// <summary>
+        /// Build a list of lanes that have players that have played on the lane before.
+        /// </summary>
+        /// <returns></returns>
+        private HashSet<int> BuildLaneAlerts() {
+            HashSet<int> lanes = [];
+            DefaultDictionary<string, HashSet<int>> hasPlayed = new(key => new());
+
+            foreach (RoundData round in this.EventData.Rounds) {
+                if (round == this.RoundData) continue;
+                foreach (PlayerRecord record in round.Records()) {
+                    hasPlayed[record.Name].Add(record.Lane);
+                }
+            }
+
+            foreach (PlayerRecord record in this.RoundData.Records()) {
+                if (hasPlayed[record.Name].Contains(record.Lane)) {
+                    lanes.Add(record.Lane);
+                }
+            }
+
+            return lanes;
+        }
+
+        private List<string> BuildNameAlerts() {
+            if (this.CurrentRoundIndex == 0) return [];
+            List<string> newNames = [];
+
+            HashSet<string> roster = [.. this.EventData.Rounds[0].Matches.SelectMany(m => m.PlayerNames())];
+            foreach (string name in this.RoundData.Matches.SelectMany(m => m.PlayerNames())) {
+                if (!roster.Contains(name)) newNames.Add(name);
+            }
+
+            return newNames;
         }
 
         public void DispatchSetTitle(string title, bool saved) {
@@ -82,7 +121,7 @@ namespace Leagueinator.GUI.Controllers {
             if (this.LeagueData.Events.Select(e => e.EventName).Where(name => name == to).Any()) {
                 this.DispatchEvent(EventName.Notification, new() {
                     ["alertLevel"] = AlertLevel.Inform,
-                    ["message"]    = $"Event name '{to}' already exits."
+                    ["message"] = $"Event name '{to}' already exits."
                 });
                 return;
             }
@@ -129,7 +168,7 @@ namespace Leagueinator.GUI.Controllers {
             if (this.LeagueData.Events.Count < 2) {
                 this.DispatchEvent(EventName.Notification, new() {
                     ["alertLevel"] = AlertLevel.Inform,
-                    ["message"]    = "Can not delete last event."
+                    ["message"] = "Can not delete last event."
                 });
                 return;
             }
@@ -317,6 +356,7 @@ namespace Leagueinator.GUI.Controllers {
         [NamedEventHandler(EventName.CopyRound)]
         internal void DoCopyRound() {
             RoundData newRound = this.RoundData.Copy();
+            Debug.WriteLine(newRound);
             this.EventData.AddRound(newRound);
             this.AddRound(newRound);
             this.DispatchSetTitle(this.Title, false);
@@ -342,7 +382,7 @@ namespace Leagueinator.GUI.Controllers {
 
         #region Match, Team, Player Handlers  
         [NamedEventHandler(EventName.ChangePlayerName)]
-        internal void DoPlayerName(string name, int lane, int teamIndex, int position) {
+        internal void DoChangePlayerName(string name, int lane, int teamIndex, int position) {
             if (this.RoundData.Matches[lane].Teams[teamIndex].Names[position].Equals(name)) {
                 return;
             }
@@ -357,7 +397,9 @@ namespace Leagueinator.GUI.Controllers {
                     ["lane"] = record.Lane,
                     ["teamIndex"] = record.Team,
                     ["position"] = record.PlayerPos,
-                    ["name"] = ""
+                    ["name"] = "",
+                    ["nameAlerts"] = this.BuildNameAlerts(),
+                    ["laneAlerts"] = this.BuildLaneAlerts(),
                 });
             }
 
@@ -366,7 +408,9 @@ namespace Leagueinator.GUI.Controllers {
                 ["lane"] = lane,
                 ["teamIndex"] = teamIndex,
                 ["position"] = position,
-                ["name"] = name
+                ["name"] = name,
+                ["nameAlerts"] = this.BuildNameAlerts(),
+                ["laneAlerts"] = this.BuildLaneAlerts(),
             });
 
             this.DispatchSetTitle(this.Title, false);

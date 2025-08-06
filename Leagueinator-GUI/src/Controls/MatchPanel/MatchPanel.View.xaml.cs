@@ -1,5 +1,6 @@
 ﻿using Leagueinator.GUI.Controllers.NamedEvents;
 using Leagueinator.GUI.Controls.MatchCards;
+using Leagueinator.GUI.Forms.Main;
 using Leagueinator.GUI.Model;
 using Leagueinator.GUI.Model.ViewModel;
 using Leagueinator.Utility.Extensions;
@@ -14,6 +15,7 @@ namespace Leagueinator.GUI.Controls.MatchPanel {
     /// View logic for MatchPanel.xaml
     /// </summary>
     public partial class MatchPanel : UserControl {
+        private List<string> NameAlerts = [];
 
         public MatchPanel() {
             NamedEvent.RegisterHandler(this, true);
@@ -30,7 +32,8 @@ namespace Leagueinator.GUI.Controls.MatchPanel {
         /// Clears all matchRow cards that does not have a value in "roundRow".
         /// </summary>
         /// <param name="roundRow"></param>
-        private void DoPopulateMatchCards(List<MatchRecord> matchRecords, List<PlayerRecord> playerRecords) {
+        private void DoPopulateMatchCards(List<MatchRecord> matchRecords, List<PlayerRecord> playerRecords,
+                                          List<string> nameAlerts, HashSet<int> laneAlerts) {
             int cardsToLoad = 0;
             int cardsLoaded = 0;
 
@@ -54,6 +57,8 @@ namespace Leagueinator.GUI.Controls.MatchPanel {
                     if (cardsLoaded == cardsToLoad) {
                         this.AssignTabOrder();
                         this.SetPlayerNames(playerRecords);
+                        this.HighlightNames(nameAlerts);
+                        this.HighlightLanes(laneAlerts);
                     }
                 };
             }
@@ -70,12 +75,6 @@ namespace Leagueinator.GUI.Controls.MatchPanel {
             return this.GetDescendantsOfType<MatchCard>().First(MatchCard => MatchCard.Lane == lane);
         }
 
-        public void PopulateMatchCards(List<MatchRecord> matchRecords, List<PlayerRecord> playerRecords) {
-            this.Dispatcher.InvokeAsync(new Action(() => {
-                this.DoPopulateMatchCards(matchRecords, playerRecords);
-            }), DispatcherPriority.Background);
-        }
-
         private void SetPlayerNames(IEnumerable<PlayerRecord> playerRecords) {
             foreach (PlayerRecord roundRecord in playerRecords) {
                 MatchCard matchCard = (MatchCard)this.OuterPanel.Children[roundRecord.Lane];
@@ -86,6 +85,37 @@ namespace Leagueinator.GUI.Controls.MatchPanel {
 
         public void RemoveMatch(int index) {
             this.OuterPanel.Children.RemoveAt(index);
+        }
+
+        private void HighlightLanes(HashSet<int> laneAlerts) {
+            this.Descendants().OfType<MatchCard>()
+                              .ToList()
+                              .ForEach(mc => {
+                                  InfoCard infoCard = mc.Descendants().OfType<InfoCard>().First();
+
+                                  if (laneAlerts.Contains(infoCard.Lane)) {
+                                      infoCard.LblLane.Foreground = AppColors.LaneAlert;
+                                  }
+                                  else {
+                                      infoCard.LblLane.Foreground = SystemColors.ControlTextBrush;
+                                  }
+                              });
+        }
+
+        private void HighlightNames(List<string> nameAlerts) {
+            this.NameAlerts = nameAlerts;
+
+            this.Descendants().OfType<TextBox>()
+                              .Where(textBox => textBox.HasTag("PlayerName"))
+                              .ToList()
+                              .ForEach(textBox => {
+                                  if (nameAlerts.Contains(textBox.Text)) {
+                                      textBox.Background = AppColors.TextBoxAlert;
+                                  }
+                                  else {
+                                      textBox.Background = SystemColors.WindowBrush;
+                                  }
+                              });
         }
     }
 }

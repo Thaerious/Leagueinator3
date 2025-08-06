@@ -1,10 +1,7 @@
 ﻿using Leagueinator.GUI.Controllers.NamedEvents;
 using Leagueinator.GUI.Controls.MatchCards;
-using Leagueinator.GUI.Model;
 using Leagueinator.GUI.Model.ViewModel;
-using System.Diagnostics;
 using System.Windows.Controls;
-using Utility.Extensions;
 
 namespace Leagueinator.GUI.Controls.MatchPanel {
     /// <summary>
@@ -36,9 +33,11 @@ namespace Leagueinator.GUI.Controls.MatchPanel {
 
 
         [NamedEventHandler(EventName.NameUpdated)]
-        internal void DoTieBreakerUpdated(int lane, int teamIndex, int position, string name) {
+        internal void DoNameUpdated(int lane, int teamIndex, int position, string name, List<string> nameAlerts, HashSet<int> laneAlerts) {
             MatchCard matchCard = this.GetMatchCard(lane);
             TeamCard teamCard = matchCard.GetTeamCard(teamIndex);
+            this.HighlightNames(nameAlerts);
+            this.HighlightLanes(laneAlerts);
             teamCard[position] = name;
         }
 
@@ -47,9 +46,10 @@ namespace Leagueinator.GUI.Controls.MatchPanel {
         [NamedEventHandler(EventName.RoundAdded)]
         [NamedEventHandler(EventName.RoundChanged)]
         [NamedEventHandler(EventName.SetModel)]
-        internal void DoSetModel(List<MatchRecord> matchRecords, List<PlayerRecord> playerRecords) {            
+        internal void DoSetModel(List<MatchRecord> matchRecords, List<PlayerRecord> playerRecords,
+                                 List<string> nameAlerts, HashSet<int> laneAlerts) {            
             this.PauseEvents();
-            this.DoPopulateMatchCards(matchRecords, playerRecords);
+            this.DoPopulateMatchCards(matchRecords, playerRecords, nameAlerts, laneAlerts);
             this.ResumeEvents();
         }
     }

@@ -61,8 +61,8 @@ namespace Leagueinator.GUI.Model {
         /// Creates a deep copy of this <see cref="MatchData"/> instance, including teams and scores.
         /// </summary>
         /// <returns>A new <see cref="MatchData"/> object with the same data.</returns>
-        public MatchData Copy() {
-            MatchData matchCopy = new(this.Parent) {
+        public MatchData Copy(RoundData parent) {
+            MatchData matchCopy = new(parent) {
                 MatchFormat = this.MatchFormat,
                 Ends = this.Ends,
             };
@@ -155,6 +155,10 @@ namespace Leagueinator.GUI.Model {
             }
 
             return matchData;
+        }
+
+        public List<TeamData> GetOpposition(TeamData teamData) {
+            return [.. this.Teams.Where(that => that != teamData)];
         }
     }
 }

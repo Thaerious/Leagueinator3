@@ -19,7 +19,7 @@ namespace Leagueinator.GUI.Forms.Main {
                                  .Where(card => card.MatchCard.Lane.Equals(lane))
                                  .FirstOrDefault(card => card.TeamIndex.Equals(teamIndex));
 
-            if (card is not null) card.Background = Colors.TeamPanelFocused;
+            if (card is not null) card.Background = AppColors.TeamPanelFocused;
         }
 
         [NamedEventHandler(EventName.FocusRevoked)]
@@ -29,7 +29,7 @@ namespace Leagueinator.GUI.Forms.Main {
                                 .Where(card => card.MatchCard.Lane.Equals(lane))
                                 .FirstOrDefault(card => card.TeamIndex.Equals(teamIndex));
 
-            if (card is not null) card.Background = Colors.TeamPanelDefault;
+            if (card is not null) card.Background = AppColors.TeamPanelDefault;
         }
 
         [NamedEventHandler(EventName.SetTitle)]
