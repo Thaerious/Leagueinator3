@@ -63,7 +63,7 @@ namespace Algorithms.PairMatching {
                 if (path.Count > this.Graph.Size) throw new Exception("Sanity Check Failed");
                 var (current, depth) = dfs.Pop();
 
-                Debug.WriteLine($"[A]  {depth} {path.JoinString("-")}:{current} <- {dfs.JoinString()} [{visited.JoinString()}]");
+                //Debug.WriteLine($"[A]  {depth} {path.JoinString("-")}:{current} <- {dfs.JoinString()} [{visited.JoinString()}]");
 
                 // Backtrack
                 while (path.Count > depth) {
@@ -74,7 +74,7 @@ namespace Algorithms.PairMatching {
                 visited.Add(current);
                 path.Add(current);
 
-                Debug.WriteLine($"[B]  {depth} {path.JoinString("-")}:{current} <- {dfs.JoinString()} [{visited.JoinString()}]");
+                //Debug.WriteLine($"[B]  {depth} {path.JoinString("-")}:{current} <- {dfs.JoinString()} [{visited.JoinString()}]");
 
                 if (depth % 2 == 0) {
                     var edges = this.Graph.GetNode(current).Edges().OrderBy(edge => edge.Weight);
@@ -86,12 +86,12 @@ namespace Algorithms.PairMatching {
 
                         if (this.Uncovered.Contains(neighbor)) {
                             path.Add(neighbor);
-                            Debug.WriteLine($"[C1] {depth} {path.JoinString("-")}:{current} <- {dfs.JoinString()} [{visited.JoinString()}]");
-                            Debug.WriteLine($"Found Path: {path.JoinString()}");
+                            //Debug.WriteLine($"[C1] {depth} {path.JoinString("-")}:{current} <- {dfs.JoinString()} [{visited.JoinString()}]");
+                            //Debug.WriteLine($"Found Path: {path.JoinString()}");
                             paths.Add([.. path]);
                         }
                         else {
-                            Debug.WriteLine($"[C2] {depth} {path.JoinString("-")}:{current} <- {dfs.JoinString()} [{visited.JoinString()}]");
+                            //Debug.WriteLine($"[C2] {depth} {path.JoinString("-")}:{current} <- {dfs.JoinString()} [{visited.JoinString()}]");
                             dfs.Push((neighbor, depth + 1));
                         }
                     }
@@ -107,7 +107,7 @@ namespace Algorithms.PairMatching {
                     }
                 }
 
-                Debug.WriteLine($"[D]  {depth} {path.JoinString("-")}:{current} <- {dfs.JoinString()} [{visited.JoinString()}]");
+                //Debug.WriteLine($"[D]  {depth} {path.JoinString("-")}:{current} <- {dfs.JoinString()} [{visited.JoinString()}]");
             }
 
             return paths;
@@ -119,13 +119,13 @@ namespace Algorithms.PairMatching {
             while (this.Uncovered.Count > 0) {
                 var paths = this.GetPaths(this.Uncovered.First());
 
-                foreach (var path in paths) {
-                    Debug.WriteLine($"Candidate path: {EvaluatePath(path)}:{path.JoinString()}");
-                }
+                //foreach (var path in paths) {
+                    //Debug.WriteLine($"Candidate path: {EvaluatePath(path)}:{path.JoinString()}");
+                //}
 
                 var chosenPath = paths.OrderBy(p => this.EvaluatePath(p)).Reverse().First();
 
-                Debug.WriteLine($"Applying Path: {chosenPath.JoinString()}");
+                //Debug.WriteLine($"Applying Path: {chosenPath.JoinString()}");
                 this.Solution.Set(chosenPath);
                 this.UpdateMetrics();
             }

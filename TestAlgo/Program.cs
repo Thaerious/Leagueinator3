@@ -273,11 +273,23 @@ D,E,1
 C,F,1
 ";
 
-Graph<string> graph = Graph<string>.FromCSV(csvBowls);
+string csvSmall = @"
+Cane,Bert,32
+Cane,Ernie,32
+Bert,Cane,32
+Bert,Able,32
+Ernie,Cane,32
+Ernie,Able,32
+Able,Bert,32
+Able,Ernie,32
+";
+
+Graph<string> graph = Graph<string>.FromCSV(csvSmall);
+
 //BruteForce();
 //Naive();
-//GreedyAugmenting();
-Single();
+Greedy();
+//Single();
 
 void Single() {
     Debug.WriteLine("Single Solution");
@@ -290,54 +302,11 @@ void Single() {
 }
 
 void Greedy() {
-    const int POPSZ = 100;
-    const int GENCNT = 50;
-
     Debug.WriteLine("Greedy Solution");
-    Random rng = new Random(123654789);
-    List<Solution<string>> population = [];
-
-    // Build initial solutions from randomly selected initialEdges.
-    while (population.Count < POPSZ) {
-        Solution<string> solution = new(graph);
-        var initialEdges = graph.Edges.OrderBy(edge => rng.Next()).ToList();
-        foreach (var edge in initialEdges) {
-            if (solution.Find(edge.Item1) != -1) continue;
-            if (solution.Find(edge.Item2) != -1) continue;
-            solution.Set(edge);
-        }
-        Debug.WriteLine(solution.ToList().JoinString(", ", "\""));
-        var repaired = new RepairSolution<string>(graph, solution).Repair();
-        population.Add(repaired);
-    }
-
-    PrintBest(population);
-
-    var edges = graph.Edges.OrderBy(edge => rng.Next()).ToList();
-    int bestGen = 0;
-    int bestFit = 0;
-
-    for (int i = 0; i < GENCNT; i++) {
-        List<Solution<string>> next = [];
-
-        foreach (var solution in population) {
-            var copy = solution.Copy();
-            var edge = edges[rng.Next(population.Count)];
-            copy.Set(edge);
-            var repaired = new RepairSolution<string>(graph, copy).Repair();
-            next.Add(repaired);
-        }
-
-        population.AddRange(next);
-        population = population.OrderBy(s => s.Fitness).Reverse().Take(POPSZ).ToList();
-        Debug.WriteLine(population[0]);
-
-        if (population[0].Fitness > bestFit) {
-            bestFit = population[0].Fitness;
-            bestGen = i;
-        }
-    }
-    Debug.WriteLine($"best fitness '{bestFit}' found on generation '{bestGen}'.");
+    var algo = new GreedyAugmenting<string>(graph);
+    Solution<string> solution = algo.Run(20, 20);
+    Debug.WriteLine($"best fitness '{solution.Fitness}' found.");
+    Debug.WriteLine(solution.JoinString());
 }
 
 void PrintBest(List<Solution<string>> population) {

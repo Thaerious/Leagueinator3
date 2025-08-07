@@ -1,6 +1,7 @@
 ﻿using Algorithms;
 using Algorithms.PairMatching;
 using Leagueinator.GUI.Model;
+using System.Diagnostics;
 
 namespace Leagueinator.GUI.Controllers.Modules.Motley {
     public class AssignPlayers {
@@ -30,16 +31,19 @@ namespace Leagueinator.GUI.Controllers.Modules.Motley {
                 }
             }
 
+            // Make the ELO list even
             if (ELO.Count % 2 != 0) {
                 setAside = this.SetAside(3);
                 foreach (string name in setAside) this.ELO.Remove(name);
 
+                // Assign those players to a 4321 match
                 roundData.AddMatch(new MatchData(roundData) {
                     MatchFormat = MatchFormat.A4321,
                     Ends = this.EventData.DefaultEnds
                 });
             }
 
+            // Make the ELO divisable by 4
             if (ELO.Count % 4 != 0) {
                 setAside = this.SetAside(2);
                 foreach (string name in setAside) this.ELO.Remove(name);
@@ -87,7 +91,6 @@ namespace Leagueinator.GUI.Controllers.Modules.Motley {
             }
 
             return newRound;
-
         }
 
         private RoundData AssignTeams(RoundData roundData) {
@@ -103,10 +106,11 @@ namespace Leagueinator.GUI.Controllers.Modules.Motley {
                                                     .Where(n => n != forPlayer)
                                                     .ToList();
 
-                foreach (var kv2 in this.ELO) {
-                    if (kv1.Key == kv2.Key) continue;
-                    if (!previousPartners.Contains(kv2.Key)) {
-                        graph.AddEdge(kv1.Key, kv2.Key, Math.Abs(kv1.Value - kv2.Value));
+                // Add edges to graph between all players that weren't partners
+                foreach (var otherPlayer in this.ELO) {
+                    if (forPlayer == otherPlayer.Key) continue;
+                    if (!previousPartners.Contains(otherPlayer.Key)) {
+                        graph.AddEdge(forPlayer, otherPlayer.Key, Math.Abs(kv1.Value - otherPlayer.Value));
                     }
                 }
             }
@@ -145,11 +149,6 @@ namespace Leagueinator.GUI.Controllers.Modules.Motley {
             var sortedList = localELO.OrderBy(kv => kv.Value).Select(kv => kv.Key).ToList();
             sortedList.RemoveRange(0, sortedList.Count - count);
             return sortedList;
-        }
-
-        internal static RoundData Assign(LeagueData leagueData, EventData eventData, RoundData roundData) {
-            AssignPlayers assignPlayers = new(leagueData, eventData, roundData);
-            return assignPlayers.Run();
         }
     }
 }

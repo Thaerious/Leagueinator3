@@ -37,7 +37,8 @@ namespace Algorithms.PairMatching {
 
                 foreach (var solution in population) {
                     var copy = solution.Copy();
-                    var edge = edges[rng.Next(population.Count)];
+                    int nextEdge = rng.Next(edges.Count);
+                    var edge = edges[nextEdge];
                     copy.Set(edge);
                     var repaired = new RepairSolution<T>(graph, copy).Repair();
                     next.Add(repaired);

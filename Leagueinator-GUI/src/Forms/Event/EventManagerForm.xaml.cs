@@ -1,7 +1,6 @@
 ﻿using Leagueinator.GUI.Controllers.NamedEvents;
 using Leagueinator.GUI.Controls.MatchCards;
 using Leagueinator.GUI.Model;
-using System.Diagnostics;
 using System.Windows;
 
 namespace Leagueinator.GUI.Forms.Event {
@@ -53,7 +52,6 @@ namespace Leagueinator.GUI.Forms.Event {
 
             this.ListEventType.SelectedValuePath = "EventType";
             this.ListEventType.DisplayMemberPath = "DisplayName";
-
         }
 
         public MatchFormat MatchFormat => (MatchFormat)this.ListMatchFormat.SelectedValue;
