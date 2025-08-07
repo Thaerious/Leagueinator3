@@ -33,13 +33,17 @@ namespace Leagueinator.GUI.Controllers {
             }
             set {
                 this._eventData = value;
-                if (this.EventTypeModule != null) {
-                    this.EventTypeModule!.UnloadModule();
-                }
-
-                this.EventTypeModule = EventTypeMeta.GetModule(this._eventData.EventType);
-                this.EventTypeModule.LoadModule(this.Window, this);
+                if (value != null) this.UpdateModules(value.EventType);
             }
+        }
+
+        private void UpdateModules(EventType eventType) {
+            if (this.EventTypeModule != null) {
+                this.EventTypeModule!.UnloadModule();
+            }
+
+            this.EventTypeModule = eventType.GetModule();
+            this.EventTypeModule.LoadModule(this.Window, this);
         }
 
         private int CurrentRoundIndex { get; set; } = 0;
@@ -211,15 +215,18 @@ namespace Leagueinator.GUI.Controllers {
                 eventData.DefaultEnds = int.Parse(form.TxtEnds.Text);
                 eventData.LaneCount = int.Parse(form.TxtLanes.Text);
                 eventData.DefaultMatchFormat = form.MatchFormat;
+                eventData.EventType = form.EventType;
 
-                this.CorrectEnds(eventData.DefaultEnds);
-                this.CorrectLanes(eventData.LaneCount);
-                this.CorrectFormat(eventData.DefaultMatchFormat);
+                this.FixEnds(eventData.DefaultEnds);
+                this.FixLanes(eventData.LaneCount);
+                this.FixFormat(eventData.DefaultMatchFormat);
                 this.DispatchModel(EventName.SetModel);
+
+                this.UpdateModules(eventData.EventType);
             }
         }
 
-        private void CorrectEnds(int value) {
+        private void FixEnds(int value) {
             // Each match w/o a player has it's ends changed to the new value.
             this.EventData.Rounds
                 .SelectMany(r => r.Matches)
@@ -228,7 +235,7 @@ namespace Leagueinator.GUI.Controllers {
                 .ForEach(match => match.Ends = value);
         }
 
-        private void CorrectLanes(int value) {
+        private void FixLanes(int value) {
             // Remove empty matches until the lane count matches.
             foreach (RoundData round in this.EventData.Rounds) {
                 while (round.Matches.Count > value) {
@@ -259,7 +266,7 @@ namespace Leagueinator.GUI.Controllers {
             }
         }
 
-        private void CorrectFormat(MatchFormat defaultMatchFormat) {
+        private void FixFormat(MatchFormat defaultMatchFormat) {
             foreach (RoundData round in this.EventData.Rounds) {
                 foreach (MatchData match in round.Matches) {
                     if (match.CountPlayers() == 0) {
