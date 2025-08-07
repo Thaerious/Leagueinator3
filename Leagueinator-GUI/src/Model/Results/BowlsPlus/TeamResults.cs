@@ -5,7 +5,7 @@
     /// </summary>
     public class TeamResults : IComparable<TeamResults> {
 
-        public Result Result { get; private set; }
+        public GameResult Result { get; private set; }
 
         public TeamResults(MatchData matchData, int teamIndex) {
             this.Result = this.CalcResult(matchData);
@@ -19,15 +19,15 @@
             this.Rank = -1; // Default rank, this is set by the DisplayRoundResults class
         }
 
-        private Result CalcResult(MatchData matchData) {
-            if (matchData.Score.Sum() == 0) return Result.Vacant;
-            if (this.BowlsFor > this.BowlsAgainst) return Result.Win;
-            if (this.BowlsFor < this.BowlsAgainst) return Result.Loss;
-            if (this.PlusFor > this.PlusAgainst) return Result.Win;
-            if (this.PlusFor < this.PlusAgainst) return Result.Loss;
-            if (matchData.TieBreaker == this.TeamIndex) return Result.Win;
-            if (matchData.TieBreaker != -1) return Result.Loss;
-            return Result.Draw;
+        private GameResult CalcResult(MatchData matchData) {
+            if (matchData.Score.Sum() == 0) return GameResult.Vacant;
+            if (this.BowlsFor > this.BowlsAgainst) return GameResult.Win;
+            if (this.BowlsFor < this.BowlsAgainst) return GameResult.Loss;
+            if (this.PlusFor > this.PlusAgainst) return GameResult.Win;
+            if (this.PlusFor < this.PlusAgainst) return GameResult.Loss;
+            if (matchData.TieBreaker == this.TeamIndex) return GameResult.Win;
+            if (matchData.TieBreaker != -1) return GameResult.Loss;
+            return GameResult.Draw;
         }
 
         public override string ToString() {
@@ -62,7 +62,7 @@
             if (other == null) return 1; // Null is less
 
             int cmp = this.Result.CompareTo(other.Result);
-            if (cmp != 0) return -cmp; // Higher Result wins (Win > Draw > Loss)
+            if (cmp != 0) return -cmp; // Higher GameResult wins (Win > Draw > Loss)
 
             cmp = this.BowlsFor.CompareTo(other.BowlsFor); // Higher is better
             if (cmp != 0) return cmp;

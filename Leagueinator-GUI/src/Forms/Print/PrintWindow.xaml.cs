@@ -106,7 +106,7 @@ namespace Leagueinator.GUI.Forms.Print {
 
         private TableRow AddResult(SingleResult result) {
             throw new NotImplementedException();
-            //List<string> names = [.. result.MatchData.Teams.SelectMany(t => t.Names).Select(name  => !string.IsNullOrEmpty(name))];
+            //List<string> names = [.. result.MatchData.AllTeams.SelectMany(t => t.Names).Select(name  => !string.IsNullOrEmpty(name))];
 
 
             //names = [.. names.Except(result.Players)];
@@ -115,7 +115,7 @@ namespace Leagueinator.GUI.Forms.Print {
 
             //return new TableRow {
             //    Cells = {
-            //        new TableCell(new Paragraph(new Run(result.Result.ToString()))),
+            //        new TableCell(new Paragraph(new Run(result.GameResult.ToString()))),
             //        new TableCell(new Paragraph(new Run($"{result.BowlsFor}+{result.PlusFor}"))),
             //        new TableCell(new Paragraph(new Run($"{result.BowlsAgainst}+{result.PlusAgainst}"))),
             //        new TableCell(new Paragraph(new Run(result.MatchData.TieBreaker == result.TeamIndex ? "✓" : " "))),

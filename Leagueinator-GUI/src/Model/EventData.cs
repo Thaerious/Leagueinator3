@@ -32,20 +32,18 @@ namespace Leagueinator.GUI.Model {
 
         public int IndexOf(RoundData roundData) => this._rounds.IndexOf(roundData);
 
-        public HashSet<TeamData> Teams {
-            get {
-                HashSet<TeamData> teams = [];
+        public List<TeamData> AllTeams() {
+            List<TeamData> teams = [];
 
-                foreach (RoundData round in this) {
-                    foreach (MatchData match in round.Matches) {
-                        foreach (TeamData team in match.Teams) {
-                            teams.Add(team);
-                        }
+            foreach (RoundData round in this) {
+                foreach (MatchData match in round.Matches) {
+                    foreach (TeamData team in match.Teams) {
+                        teams.Add(team);
                     }
                 }
-
-                return teams;
             }
+
+            return teams;
         }
 
         /// <summary>
@@ -102,7 +100,7 @@ namespace Leagueinator.GUI.Model {
         /// </summary>
         /// <param name="team"></param>
         /// <returns></returns>
-        public bool HasPlayed(IEnumerable<string> team, IEnumerable<string> opponent) {
+        public bool HasPlayed(Players team, Players opponent) {
             foreach (TeamData prevOpponent in this.PreviousOpponents(team)) {
                 if (opponent.Intersect(prevOpponent.Names).Any()) {
                     return true;
@@ -138,7 +136,7 @@ namespace Leagueinator.GUI.Model {
             string[] parts = line.Split('|');
             if (parts.Length != 7) throw new FormatException($"Invalid EventData format: '{line}'");
 
-            EventData eventData = new (leagueData) {
+            EventData eventData = new(leagueData) {
                 EventName = parts[0],
                 Date = DateTime.Parse(parts[1], null, System.Globalization.DateTimeStyles.RoundtripKind),
                 DefaultMatchFormat = Enum.Parse<MatchFormat>(parts[2]),
@@ -157,7 +155,7 @@ namespace Leagueinator.GUI.Model {
         }
 
         internal void ReplaceRound(RoundData roundData, RoundData newRound) {
-            int index = this._rounds.IndexOf(roundData);        
+            int index = this._rounds.IndexOf(roundData);
             this._rounds[index] = newRound;
         }
     }

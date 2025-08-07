@@ -39,21 +39,21 @@
         public int Wins {
             get {
                 if (this.Count == 0) return 0;
-                return this.Count(r => r.Result == Result.Win);
+                return this.Count(r => r.Result == GameResult.Win);
             }
         }
 
         public int Draws {
             get {
                 if (this.Count == 0) return 0;
-                return this.Count(r => r.Result == Result.Draw);
+                return this.Count(r => r.Result == GameResult.Draw);
             }
         }
 
         public int Losses {
             get {
                 if (this.Count == 0) return 0;
-                return this.Count(r => r.Result == Result.Loss);
+                return this.Count(r => r.Result == GameResult.Loss);
             }
         }
 
@@ -89,7 +89,7 @@
         public int CountWins {
             get {
                 if (this.Count == 0) return 0;
-                return this.Count(r => r.Result == Result.Win);
+                return this.Count(r => r.Result == GameResult.Win);
             }
         }
 

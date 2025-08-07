@@ -7,10 +7,12 @@ namespace Leagueinator.GUI.Controllers.Modules.AssignLanes {
         public override void LoadModule(Window window, MainController mainController) {
             base.LoadModule(window, mainController);
             this.MainWindow.MainMenu.AddMenuItem(["Action", "Assign Lanes"], this.AssignLanes);
+            NamedEvent.RegisterHandler(this);
         }
 
         public override void UnloadModule() {
             this.MainWindow.MainMenu.RemoveMenuItem(["Action", "Assign Lanes"]);
+            NamedEvent.RemoveHandler(this);
         }
 
         private void AssignLanes(object sender, RoutedEventArgs e) {

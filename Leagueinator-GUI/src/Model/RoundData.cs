@@ -95,7 +95,13 @@ namespace Leagueinator.GUI.Model {
         }
 
         internal void InsertMatch(int index, MatchData match) {
+            if (match.Parent != this) throw new InvalidParentException();
             this._matches[index] = match;
+        }
+
+        internal void AddMatch(MatchData match) {
+            if (match.Parent != this) throw new InvalidParentException();
+            this._matches.Add(match);
         }
     }
 }

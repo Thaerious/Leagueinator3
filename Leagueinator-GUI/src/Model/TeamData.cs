@@ -1,18 +1,42 @@
 ﻿
 using Leagueinator.GUI.Model.ViewModel;
-using System.Diagnostics;
 using System.IO;
-using System.Text.Json.Serialization;
 
 namespace Leagueinator.GUI.Model {
     public class TeamData(MatchData matchData, int size) : IEquatable<TeamData>, IHasParent<MatchData> {
 
         private readonly string[] _names = [.. Enumerable.Repeat(string.Empty, size)];
+
         public IReadOnlyList<string> Names => _names;
+
+        //public Players Players => [.. this.Names]; // use new Players(team.Names)
 
         public int Index => this.Parent.Teams.ToList().IndexOf(this);
 
         public MatchData Parent { get; } = matchData;
+
+        public int Bowls => this.Parent.Score[this.Index];
+
+        public GameResult Result {
+            get {
+                int countScored = this.Parent.Teams.Select(t => t.Bowls > 0).Count();
+                if (countScored == 0) return GameResult.Vacant;
+
+                // If there are no teams with a greater or equal score, this team wins
+                int countGreater = this.Parent.Teams.Select(t => t.Bowls >= this.Bowls).Count();
+                if (countGreater == 0) return GameResult.Win;
+
+                // If there are no teams with a lsser or equal score, this team loses
+                int countLesser = this.Parent.Teams.Select(t => t.Bowls <= this.Bowls).Count();
+                if (countLesser == 0) return GameResult.Loss;
+
+                // If the tiebreaker goes to this team, this team wins
+                if (this.Parent.TieBreaker == this.Index) return GameResult.Win;
+
+                // All else, this team ties.
+                return GameResult.Draw;
+            }
+        }
 
         public void AddPlayer(string name) {
             if (this.IsFull()) throw new InvalidOperationException("TeamData is full");

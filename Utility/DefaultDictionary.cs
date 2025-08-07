@@ -1,6 +1,13 @@
 ﻿namespace Utility {
     public class DefaultDictionary<K, V> : Dictionary<K, V> where K : notnull {
 
+        public DefaultDictionary() {
+            var ctor = typeof(V).GetConstructor(Type.EmptyTypes) 
+                     ?? throw new NotSupportedException("Must have a no-arg constructor.");
+
+            this.Generator = (_) => Activator.CreateInstance<V>();
+        }
+
         public DefaultDictionary(Func<K, V> generator) {
             this.Generator = generator;
         }

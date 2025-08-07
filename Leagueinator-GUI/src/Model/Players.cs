@@ -1,11 +1,16 @@
 ﻿
 namespace Leagueinator.GUI.Model {
+
+    /// <summary>
+    /// A set of player names that when compared for equality checks only
+    /// membership, not order.
+    /// </summary>
     public class Players : List<string>, IEquatable<Players> {
         
         public Players(): base() { }
         
-        public Players(IEnumerable<string> source) : base(source) {
-            this.AddRange(source);
+        public Players(IEnumerable<string> source) : base() {
+            this.AddRange(source.Where(s => !string.IsNullOrEmpty(s)));
         }
 
         public bool Equals(Players? other) {

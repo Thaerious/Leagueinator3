@@ -67,7 +67,7 @@ namespace Leagueinator.GUI.Model {
                 Ends = this.Ends,
             };
 
-            // Deep copy Teams
+            // Deep copy AllTeams
             for (int i = 0; i < this.Teams.Count; i++) {
                 matchCopy.Teams[i].CopyFrom(this.Teams[i]);
             }

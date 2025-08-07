@@ -17,16 +17,16 @@ namespace Leagueinator.GUI.Model.Results.BowlsPlus {
 
         public Players Players { get; }
 
-        public Result Result {
+        public GameResult Result {
             get {
-                if (this.MatchData.Score.Sum() == 0) return Result.Vacant;
-                if (this.BowlsFor > this.BowlsAgainst) return Result.Win;
-                if (this.BowlsFor < this.BowlsAgainst) return Result.Loss;
-                if (this.PlusFor > this.PlusAgainst) return Result.Win;
-                if (this.PlusFor < this.PlusAgainst) return Result.Loss;
-                if (this.MatchData.TieBreaker == this.TeamIndex) return Result.Win;
-                if (this.MatchData.TieBreaker != -1) return Result.Loss;
-                return Result.Draw;
+                if (this.MatchData.Score.Sum() == 0) return GameResult.Vacant;
+                if (this.BowlsFor > this.BowlsAgainst) return GameResult.Win;
+                if (this.BowlsFor < this.BowlsAgainst) return GameResult.Loss;
+                if (this.PlusFor > this.PlusAgainst) return GameResult.Win;
+                if (this.PlusFor < this.PlusAgainst) return GameResult.Loss;
+                if (this.MatchData.TieBreaker == this.TeamIndex) return GameResult.Win;
+                if (this.MatchData.TieBreaker != -1) return GameResult.Loss;
+                return GameResult.Draw;
             }
         }
 
@@ -86,7 +86,7 @@ namespace Leagueinator.GUI.Model.Results.BowlsPlus {
             if (other == null) return 1; // Null is less
 
             int cmp = this.Result.CompareTo(other.Result);
-            if (cmp != 0) return -cmp; // Higher Result wins (Win > Draw > Loss)
+            if (cmp != 0) return -cmp; // Higher GameResult wins (Win > Draw > Loss)
 
             cmp = this.BowlsFor.CompareTo(other.BowlsFor); // Higher is better
             if (cmp != 0) return cmp;

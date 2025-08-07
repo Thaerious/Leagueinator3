@@ -1,4 +1,5 @@
-﻿using Leagueinator.GUI.Controllers.NamedEvents;
+﻿using Leagueinator.GUI.Controllers.Modules;
+using Leagueinator.GUI.Controllers.NamedEvents;
 using Leagueinator.GUI.Dialogs;
 using Leagueinator.GUI.Forms;
 using Leagueinator.GUI.Forms.Event;
@@ -22,6 +23,9 @@ namespace Leagueinator.GUI.Controllers {
         internal LeagueData LeagueData { get; private set; } = new();
 
         private EventData? _eventData = default;
+
+        private IModule? EventTypeModule = null;
+
         internal EventData EventData {
             get {
                 if (_eventData == null) throw new NullReferenceException("EventData not set.");
@@ -29,9 +33,12 @@ namespace Leagueinator.GUI.Controllers {
             }
             set {
                 this._eventData = value;
-                // TODO Renable when modules are back
-                //var module = EventTypeMeta.GetModule(this._eventData.EventType);
-                //this.LoadModule(module);
+                if (this.EventTypeModule != null) {
+                    this.EventTypeModule!.UnloadModule();
+                }
+
+                this.EventTypeModule = EventTypeMeta.GetModule(this._eventData.EventType);
+                this.EventTypeModule.LoadModule(this.Window, this);
             }
         }
 

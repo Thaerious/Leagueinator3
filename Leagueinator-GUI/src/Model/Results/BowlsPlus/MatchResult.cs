@@ -7,7 +7,7 @@ namespace Leagueinator.GUI.Model.Results.BowlsPlus {
         public Players GetWinners() {
             throw new NotImplementedException();
             //foreach (SingleResult singleResult in this) {
-            //    if (singleResult.Result == Result.Win) {
+            //    if (singleResult.GameResult == GameResult.Win) {
             //        return singleResult.Players;
             //    }
             //}
@@ -21,7 +21,7 @@ namespace Leagueinator.GUI.Model.Results.BowlsPlus {
         public Players GetLosers() {
             throw new NotImplementedException();
             //foreach (SingleResult singleResult in this) {
-            //    if (singleResult.Result == Result.Loss) {
+            //    if (singleResult.GameResult == GameResult.Loss) {
             //        return singleResult.Players;
             //    }
             //}

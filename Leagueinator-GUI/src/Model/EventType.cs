@@ -1,14 +1,16 @@
-﻿namespace Leagueinator.GUI.Model {
+﻿using Leagueinator.GUI.Controllers.Modules;
+using Leagueinator.GUI.Controllers.Modules.RankedLadder;
+
+namespace Leagueinator.GUI.Model {
     public enum EventType { RankedLadder, Motley };
 
     public static class EventTypeMeta {
-        // This should be part of the module package TODO
-        //public static IModule GetModule(EventType eventType) {
-        //    return eventType switch {
-        //        EventType.RankedLadder => new RankedLadderModule(),
-        //        EventType.Motley => new MotleyModule(),
-        //    };
-        //}
+        public static IModule GetModule(EventType eventType) {
+            return eventType switch {
+                EventType.RankedLadder => new RankedLadderModule(),
+                //EventType.Motley => new MotleyModule(),
+            };
+        }
     }
 }
 
