@@ -113,7 +113,7 @@ namespace Leagueinator.GUI.Model {
             }
         }
 
-        internal List<string> PlayerNames() {
+        internal List<string> AllNames() {
             return [.. this.Teams.SelectMany(t => t.Names).Where(name => !string.IsNullOrEmpty(name))];
         }
 

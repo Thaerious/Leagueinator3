@@ -1,5 +1,4 @@
 ﻿using Leagueinator.GUI.Model.ViewModel;
-using System.Diagnostics;
 using System.IO;
 
 namespace Leagueinator.GUI.Model {

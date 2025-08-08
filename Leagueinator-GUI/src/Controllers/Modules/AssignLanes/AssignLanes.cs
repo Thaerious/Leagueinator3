@@ -70,7 +70,7 @@ namespace Leagueinator.GUI.Controllers.Modules.AssignLanes {
 
             foreach (MatchData match in permittedLanes.Keys) {
                 var lanes = permittedLanes[match];
-                Debug.WriteLine($"{match.PlayerNames().JoinString()} ; {lanes.JoinString()}");
+                Debug.WriteLine($"{match.AllNames().JoinString()} ; {lanes.JoinString()}");
             }
 
             AssignValues<MatchData, int> assign = new(permittedLanes);

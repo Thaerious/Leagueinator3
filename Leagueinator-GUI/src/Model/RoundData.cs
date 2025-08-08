@@ -122,5 +122,7 @@ namespace Leagueinator.GUI.Model {
             };
             this._matches.Add(match);
         }
+
+        internal IEnumerable<string> AllNames() => Matches.SelectMany(m => m.AllNames());
     }
 }

@@ -11,6 +11,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Windows;
 using Utility;
+using Utility.Extensions;
 
 namespace Leagueinator.GUI.Controllers {
 
@@ -103,15 +104,19 @@ namespace Leagueinator.GUI.Controllers {
         }
 
         private List<string> BuildNameAlerts() {
-            if (this.CurrentRoundIndex == 0) return [];
-            List<string> newNames = [];
+            // Collect all names that are not in the current round
+            HashSet<string> roster = [..this.LeagueData.Events
+                                            .SelectMany(e => e.Rounds)
+                                            .Where(r => r != this.RoundData)
+                                            .SelectMany(r => r.AllNames())
+                                     ];
 
-            HashSet<string> roster = [.. this.EventData.Rounds[0].Matches.SelectMany(m => m.PlayerNames())];
-            foreach (string name in this.RoundData.Matches.SelectMany(m => m.PlayerNames())) {
-                if (!roster.Contains(name)) newNames.Add(name);
-            }
+            Debug.WriteLine(roster.JoinString());
+            Debug.WriteLine(this.RoundData.AllNames().JoinString());
+            Debug.WriteLine(this.RoundData.AllNames().Except(roster).JoinString());
 
-            return newNames;
+            // Return the symmetric difference of the two sets
+            return this.RoundData.AllNames().Except(roster).ToList();
         }
 
         public void DispatchSetTitle(bool saved) {
@@ -231,7 +236,7 @@ namespace Leagueinator.GUI.Controllers {
             // Each match w/o a player has it's ends changed to the new value.
             this.EventData.Rounds
                 .SelectMany(r => r.Matches)
-                .Where(match => match.PlayerNames().Count == 0)
+                .Where(match => match.AllNames().Count == 0)
                 .ToList()
                 .ForEach(match => match.Ends = value);
         }
