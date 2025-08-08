@@ -13,7 +13,7 @@ namespace Leagueinator.GUI.Controllers.NamedEvents {
         public static HashSet<object> Receivers = [];
 
         public static void RegisterHandler(object receiver, bool startPaused = false) {
-            if (Receivers.Contains(receiver.GetType())) throw new Exception("Reveiver Exception");
+            if (Receivers.Contains(receiver.GetType())) throw new Exception("Receiver Exception");
             Receivers.Add(receiver.GetType()); // TODO remove this, it's just to check for sanity errors
 
             Logger.Log($"Register handler: '{receiver.GetType().Name}'");
@@ -37,6 +37,8 @@ namespace Leagueinator.GUI.Controllers.NamedEvents {
         }
 
         public static void RemoveHandler(object receiver) {
+            Logger.Log($"Remove handler: '{receiver.GetType().Name}'");
+
             var methods = receiver.GetType().GetMethods(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.DeclaredOnly);
             Receivers.Remove(receiver.GetType()); // TODO remove this, it's just to check for sanity errors
 

@@ -209,7 +209,6 @@ namespace Leagueinator.GUI.Controllers {
 
             if (form.ShowDialog(eventData) ?? false) {
                 this.DispatchModel(EventName.SetModel);
-                NamedEvent.RemoveHandler(form);
 
                 eventData.EventName = form.TxtName.Text;
                 eventData.DefaultEnds = int.Parse(form.TxtEnds.Text);
@@ -224,6 +223,8 @@ namespace Leagueinator.GUI.Controllers {
 
                 this.UpdateModules(eventData.EventType);
             }
+
+            NamedEvent.RemoveHandler(form);
         }
 
         private void FixEnds(int value) {

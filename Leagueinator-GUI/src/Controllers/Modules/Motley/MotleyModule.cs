@@ -18,7 +18,6 @@ namespace Leagueinator.GUI.Controllers.Modules.Motley {
             this.MainWindow.MainMenu.RemoveMenuItem(["Action", "Generate Next Round"]);
         }
 
-
         /// <summary>
         /// Take all the players from the target round and assign them partners.
         /// Returns a round with the players in teams; the teams in no particular order.

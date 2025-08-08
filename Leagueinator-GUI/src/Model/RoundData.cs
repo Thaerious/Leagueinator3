@@ -13,14 +13,25 @@ namespace Leagueinator.GUI.Model {
 
         public EventData Parent { get; } = EventData;
 
-        public void Fill() {
-            while (this._matches.Count < this.Parent.LaneCount) {
+        public void Fill(int? toIndex = null) {
+            toIndex = toIndex ?? this.Parent.LaneCount;
+
+            while (this._matches.Count < toIndex) {
                 this._matches.Add(
                     new MatchData(this) {
                         MatchFormat = this.Parent.DefaultMatchFormat,
                         Ends = this.Parent.DefaultEnds
                     }
                 );
+            }
+        }
+
+        public void Trim() {
+            List<MatchData> matches = [.. this._matches];
+            foreach (var match in matches) {
+                if (match.CountPlayers() == 0) {
+                    this.RemoveMatch(match);
+                }
             }
         }
 
@@ -101,6 +112,14 @@ namespace Leagueinator.GUI.Model {
 
         internal void AddMatch(MatchData match) {
             if (match.Parent != this) throw new InvalidParentException();
+            this._matches.Add(match);
+        }
+
+        internal void AddMatch() {
+            MatchData match = new(this) {
+                MatchFormat = this.Parent.DefaultMatchFormat,
+                Ends = this.Parent.DefaultEnds
+            };
             this._matches.Add(match);
         }
     }

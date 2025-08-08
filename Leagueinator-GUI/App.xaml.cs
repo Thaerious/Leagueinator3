@@ -32,7 +32,8 @@ namespace Leagueinator.GUI {
                     MainController mainController = new(mainWindow);
 
                     // Add standard modules
-                    new AssignLanesModule().LoadModule(mainWindow, mainController);                    
+                    new AssignLanesModule().LoadModule(mainWindow, mainController);
+                    new CSVModule().LoadModule(mainWindow, mainController);
                     this.DispatchEvent(EventName.NewLeague);
                 };
             });

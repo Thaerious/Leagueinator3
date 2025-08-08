@@ -15,7 +15,10 @@ namespace Leagueinator.GUI.Model {
 
         public MatchData Parent { get; } = matchData;
 
-        public int Bowls => this.Parent.Score[this.Index];
+        public int Bowls {
+            get => this.Parent.Score[this.Index];
+            set => this.Parent.Score[this.Index] = value;
+        }
 
         public GameResult Result {
             get {

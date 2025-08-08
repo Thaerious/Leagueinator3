@@ -21,8 +21,10 @@ namespace Leagueinator.GUI.Controls.MatchCards {
         /// </summary>
         public MatchCard() {
             this.Loaded += (s, e) => {
-                InfoCard infoCard = this.GetDescendantsOfType<InfoCard>().FirstOrDefault()
-                                  ?? throw new NullReferenceException("InfoCard not found on MatchCard.");
+                InfoCard infoCard = this.GetDescendantsOfType<InfoCard>().FirstOrDefault();
+                //?? throw new NullReferenceException("InfoCard not found on MatchCard.");
+
+                if (infoCard is null) return;
 
                 infoCard.TxtEnds.TextChanged += this.EndsTextChanged;
                 infoCard.TxtEnds.PreviewMouseLeftButtonDown += this.PreventCaretBehaviour;

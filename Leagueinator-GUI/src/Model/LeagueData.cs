@@ -1,4 +1,5 @@
 ﻿using Leagueinator.GUI.Model.ViewModel;
+using System.Diagnostics;
 using System.IO;
 
 namespace Leagueinator.GUI.Model {
@@ -8,13 +9,26 @@ namespace Leagueinator.GUI.Model {
         public IReadOnlyList<EventData> Events => _events;
 
         internal EventData AddEvent(string? name = null) {
-            name = name ?? DateTime.Now.ToString("MMMM d, yyyy");
+            name = name ?? DateTime.Now.ToString("MMMM dd yyyy");
             int count = this._events.Count(e => e.EventName.StartsWith(name));
             if (count > 0) name = $"{name} [{count}]";
 
-            EventData eventData = new(this) {
-                EventName = name
-            };
+            EventData eventData;
+
+            if (this.Events.Count > 0) {
+                eventData = new(this) {
+                    EventName = name,
+                    DefaultMatchFormat = this.Events[^1].DefaultMatchFormat,
+                    EventType = this.Events[^1].EventType,
+                    DefaultEnds = this.Events[^1].DefaultEnds,
+                    LaneCount = this.Events[^1].LaneCount,
+                };
+            }
+            else {
+                eventData = new(this) {
+                    EventName = name
+                };
+            }
 
             this._events.Add(eventData);
             return eventData;
