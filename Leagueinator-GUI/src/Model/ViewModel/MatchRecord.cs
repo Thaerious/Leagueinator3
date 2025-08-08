@@ -1,4 +1,6 @@
-﻿namespace Leagueinator.GUI.Model.ViewModel {
+﻿using Leagueinator.GUI.Model.Enums;
+
+namespace Leagueinator.GUI.Model.ViewModel {
     public record MatchRecord(
         MatchFormat MatchFormat,
         int Ends,

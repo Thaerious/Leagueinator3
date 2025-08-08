@@ -1,14 +1,10 @@
 ﻿using Leagueinator.GUI.Controllers.NamedEvents;
 using Leagueinator.GUI.Controls.MatchCards;
 using Leagueinator.GUI.Forms.Main;
-using Leagueinator.GUI.Model;
 using Leagueinator.GUI.Model.ViewModel;
 using Leagueinator.Utility.Extensions;
-using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Threading;
-using Utility.Extensions;
 
 namespace Leagueinator.GUI.Controls.MatchPanel {
     /// <summary>

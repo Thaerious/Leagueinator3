@@ -1,4 +1,6 @@
-﻿namespace Leagueinator.GUI.Model.Results.BowlsPlus {
+﻿using Leagueinator.GUI.Model.Enums;
+
+namespace Leagueinator.GUI.Model.Results.BowlsPlus {
     public class TeamResult : List<SingleResult>, IComparable<TeamResult>{
         public readonly Players Players;
 

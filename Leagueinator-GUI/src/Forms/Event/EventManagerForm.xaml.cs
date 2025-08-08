@@ -1,6 +1,7 @@
 ﻿using Leagueinator.GUI.Controllers.NamedEvents;
 using Leagueinator.GUI.Controls.MatchCards;
 using Leagueinator.GUI.Model;
+using Leagueinator.GUI.Model.Enums;
 using System.Windows;
 
 namespace Leagueinator.GUI.Forms.Event {

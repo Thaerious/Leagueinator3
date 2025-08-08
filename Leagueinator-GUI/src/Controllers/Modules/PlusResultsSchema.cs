@@ -1,4 +1,5 @@
 ﻿using Leagueinator.GUI.Model;
+using Leagueinator.GUI.Model.Enums;
 using Leagueinator.GUI.Model.Results.BowlsPlus;
 using Leagueinator.GUI.Model.ViewModel;
 

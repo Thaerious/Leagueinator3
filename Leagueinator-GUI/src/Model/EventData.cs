@@ -1,4 +1,5 @@
-﻿using Leagueinator.GUI.Model.ViewModel;
+﻿using Leagueinator.GUI.Model.Enums;
+using Leagueinator.GUI.Model.ViewModel;
 using System.Collections;
 using System.Diagnostics;
 using System.IO;

@@ -1,4 +1,6 @@
-﻿namespace Leagueinator.GUI.Model.Results.BowlsPlus {
+﻿using Leagueinator.GUI.Model.Enums;
+
+namespace Leagueinator.GUI.Model.Results.BowlsPlus {
 
     /// <summary>
     /// A collection of all team results for a single set of players in an event.

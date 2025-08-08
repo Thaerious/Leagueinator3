@@ -5,6 +5,7 @@ using Leagueinator.GUI.Forms;
 using Leagueinator.GUI.Forms.Event;
 using Leagueinator.GUI.Forms.Main;
 using Leagueinator.GUI.Model;
+using Leagueinator.GUI.Model.Enums;
 using Leagueinator.GUI.Model.ViewModel;
 using Microsoft.Win32;
 using System.Diagnostics;

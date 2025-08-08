@@ -1,6 +1,7 @@
 ﻿using Algorithms;
 using Algorithms.PairMatching;
 using Leagueinator.GUI.Model;
+using Leagueinator.GUI.Model.Enums;
 using System.Diagnostics;
 
 namespace Leagueinator.GUI.Controllers.Modules.Motley {

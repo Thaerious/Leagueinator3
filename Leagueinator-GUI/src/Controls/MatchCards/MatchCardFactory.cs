@@ -1,4 +1,5 @@
 ﻿using Leagueinator.GUI.Model;
+using Leagueinator.GUI.Model.Enums;
 
 namespace Leagueinator.GUI.Controls.MatchCards {
     public static class MatchCardFactory {

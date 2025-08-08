@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using Leagueinator.GUI.Model.Enums;
+using System.Diagnostics;
 using System.Xml.Linq;
 
 namespace Leagueinator.GUI.Model.ViewModel {
