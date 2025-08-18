@@ -1,7 +1,9 @@
 ﻿
 using Leagueinator.GUI.Model.Enums;
 using Leagueinator.GUI.Model.ViewModel;
+using System.Diagnostics;
 using System.IO;
+using Utility.Extensions;
 
 namespace Leagueinator.GUI.Model {
     public class TeamData(MatchData matchData, int size) : IEquatable<TeamData>, IHasParent<MatchData> {
@@ -9,8 +11,6 @@ namespace Leagueinator.GUI.Model {
         private readonly string[] _names = [.. Enumerable.Repeat(string.Empty, size)];
 
         public IReadOnlyList<string> Names => _names;
-
-        //public Players Players => [.. this.Names]; // use new Players(team.Names)
 
         public int Index => this.Parent.Teams.ToList().IndexOf(this);
 
@@ -23,22 +23,21 @@ namespace Leagueinator.GUI.Model {
 
         public GameResult Result {
             get {
-                int countScored = this.Parent.Teams.Select(t => t.Bowls > 0).Count();
-                if (countScored == 0) return GameResult.Vacant;
+                var teams = this.Parent.Teams.Where(t => !t.IsEmpty());
 
-                // If there are no teams with a greater or equal score, this team wins
-                int countGreater = this.Parent.Teams.Select(t => t.Bowls >= this.Bowls).Count();
-                if (countGreater == 0) return GameResult.Win;
+                // No scores registered, implies game not played.
+                if (teams.All(t => t.Bowls <= 0)) return GameResult.Vacant;
 
-                // If there are no teams with a lsser or equal score, this team loses
-                int countLesser = this.Parent.Teams.Select(t => t.Bowls <= this.Bowls).Count();
-                if (countLesser == 0) return GameResult.Loss;
+                // Team does not have the max score
+                int max = teams.Max(t => t.Bowls);
+                if (this.Bowls < max) return GameResult.Loss;
 
-                // If the tiebreaker goes to this team, this team wins
-                if (this.Parent.TieBreaker == this.Index) return GameResult.Win;
+                // Team shares max score
+                bool multipleAtMax = teams.Count(t => t.Bowls == max) > 1;
+                if (!multipleAtMax) return GameResult.Win;
 
-                // All else, this team ties.
-                return GameResult.Draw;
+                // Tie at max: resolve with tiebreaker
+                return (this.Parent.TieBreaker == this.Index) ? GameResult.Win : GameResult.Draw;
             }
         }
 
@@ -110,7 +109,11 @@ namespace Leagueinator.GUI.Model {
         }
 
         public override string ToString() {
-            return string.Join(", ", Names);
+            return $"[{this._names.JoinString()}]:{this.Result}";
+        }
+
+        public List<string> AllNames() {
+            return [.. this._names.Select(n => n.Trim()).Where(n => !string.IsNullOrEmpty(n))];
         }
 
         public int CountPlayers() {
@@ -172,6 +175,10 @@ namespace Leagueinator.GUI.Model {
 
             matchData.Score[index] = int.Parse(parts[0]);
             return teamData;
+        }
+
+        public bool HasPlayers() {
+            return this.CountPlayers() > 0;
         }
     }
 }

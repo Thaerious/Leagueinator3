@@ -109,12 +109,7 @@ namespace Leagueinator.GUI.Controllers {
             HashSet<string> roster = [..this.LeagueData.Events
                                             .SelectMany(e => e.Rounds)
                                             .Where(r => r != this.RoundData)
-                                            .SelectMany(r => r.AllNames())
-                                     ];
-
-            Debug.WriteLine(roster.JoinString());
-            Debug.WriteLine(this.RoundData.AllNames().JoinString());
-            Debug.WriteLine(this.RoundData.AllNames().Except(roster).JoinString());
+                                            .SelectMany(r => r.AllNames())];
 
             // Return the symmetric difference of the two sets
             return this.RoundData.AllNames().Except(roster).ToList();

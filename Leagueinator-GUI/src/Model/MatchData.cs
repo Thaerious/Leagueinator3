@@ -3,6 +3,7 @@ using Leagueinator.GUI.Model.ViewModel;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
+using Utility.Extensions;
 
 namespace Leagueinator.GUI.Model {
 
@@ -115,7 +116,7 @@ namespace Leagueinator.GUI.Model {
         }
 
         internal List<string> AllNames() {
-            return [.. this.Teams.SelectMany(t => t.Names).Where(name => !string.IsNullOrEmpty(name))];
+            return [.. this.Teams.SelectMany(t => t.AllNames())];
         }
 
         public IEnumerable<PlayerRecord> Records() {
@@ -160,6 +161,10 @@ namespace Leagueinator.GUI.Model {
 
         public List<TeamData> GetOpposition(TeamData teamData) {
             return [.. this.Teams.Where(that => that != teamData)];
+        }
+
+        public bool HasPlayers() {
+            return this.CountPlayers() > 0;
         }
     }
 }

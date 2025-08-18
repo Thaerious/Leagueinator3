@@ -195,7 +195,6 @@ namespace Leagueinator.GUI.Controls.MatchCards {
 
             if (checkBox.IsChecked == true) checkTie[otherIndex].IsChecked = false;
 
-            Debug.WriteLine("HndTieValueChanged");
             this.DispatchEvent(EventName.ChangeTieBreaker, new() {
                 ["lane"] = this.Lane,
                 ["teamIndex"] = checkTie.FindIndex(cb => cb.IsChecked == true)

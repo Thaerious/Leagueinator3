@@ -109,7 +109,7 @@ namespace Leagueinator.GUI.Forms.Print {
             //List<string> names = [.. result.MatchData.AllTeams.SelectMany(t => t.Names).Select(name  => !string.IsNullOrEmpty(name))];
 
 
-            //names = [.. names.Except(result.Players)];
+            //names = [.. names.Except(result.AllNames)];
             //var joinNames = string.Join(", ", names);
 
 

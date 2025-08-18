@@ -10,7 +10,12 @@ namespace Leagueinator.GUI.Model {
         public Players(): base() { }
         
         public Players(IEnumerable<string> source) : base() {
-            this.AddRange(source.Where(s => !string.IsNullOrEmpty(s)));
+            IEnumerable<string> range = 
+                source.Select(s => s?.Trim())
+                      .Where(s => !string.IsNullOrEmpty(s))
+                      .Distinct(StringComparer.Ordinal)!; // force not null?  TODO fix?
+
+            this.AddRange(range);
         }
 
         public bool Equals(Players? other) {

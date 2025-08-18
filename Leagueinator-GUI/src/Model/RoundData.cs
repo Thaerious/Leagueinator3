@@ -1,6 +1,8 @@
-﻿using System.Text;
-using Leagueinator.GUI.Model.ViewModel;
+﻿using Leagueinator.GUI.Model.ViewModel;
+using System.Diagnostics;
 using System.IO;
+using System.Text;
+using Utility.Extensions;
 
 namespace Leagueinator.GUI.Model {
 
@@ -110,9 +112,10 @@ namespace Leagueinator.GUI.Model {
             this._matches[index] = match;
         }
 
-        internal void AddMatch(MatchData match) {
+        internal MatchData AddMatch(MatchData match) {
             if (match.Parent != this) throw new InvalidParentException();
             this._matches.Add(match);
+            return match;
         }
 
         internal void AddMatch() {
@@ -123,6 +126,8 @@ namespace Leagueinator.GUI.Model {
             this._matches.Add(match);
         }
 
-        internal IEnumerable<string> AllNames() => Matches.SelectMany(m => m.AllNames());
+        internal IEnumerable<string> AllNames() {
+            return this.Matches.SelectMany(m => m.AllNames());
+        }
     }
 }

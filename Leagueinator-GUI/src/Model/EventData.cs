@@ -18,6 +18,12 @@ namespace Leagueinator.GUI.Model {
         private readonly List<RoundData> _rounds = [];
         public IReadOnlyList<RoundData> Rounds => _rounds;
 
+        public IEnumerable<string> AllNames() => this.AllTeams()
+                                                  .SelectMany(t => t.Names)
+                                                  .Where(n => !string.IsNullOrEmpty(n))
+                                                  .Distinct(StringComparer.Ordinal)
+                                                  .ToList();
+
         public RoundData AddRound(bool fill = true) {
             RoundData newRound = new(this);
             if (fill) newRound.Fill();

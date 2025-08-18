@@ -40,7 +40,7 @@ namespace Leagueinator.Utility.Extensions {
         }
 
         /// <summary>
-        /// Removes a menu item from a Menu given a header path (e.g., ["View", "ELO"]).
+        /// Removes a menu item from a Menu given a header path (e.g., ["View", "ELOEngine"]).
         /// Supports nested menus.
         /// </summary>
         /// <param name="menu">The root Menu to remove from.</param>

@@ -8,24 +8,24 @@ namespace Leagueinator.GUI.Model.Results.BowlsPlus {
             throw new NotImplementedException();
             //foreach (SingleResult singleResult in this) {
             //    if (singleResult.GameResult == GameResult.Win) {
-            //        return singleResult.Players;
+            //        return singleResult.AllNames;
             //    }
             //}
 
             //foreach (SingleResult singleResult in this) {
             //    Debug.WriteLine(singleResult);
             //}
-            //throw new ModuleException("Match must have a winner to calculate ELO");
+            //throw new ModuleException("Match must have a winner to calculate ELOEngine");
         }
 
         public Players GetLosers() {
             throw new NotImplementedException();
             //foreach (SingleResult singleResult in this) {
             //    if (singleResult.GameResult == GameResult.Loss) {
-            //        return singleResult.Players;
+            //        return singleResult.AllNames;
             //    }
             //}
-            //throw new ModuleException("Match must have a loser to calculate ELO");
+            //throw new ModuleException("Match must have a loser to calculate ELOEngine");
         }
     }
 }

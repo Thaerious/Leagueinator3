@@ -18,7 +18,7 @@ namespace Leagueinator.GUI.Controllers.Modules.RankedLadder {
 
             foreach (TeamData team in this.EventData.AllTeams()) {
                 if (team.CountPlayers() == 0) continue;
-                var key = new Players(team.Names);            // ensure Players uses set-like equality
+                var key = new Players(team.Names);            // ensure AllNames uses set-like equality
                 summary[key] += new PlusResultsSchema(team);  // uses operator +
             }
 
@@ -74,7 +74,6 @@ namespace Leagueinator.GUI.Controllers.Modules.RankedLadder {
                     previous.Add([.. opponents.Names]);
                 }
             }
-            foreach (Players x in previous) Debug.WriteLine(x.JoinString());
             return previous;
         }
     }
