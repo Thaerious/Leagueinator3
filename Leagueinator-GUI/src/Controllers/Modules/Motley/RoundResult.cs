@@ -7,11 +7,8 @@ namespace Leagueinator.GUI.Controllers.Modules.Motley {
         public static RoundResult Sum(this List<RoundResult> results) {
             RoundResult sum = new();
             foreach (RoundResult result in results) {
-                sum.GamesPlayed += result.GamesPlayed;
+                sum.Ends += result.Ends;
                 sum.Score += result.Score;
-                sum.Wins += result.Wins;
-                sum.Draws += result.Draws;
-                sum.Losses += result.Losses;
                 sum.ShotsFor += result.ShotsFor;
                 sum.ShotsAgainst += result.ShotsAgainst;
             }
@@ -21,9 +18,9 @@ namespace Leagueinator.GUI.Controllers.Modules.Motley {
 
     public record RoundResult : IComparable<RoundResult> {
 
-        public int Lane { get; set; } = -1;        
+        public int Lane { get; set; } = -1;
         public int Score { get; set; } = 0;
-        public GameResult Ressult { get; set; } = GameResult.Vacant;
+        public GameResult Result { get; set; } = GameResult.Vacant;
         public int ShotsFor { get; set; } = 0;
         public int ShotsAgainst { get; set; } = 0;
         public int Ends { get; set; } = 0;
@@ -34,34 +31,27 @@ namespace Leagueinator.GUI.Controllers.Modules.Motley {
 
         public RoundResult() { }
 
-        // Constructor that accepts EventData
-        public RoundResult(RoundData roundData, string name) {
-            this.Label = roundData.EventName;
 
-            foreach (TeamData teamData in roundData.AllTeams()) {
-                if (!teamData.Names.Contains(name)) continue;
+        public RoundResult(TeamData teamData) {
+            this.Lane = teamData.Parent.Lane;
 
-                switch (teamData.Result) {
-                    case Model.Enums.GameResult.Vacant:
-                        break;
-                    case Model.Enums.GameResult.Loss:
-                        this.Score += 1;
-                        this.Losses++;
-                        break;
-                    case Model.Enums.GameResult.Draw:
-                        this.Score += 2;
-                        this.Draws++;
-                        break;
-                    case Model.Enums.GameResult.Win:
-                        this.Score += 3;
-                        this.Wins++;
-                        break;
-                }
-
-                this.ShotsFor += teamData.Shots;
-                this.ShotsAgainst += teamData.ShotsAgainst;
-                this.GamesPlayed++;
+            switch (teamData.Result) {
+                case Model.Enums.GameResult.Vacant:
+                    break;
+                case Model.Enums.GameResult.Loss:
+                    this.Score += 1;
+                    break;
+                case Model.Enums.GameResult.Draw:
+                    this.Score += 2;
+                    break;
+                case Model.Enums.GameResult.Win:
+                    this.Score += 3;
+                    break;
             }
+
+            this.ShotsFor += teamData.Shots;
+            this.ShotsAgainst += teamData.ShotsAgainst;
+            this.Ends = teamData.Parent.Ends;
         }
 
         public int CompareTo(RoundResult? other) {

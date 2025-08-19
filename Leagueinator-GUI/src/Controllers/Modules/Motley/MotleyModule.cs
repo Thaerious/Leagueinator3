@@ -45,11 +45,13 @@ namespace Leagueinator.GUI.Controllers.Modules.Motley {
                              .ToList();
         }
 
-        private List<(string Name, List<EventResult> List, EventResult Sum)> EventScores(EventData eventData) {
-            DefaultDictionary<string, List<EventResult>> dictionary = new((_) => []);
+        private List<(string Name, List<RoundResult> List, RoundResult Sum)> EventScores(EventData eventData) {
+            DefaultDictionary<string, List<RoundResult>> dictionary = new((_) => []);
 
-            foreach (string name in eventData.AllNames()) {
-                dictionary[name].Add(new(eventData, name));
+            foreach (TeamData teamData in eventData.AllTeams()) {
+                foreach (string name in teamData.AllNames()) {
+                    dictionary[name].Add(new(teamData));
+                }
             }
 
             return dictionary.Select(kvp => (Name: kvp.Key, List: kvp.Value, Sum: kvp.Value.Sum()))
@@ -81,31 +83,35 @@ namespace Leagueinator.GUI.Controllers.Modules.Motley {
         }
 
         private void ShowEventResults(object sender, RoutedEventArgs e) {
-            var scores = this.CalculateScores(this.MainController.EventData);
+            var scores = this.EventScores(this.MainController.EventData);
             var resultsWindow = new ResultsWindow();
+            var eventResults = this.LeagueScores(this.MainController.LeagueData);
 
             int pos = 1;
-            foreach ((string Name, int Score, int SF, int SA) score in scores) {
+            foreach ((string Name, List<RoundResult> List, RoundResult Sum) score in scores) {
                 resultsWindow.AddHeader(
-                    [$"#{pos++} {score.Name} ({score.Score})", "Result", "SF", "SA"],
-                    [150, 70, 40, 40]
+                    [$"#{pos++} {score.Name} ({score.Sum.Score})", "PTS", "SF", "SA", "Ends"],
+                    [150, 40, 40, 40, 40]
                 );
 
-                var teams = this.MainController.EventData.AllTeams().Where(t => t.Names.Contains(score.Name));
-                foreach (TeamData team in teams) {
+                foreach (RoundResult rr in score.List) {
                     resultsWindow.AddRow(
-                        [$"Lane {team.Parent.Lane + 1}", $"{team.Result}", $"{team.Shots}", $"{team.ShotsAgainst}"]
+                        [$"Lane {rr.Lane + 1}", $"{rr.Score}", $"{rr.ShotsFor}", $"{rr.ShotsAgainst}", $"{rr.Ends}"]
                     );
                 }
 
-                double pct = (double)score.SF / ((double)score.SF + (double)score.SA) * 100.0;
+                resultsWindow.AddSummaryRow(
+                    [$"", $"{score.Sum.Score}", $"{score.Sum.ShotsFor}", $"{score.Sum.ShotsAgainst}", $"{score.Sum.Ends}"]
+                );
+
                 resultsWindow.FinishTable(
-                    $"sf:{score.SF},  sa:{score.SA}, diff:{score.SF - score.SA},  pct:{pct:0.00}"
+                    $"diff:{score.Sum.Diff},  pct:{score.Sum.PCT * 100:0.00}"
                 );
             }
 
             resultsWindow.Show();
         }
+
 
         private void ShowLeagueResults(object sender, RoutedEventArgs e) {
             var scores = this.LeagueScores(this.MainController.LeagueData);
