@@ -8,40 +8,31 @@ namespace Leagueinator.GUI.Controllers.Modules.RankedLadder {
         public EventData EventData { get; } = eventData;
 
         /// <summary>
-        /// Generates a new round based on the players of the previous _rounds.
-        /// Ignores any match that des not have any players or bowls.
+        /// Generates a new round based on the scores of the previous _rounds.
+        /// Ignores any match that des not have any scores or bowls.
         /// </summary>
         /// <returns></returns>
         public RoundData GenerateRound() {
             RoundData newRound = new(this.EventData);
-            DefaultDictionary<Players, PlusResultsSchema> summary = [];
+            var scores = RankedLadderModule.EventScores(this.EventData);
 
-            foreach (TeamData team in this.EventData.AllTeams()) {
-                if (team.CountPlayers() == 0) continue;
-                var key = new Players(team.Names);            // ensure AllNames uses set-like equality
-                summary[key] += new PlusResultsSchema(team);  // uses operator +
-            }
-
-            var players = summary.OrderBy(kvp => kvp.Value)
-                                 .Select(kvp => kvp.Key)
-                                 .ToList();
-
-            while (players.Count > 0) {
-                Players bestTeam = players[0];
-                players.RemoveAt(0);
-
-                Players opponents = this.GetOpponents(bestTeam, players);
-                players.Remove(opponents);
-
+            while (scores.Count > 0) {
                 MatchData matchData = new(newRound) {
                     MatchFormat = this.EventData.DefaultMatchFormat,
                     Ends = this.EventData.DefaultEnds,
                 };
 
-                // TODO Generalize for 4321
+                TeamData bestTeam = scores[0].Team;
+                scores.RemoveAt(0);
+
+                int opponentIndex = this.GetOpponents(bestTeam, scores);
+                TeamData opponent = scores[opponentIndex].Team;
+                scores.RemoveAt(opponentIndex);
+
                 matchData.Teams[0].CopyFrom(bestTeam);
-                matchData.Teams[1].CopyFrom(opponents);
+                matchData.Teams[1].CopyFrom(opponent);
                 newRound.AddMatch(matchData);
+
             }
 
             newRound.Fill();
@@ -49,32 +40,19 @@ namespace Leagueinator.GUI.Controllers.Modules.RankedLadder {
         }
 
         /// <summary>
-        /// From the list of players return the next team that has not played against 'team'.
+        /// From the list of scores return the next team that has not played against 'team'.
         /// </summary>
-        /// <param name="players"></param>
+        /// <param name="scores"></param>
         /// <returns></returns>
-        private Players GetOpponents(Players target, List<Players> players) {
-            Debug.WriteLine($"Finding opponents for {target.JoinString()}");
-            var previousOpponents = this.PreviousOpponents(target);
+        private int GetOpponents(TeamData target, List<(TeamData Team, List<RoundResult> List, RoundResult Sum)> scores) {
+            var blackList = target.GetOpposition().SelectMany(t => t.AllNames()).ToHashSet();
 
-            foreach (Players opponents in players) {
-                if (previousOpponents.Contains(opponents)) continue;
-                return opponents;
+            for (int i = 0; i < scores.Count; i++) {
+                TeamData oppTeam = scores[i].Team;
+                if (!oppTeam.AllNames().Intersect(blackList).Any()) return i;
             }
 
-            throw new UnpairableTeamsException(target);
-        }
-
-        private HashSet<Players> PreviousOpponents(Players target) {
-            HashSet<Players> previous = [];
-
-            foreach (TeamData teamData in this.EventData.AllTeams()) {
-                if (!teamData.Equals(target)) continue;
-                foreach (TeamData opponents in teamData.Parent.Teams) {
-                    previous.Add([.. opponents.Names]);
-                }
-            }
-            return previous;
+            throw new UnpairableTeamsException(target.AllNames());
         }
     }
 }

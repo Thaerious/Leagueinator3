@@ -23,29 +23,31 @@ namespace Leagueinator.GUI.Controllers.Modules.RankedLadder {
             NamedEvent.RemoveHandler(this);
         }
 
-        private List<(Players Names, List<RoundResult> List, RoundResult Sum)> EventScores(EventData eventData) {
-            DefaultDictionary<Players, List<RoundResult>> dictionary = new((_) => []);
+        public static List<(TeamData Team, List<RoundResult> List, RoundResult Sum)> EventScores(EventData eventData) {
+            DefaultDictionary<TeamData, List<RoundResult>> dictionary = new((_) => []);
 
             foreach (TeamData teamData in eventData.AllTeams()) {
                 if (teamData.IsEmpty()) continue;
-                RoundResult rr = new(teamData);                
-                rr.Opponents = [.. teamData.GetOpposition().AllNames()];
-                dictionary[new(teamData.Names)].Add(rr);
+                RoundResult rr = new(teamData) {
+                    Opponents = [.. teamData.GetOpposition().AllNames()]
+                };
+
+                dictionary[teamData].Add(rr);
             }
 
-            return dictionary.Select(kvp => (Names: kvp.Key, List: kvp.Value, Sum: kvp.Value.Sum()))
+            return dictionary.Select(kvp => (Team: kvp.Key, List: kvp.Value, Sum: kvp.Value.Sum()))
                              .OrderBy(tuple => tuple.Sum)
                              .ToList();
         }
 
         private void ShowEventResults(object sender, RoutedEventArgs e) {
-            var scores = this.EventScores(this.MainController.EventData);
+            var scores = EventScores(this.MainController.EventData);
             var resultsWindow = new ResultsWindow();
 
             int pos = 1;
-            foreach ((Players Names, List<RoundResult> List, RoundResult Sum) score in scores) {
+            foreach ((TeamData Team, List<RoundResult> List, RoundResult Sum) score in scores) {
                 resultsWindow.AddHeader(
-                    [$"#{pos++} {score.Names} ({score.Sum.Score})", "R", "SF", "SA", "Ends", "VS"],
+                    [$"#{pos++} {score.Team.AllNames().JoinString()} ({score.Sum.Score})", "R", "SF", "SA", "Ends", "VS"],
                     [150, 40, 40, 40, 40, 150]
                 );
 
@@ -73,7 +75,7 @@ namespace Leagueinator.GUI.Controllers.Modules.RankedLadder {
 
         [NamedEventHandler(EventName.GenerateRound)]
         internal void DoGenerateRound() {
-            Debug.WriteLine(" *** DoGenerateRound");
+            
             this.MainWindow.ClearFocus();
             RankedLadderRoundBuilder builder = new(this.MainController.EventData);
             RoundData newRound = builder.GenerateRound();
