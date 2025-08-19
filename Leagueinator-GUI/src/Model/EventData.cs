@@ -1,29 +1,78 @@
 ﻿using Leagueinator.GUI.Model.Enums;
 using Leagueinator.GUI.Model.ViewModel;
 using System.Collections;
-using System.Diagnostics;
 using System.IO;
 
 namespace Leagueinator.GUI.Model {
 
+    /// <summary>
+    /// Represents a single event (e.g. tournament night, league day) within a <see cref="LeagueData"/>.
+    /// Stores metadata (name, date, format, lanes, ends, type) and a collection of <see cref="RoundData"/>.
+    /// </summary>
+    /// <remarks>
+    /// Implements <see cref="IEnumerable{RoundData}"/> for iteration over rounds.
+    /// Supports serialization to and from text streams for persistence.
+    /// </remarks>
     public class EventData(LeagueData LeagueData) : IEnumerable<RoundData>, IHasParent<LeagueData> {
+        /// <summary>
+        /// Parent league this event belongs to.
+        /// </summary>
         public LeagueData Parent { get; } = LeagueData;
+
+        /// <summary>
+        /// Display name of the event. Defaults to current date in "MMMM d, yyyy" format.
+        /// </summary>
         public string EventName { get; set; } = DateTime.Now.ToString("MMMM d, yyyy");
+
+        /// <summary>
+        /// Date the event took place or is scheduled.
+        /// </summary>
         public DateTime Date { get; set; } = DateTime.Now;
+
+        /// <summary>
+        /// Default match format (e.g. 2v2, 3v3).
+        /// </summary>
         public MatchFormat DefaultMatchFormat { get; set; } = MatchFormat.VS2;
+
+        /// <summary>
+        /// Number of lanes available for this event.
+        /// </summary>
         public int LaneCount { get; set; } = 8;
+
+        /// <summary>
+        /// Default number of ends per match.
+        /// </summary>
         public int DefaultEnds { get; set; } = 10;
+
+        /// <summary>
+        /// Type of event (e.g. Ranked Ladder, Casual, etc.).
+        /// </summary>
         public EventType EventType { get; set; } = EventType.RankedLadder;
 
+        /// <summary>
+        /// Backing list for rounds in this event.
+        /// </summary>
         private readonly List<RoundData> _rounds = [];
+
+        /// <summary>
+        /// Read-only access to rounds.
+        /// </summary>
         public IReadOnlyList<RoundData> Rounds => _rounds;
 
+        /// <summary>
+        /// Returns all distinct player names that participated in this event.
+        /// </summary>
         public IEnumerable<string> AllNames() => this.AllTeams()
                                                   .SelectMany(t => t.Names)
                                                   .Where(n => !string.IsNullOrEmpty(n))
                                                   .Distinct(StringComparer.Ordinal)
                                                   .ToList();
 
+        /// <summary>
+        /// Creates and adds a new round to the event.
+        /// </summary>
+        /// <param name="fill">Whether to auto-populate the round with default matches.</param>
+        /// <returns>The newly added round.</returns>
         public RoundData AddRound(bool fill = true) {
             RoundData newRound = new(this);
             if (fill) newRound.Fill();
@@ -31,33 +80,33 @@ namespace Leagueinator.GUI.Model {
             return newRound;
         }
 
+        /// <summary>
+        /// Adds an existing round to this event, validating parent relationship.
+        /// </summary>
+        /// <exception cref="InvalidParentException">Thrown if round belongs to a different event.</exception>
         public RoundData AddRound(RoundData roundData) {
             if (roundData.Parent != this) throw new InvalidParentException();
             this._rounds.Add(roundData);
             return roundData;
         }
 
+        /// <summary>
+        /// Returns the index of a given round.
+        /// </summary>
         public int IndexOf(RoundData roundData) => this._rounds.IndexOf(roundData);
 
-        public List<TeamData> AllTeams() {
-            List<TeamData> teams = [];
-
-            foreach (RoundData round in this) {
-                foreach (MatchData match in round.Matches) {
-                    foreach (TeamData team in match.Teams) {
-                        teams.Add(team);
-                    }
-                }
-            }
-
-            return teams;
+        /// <summary>
+        /// Returns all non-empty teams that participated in this event.
+        /// This returns an object for each team in each match.
+        /// </summary>
+        public IEnumerable<TeamData> AllTeams() {
+            return this.Rounds.SelectMany(r => r.AllTeams());   
         }
 
         /// <summary>
-        /// Returns a list of all matches that a players has played in.
+        /// Returns a list of all matches that a team (specified by players) has played in.
         /// </summary>
-        /// <param name="players"></param>
-        /// <returns></returns>
+        /// <param name="players">Names of the players forming the team.</param>
         public List<MatchData> GetMatchesForTeam(IEnumerable<string> players) {
             List<MatchData> matches = [.. this.Rounds.SelectMany(r => r.Matches)];
 
@@ -73,22 +122,21 @@ namespace Leagueinator.GUI.Model {
             return matches;
         }
 
-        // TODO this should be event.rounds....
-        public IEnumerator<RoundData> GetEnumerator() {
-            return this._rounds.GetEnumerator();
-        }
+        /// <summary>
+        /// Enumerator for rounds in this event.
+        /// </summary>
+        public IEnumerator<RoundData> GetEnumerator() => this._rounds.GetEnumerator();
 
-        IEnumerator IEnumerable.GetEnumerator() {
-            return this.GetEnumerator();
-        }
+        IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
 
+        /// <summary>
+        /// Removes the round at the specified index.
+        /// </summary>
         internal void RemoveRound(int index) => this._rounds.RemoveAt(index);
 
         /// <summary>
-        /// Returns a list of all previous previous opponents for the Target players.
+        /// Returns all previous opponents for the specified players.
         /// </summary>
-        /// <param name="players"></param>
-        /// <returns></returns>
         public List<TeamData> PreviousOpponents(IEnumerable<string> players) {
             List<TeamData> opponents = [];
 
@@ -103,10 +151,9 @@ namespace Leagueinator.GUI.Model {
         }
 
         /// <summary>
-        /// True if any player from players has played against any player from pollOpponent.
+        /// Determines whether <paramref name="team"/> has played against <paramref name="opponent"/>.
+        /// True if any player overlaps with a previously faced opponent.
         /// </summary>
-        /// <param name="team"></param>
-        /// <returns></returns>
         public bool HasPlayed(Players team, Players opponent) {
             foreach (TeamData prevOpponent in this.PreviousOpponents(team)) {
                 if (opponent.Intersect(prevOpponent.Names).Any()) {
@@ -116,10 +163,16 @@ namespace Leagueinator.GUI.Model {
             return false;
         }
 
+        /// <summary>
+        /// Returns player records aggregated across all rounds.
+        /// </summary>
         public IEnumerable<PlayerRecord> Records() {
             return this.SelectMany(roundData => roundData.Records());
         }
 
+        /// <summary>
+        /// Serializes this event and all rounds to a stream.
+        /// </summary>
         internal void WriteOut(StreamWriter writer) {
             writer.WriteLine(
                 string.Join("|",
@@ -138,6 +191,12 @@ namespace Leagueinator.GUI.Model {
             }
         }
 
+        /// <summary>
+        /// Deserializes <see cref="EventData"/> from a stream.
+        /// Expects exactly 7 '|' delimited fields in the header line.
+        /// </summary>
+        /// <exception cref="EndOfStreamException">Thrown if stream ends unexpectedly.</exception>
+        /// <exception cref="FormatException">Thrown if data is malformed.</exception>
         public static EventData ReadIn(LeagueData leagueData, StreamReader reader) {
             string? line = reader.ReadLine() ?? throw new EndOfStreamException("Unexpected end of file while reading EventData");
             string[] parts = line.Split('|');
@@ -161,6 +220,9 @@ namespace Leagueinator.GUI.Model {
             return eventData;
         }
 
+        /// <summary>
+        /// Replaces an existing round with a new one at the same index.
+        /// </summary>
         internal void ReplaceRound(RoundData roundData, RoundData newRound) {
             int index = this._rounds.IndexOf(roundData);
             this._rounds[index] = newRound;

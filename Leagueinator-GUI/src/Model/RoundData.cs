@@ -129,5 +129,9 @@ namespace Leagueinator.GUI.Model {
         internal IEnumerable<string> AllNames() {
             return this.Matches.SelectMany(m => m.AllNames());
         }
+
+        internal IEnumerable<TeamData> AllTeams() {
+            return this.Matches.SelectMany(m => m.Teams);
+        }
     }
 }

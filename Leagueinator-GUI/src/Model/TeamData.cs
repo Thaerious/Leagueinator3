@@ -16,24 +16,26 @@ namespace Leagueinator.GUI.Model {
 
         public MatchData Parent { get; } = matchData;
 
-        public int Bowls {
+        public int Shots {
             get => this.Parent.Score[this.Index];
             set => this.Parent.Score[this.Index] = value;
         }
+
+        public int ShotsAgainst => this.Parent.Teams.Where(t => t != this).Select(t => t.Shots).Sum();
 
         public GameResult Result {
             get {
                 var teams = this.Parent.Teams.Where(t => !t.IsEmpty());
 
                 // No scores registered, implies game not played.
-                if (teams.All(t => t.Bowls <= 0)) return GameResult.Vacant;
+                if (teams.All(t => t.Shots <= 0)) return GameResult.Vacant;
 
                 // Team does not have the max score
-                int max = teams.Max(t => t.Bowls);
-                if (this.Bowls < max) return GameResult.Loss;
+                int max = teams.Max(t => t.Shots);
+                if (this.Shots < max) return GameResult.Loss;
 
                 // Team shares max score
-                bool multipleAtMax = teams.Count(t => t.Bowls == max) > 1;
+                bool multipleAtMax = teams.Count(t => t.Shots == max) > 1;
                 if (!multipleAtMax) return GameResult.Win;
 
                 // Tie at max: resolve with tiebreaker

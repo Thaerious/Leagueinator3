@@ -58,5 +58,18 @@ namespace Leagueinator.GUI.Model {
             }
             return leagueData;
         }
+
+        /// <summary>
+        /// Returns all distinct player names that participated in this league.
+        /// </summary>
+        public IEnumerable<string> AllNames() => this.AllTeams()
+                                                  .SelectMany(t => t.Names)
+                                                  .Where(n => !string.IsNullOrEmpty(n))
+                                                  .Distinct(StringComparer.Ordinal)
+                                                  .ToList();
+
+        public IEnumerable<TeamData> AllTeams() {
+            return this.Events.SelectMany(e => e.AllTeams());
+        }
     }
 }

@@ -117,7 +117,7 @@ namespace Leagueinator.GUI.Forms.Print {
             //    Cells = {
             //        new TableCell(new Paragraph(new Run(result.GameResult.ToString()))),
             //        new TableCell(new Paragraph(new Run($"{result.BowlsFor}+{result.PlusFor}"))),
-            //        new TableCell(new Paragraph(new Run($"{result.BowlsAgainst}+{result.PlusAgainst}"))),
+            //        new TableCell(new Paragraph(new Run($"{result.ShotsAgainst}+{result.PlusAgainst}"))),
             //        new TableCell(new Paragraph(new Run(result.MatchData.TieBreaker == result.TeamIndex ? "✓" : " "))),
             //        new TableCell(new Paragraph(new Run($"{result.MatchData.Ends}"))),
             //        new TableCell(new Paragraph(new Run($"{result.MatchData.Lane + 1}"))),
