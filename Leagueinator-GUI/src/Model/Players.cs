@@ -1,4 +1,6 @@
 ﻿
+using Utility.Extensions;
+
 namespace Leagueinator.GUI.Model {
 
     /// <summary>
@@ -17,6 +19,11 @@ namespace Leagueinator.GUI.Model {
 
             this.AddRange(range);
         }
+
+        public override string ToString() {
+            return this.JoinString();
+        }
+
 
         public bool Equals(Players? other) {
             if (other is null) {

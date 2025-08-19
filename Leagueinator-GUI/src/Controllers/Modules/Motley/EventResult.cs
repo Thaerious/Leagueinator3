@@ -60,7 +60,7 @@ namespace Leagueinator.GUI.Controllers.Modules.Motley {
                         break;
                 }
 
-                this.ShotsFor += teamData.Shots;
+                this.ShotsFor += teamData.ShotsFor;
                 this.ShotsAgainst += teamData.ShotsAgainst;
                 this.GamesPlayed++;
             }

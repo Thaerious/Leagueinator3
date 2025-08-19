@@ -1,7 +1,7 @@
 ﻿using Leagueinator.GUI.Model;
 using Leagueinator.GUI.Model.Enums;
 
-namespace Leagueinator.GUI.Controllers.Modules.Motley {
+namespace Leagueinator.GUI.Controllers.Modules.RankedLadder {
 
     public static class RoundResultExtensions {
         public static RoundResult Sum(this List<RoundResult> results) {
@@ -9,49 +9,63 @@ namespace Leagueinator.GUI.Controllers.Modules.Motley {
             foreach (RoundResult result in results) {
                 sum.Ends += result.Ends;
                 sum.Score += result.Score;
-                sum.ShotsFor += result.ShotsFor;
-                sum.ShotsAgainst += result.ShotsAgainst;
-            }
+                sum.BowlsFor += result.ShotsFor;
+                sum.BowlsAgainst += result.BowlsAgainst;
+                sum.PlusFor += result.PlusFor;
+                sum.PlusAgainst += result.PlusAgainst;
+            }            
             return sum;
         }
     }
 
     public record RoundResult : IComparable<RoundResult> {
+
+        private List<string> _opponents = [];
+        public List<string> Opponents {
+            get => this._opponents;
+            set => this._opponents = [.. value];
+        }
         public int Lane { get; set; } = -1;
         public int Score { get; set; } = 0;
         public GameResult Result { get; set; } = GameResult.Vacant;
-        public int ShotsFor { get; set; } = 0;
-        public int ShotsAgainst { get; set; } = 0;
-        public int Ends { get; set; } = 0;
+        public int BowlsFor { get; set; } = 0;
+        public int BowlsAgainst { get; set; } = 0;
+        public int PlusFor { get; set; } = 0;
+        public int PlusAgainst { get; set; } = 0;
+        public int ShotsFor => this.BowlsFor + this.PlusFor;
+        public int ShotsAgainst => this.BowlsAgainst + this.PlusAgainst;
 
-        public int Diff => this.ShotsFor - this.ShotsAgainst;
+    public int Ends { get; set; } = 0;
+
+        public int DiffBowls => this.BowlsFor - this.BowlsAgainst;
+
+        public int DiffPlus => this.PlusFor - this.PlusAgainst;
 
         public double PCT => (double)this.ShotsFor / ((double)this.ShotsFor + this.ShotsAgainst);
 
         public RoundResult() { }
-
 
         public RoundResult(TeamData teamData) {
             this.Lane = teamData.Parent.Lane;
 
             switch (teamData.Result) {
                 case Model.Enums.GameResult.Vacant:
-                    break;
                 case Model.Enums.GameResult.Loss:
-                    this.Score += 1;
                     break;
                 case Model.Enums.GameResult.Draw:
-                    this.Score += 2;
+                    this.Score += 1;
                     break;
                 case Model.Enums.GameResult.Win:
                     this.Score += 3;
                     break;
             }
 
-            this.Result = teamData.Result;
-            this.ShotsFor += teamData.ShotsFor;
-            this.ShotsAgainst += teamData.ShotsAgainst;
             this.Ends = teamData.Parent.Ends;
+            this.Result = teamData.Result;
+            this.BowlsFor += (int)Math.Min(teamData.ShotsFor, this.Ends * 1.5);
+            this.BowlsAgainst += (int)Math.Min(teamData.ShotsAgainst, this.Ends * 1.5);
+            this.PlusFor = teamData.ShotsFor - this.BowlsFor;
+            this.PlusAgainst = teamData.ShotsAgainst - this.BowlsAgainst;
         }
 
         public int CompareTo(RoundResult? other) {
@@ -60,7 +74,10 @@ namespace Leagueinator.GUI.Controllers.Modules.Motley {
             int c = other.Score.CompareTo(Score);  // higher Score first
             if (c != 0) return c;
 
-            c = other.Diff.CompareTo(Diff);        // higher Differential first
+            c = other.DiffBowls.CompareTo(DiffBowls);        // diff score w/o plus
+            if (c != 0) return c;
+
+            c = other.DiffPlus.CompareTo(DiffPlus);        // diff plus
             if (c != 0) return c;
 
             // higher Shot % first (with small tolerance)

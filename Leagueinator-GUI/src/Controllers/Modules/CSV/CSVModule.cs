@@ -62,7 +62,7 @@ namespace Leagueinator.GUI.Controllers.Modules.AssignLanes {
                     }
 
                     matchData.Teams[team].AddPlayer(name);
-                    matchData.Teams[team].Shots = bowls;                    
+                    matchData.Teams[team].ShotsFor = bowls;                    
                 }
                 this.MainController.DispatchModel();
             }

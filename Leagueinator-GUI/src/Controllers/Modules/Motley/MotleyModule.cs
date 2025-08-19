@@ -69,7 +69,7 @@ namespace Leagueinator.GUI.Controllers.Modules.Motley {
                 var teams = eventData.AllTeams().Where(t => t.Names.Contains(name));
                 foreach (TeamData team in teams) {
                     dictionary[name] += ResultValue[team.Result];
-                    sf[name] += team.Shots;
+                    sf[name] += team.ShotsFor;
                     sa[name] += team.ShotsAgainst;
                 }
             }
@@ -85,7 +85,6 @@ namespace Leagueinator.GUI.Controllers.Modules.Motley {
         private void ShowEventResults(object sender, RoutedEventArgs e) {
             var scores = this.EventScores(this.MainController.EventData);
             var resultsWindow = new ResultsWindow();
-            var eventResults = this.LeagueScores(this.MainController.LeagueData);
 
             int pos = 1;
             foreach ((string Name, List<RoundResult> List, RoundResult Sum) score in scores) {

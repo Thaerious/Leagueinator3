@@ -10,7 +10,7 @@ namespace Leagueinator.GUI.Controllers.Modules {
 
         public PlusResultsSchema(TeamData teamData) {
             int maxBowls = (int)Math.Floor(teamData.Parent.Ends * 1.5);
-            int sumAgainst = teamData.Parent.Teams.Where(t => t != teamData).Select(t => t.Shots).Sum();
+            int sumAgainst = teamData.Parent.Teams.Where(t => t != teamData).Select(t => t.ShotsFor).Sum();
 
             this.Lane = teamData.Parent.Lane;
             this.Ends = teamData.Parent.Ends;
@@ -21,9 +21,9 @@ namespace Leagueinator.GUI.Controllers.Modules {
                                      .ToList();
 
             this.Result = teamData.Result;
-            this.BowlsFor = Math.Min(teamData.Shots, maxBowls);
+            this.BowlsFor = Math.Min(teamData.ShotsFor, maxBowls);
             this.BowlsAgainst = Math.Min(sumAgainst, maxBowls);
-            this.PlusFor = teamData.Shots - this.BowlsFor;
+            this.PlusFor = teamData.ShotsFor - this.BowlsFor;
             this.PlusAgainst = sumAgainst - this.BowlsAgainst;
 
             if (teamData.Result == GameResult.Win) this.Wins = 1;
