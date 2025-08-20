@@ -17,9 +17,10 @@ namespace Leagueinator.GUI.Forms.Print {
 
         private int[]? Widths = default;
 
-        public ResultsWindow() {
+        public ResultsWindow(string title) {
             InitializeComponent();
             this.TeamSection.Blocks.Add(Section);
+            this.Title = title;
         }
 
         public void AddHeader(string[] headers, int[] widths) {    

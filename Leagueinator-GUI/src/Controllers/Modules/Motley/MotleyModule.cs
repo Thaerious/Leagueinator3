@@ -84,7 +84,7 @@ namespace Leagueinator.GUI.Controllers.Modules.Motley {
 
         private void ShowEventResults(object sender, RoutedEventArgs e) {
             var scores = this.EventScores(this.MainController.EventData);
-            var resultsWindow = new ResultsWindow();
+            var resultsWindow = new ResultsWindow("Event Results");
 
             int pos = 1;
             foreach ((string Name, List<RoundResult> List, RoundResult Sum) score in scores) {
@@ -114,7 +114,7 @@ namespace Leagueinator.GUI.Controllers.Modules.Motley {
 
         private void ShowLeagueResults(object sender, RoutedEventArgs e) {
             var scores = this.LeagueScores(this.MainController.LeagueData);
-            var resultsWindow = new ResultsWindow();
+            var resultsWindow = new ResultsWindow("League Results");
             var eventResults = this.LeagueScores(this.MainController.LeagueData);
 
             int pos = 1;

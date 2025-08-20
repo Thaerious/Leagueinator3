@@ -41,7 +41,7 @@ namespace Leagueinator.GUI.Controllers.Modules.RankedLadder {
 
         private void ShowEventResults(object sender, RoutedEventArgs e) {
             var scores = EventScores(this.MainController.EventData);
-            var resultsWindow = new ResultsWindow();
+            var resultsWindow = new ResultsWindow("Event Results");
 
             int pos = 1;
             foreach ((TeamData Team, List<RoundResult> List, RoundResult Sum) score in scores) {
