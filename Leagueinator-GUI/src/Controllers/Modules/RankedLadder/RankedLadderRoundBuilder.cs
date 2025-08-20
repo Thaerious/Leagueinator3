@@ -45,14 +45,14 @@ namespace Leagueinator.GUI.Controllers.Modules.RankedLadder {
         /// <param name="scores"></param>
         /// <returns></returns>
         private int GetOpponents(TeamData target, List<(TeamData Team, List<RoundResult> List, RoundResult Sum)> scores) {
-            var blackList = target.GetOpposition().SelectMany(t => t.AllNames()).ToHashSet();
+            var blackList = target.GetOpposition().SelectMany(t => t.Players).ToHashSet();
 
             for (int i = 0; i < scores.Count; i++) {
                 TeamData oppTeam = scores[i].Team;
-                if (!oppTeam.AllNames().Intersect(blackList).Any()) return i;
+                if (!oppTeam.Players.Intersect(blackList).Any()) return i;
             }
 
-            throw new UnpairableTeamsException(target.AllNames());
+            throw new UnpairableTeamsException(target.Players);
         }
     }
 }

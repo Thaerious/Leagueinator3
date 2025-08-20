@@ -47,7 +47,7 @@ namespace Leagueinator.GUI.Controllers.Modules.RankedLadder {
             int pos = 1;
             foreach ((TeamData Team, List<RoundResult> List, RoundResult Sum) score in scores) {
                 resultsWindow.AddHeader(
-                    [$"#{pos++} {score.Team.AllNames().JoinString()} ({score.Sum.Score})", "R", "SF", "SA", "Ends", "VS"],
+                    [$"#{pos++} {score.Team.Players.JoinString()} ({score.Sum.Score})", "R", "SF", "SA", "Ends", "VS"],
                     [150, 40, 40, 40, 40, 150]
                 );
 

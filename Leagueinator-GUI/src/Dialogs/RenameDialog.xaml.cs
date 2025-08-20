@@ -28,7 +28,7 @@ namespace Leagueinator.GUI.Dialogs {
         }
 
         private void HndOkButtonClick(object sender, RoutedEventArgs e) {
-            // Set the NewName property To the text in the textbox.
+            // SetPlayer the NewName property To the text in the textbox.
             this.NewName = this.txtNewName.Text;
             this.DialogResult = true;
             this.Close();

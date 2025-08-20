@@ -238,7 +238,7 @@ namespace Leagueinator.GUI.Controllers {
         }
 
         private void FixLanes(int value) {
-            // Remove empty matches until the lane count matches.
+            // RemovePlayer empty matches until the lane count matches.
             foreach (RoundData round in this.EventData.Rounds) {
                 while (round.Matches.Count > value) {
                     MatchData? match = round.Matches.Where(m => m.CountPlayers() == 0).FirstOrDefault();
@@ -255,7 +255,7 @@ namespace Leagueinator.GUI.Controllers {
                 }
             }
 
-            // Remove any match until the lane count matches.
+            // RemovePlayer any match until the lane count matches.
             foreach (RoundData round in this.EventData.Rounds) {
                 while (round.Matches.Count > value) {
                     round.RemoveMatch(round.Matches[0]);
@@ -392,7 +392,7 @@ namespace Leagueinator.GUI.Controllers {
         #region Match, Team, Player Handlers  
         [NamedEventHandler(EventName.ChangePlayerName)]
         internal void DoChangePlayerName(string name, int lane, int teamIndex, int position) {
-            if (this.RoundData.Matches[lane].Teams[teamIndex].Names[position].Equals(name)) {
+            if (this.RoundData.Matches[lane].Teams[teamIndex].Players[position].Equals(name)) {
                 return;
             }
 
@@ -412,7 +412,7 @@ namespace Leagueinator.GUI.Controllers {
                 });
             }
 
-            this.RoundData.Matches[lane].Teams[teamIndex].Set(position, name);
+            this.RoundData.Matches[lane].Teams[teamIndex].SetPlayer(position, name);
             this.DispatchEvent(EventName.NameUpdated, new() {
                 ["lane"] = lane,
                 ["teamIndex"] = teamIndex,
@@ -472,8 +472,8 @@ namespace Leagueinator.GUI.Controllers {
 
         [NamedEventHandler(EventName.SwapTeams)]
         internal void DoSwap(int fromLane, int toLane, int fromIndex, int toIndex) {
-            List<string> namesFrom = [.. this.RoundData.Matches[fromLane].Teams[fromIndex].Names];
-            List<string> namesTo = [.. this.RoundData.Matches[toLane].Teams[toIndex].Names];
+            List<string> namesFrom = [.. this.RoundData.Matches[fromLane].Teams[fromIndex].Players];
+            List<string> namesTo = [.. this.RoundData.Matches[toLane].Teams[toIndex].Players];
 
             this.RoundData.Matches[fromLane].Teams[fromIndex].CopyFrom(namesTo);
             this.RoundData.Matches[toLane].Teams[toIndex].CopyFrom(namesFrom);

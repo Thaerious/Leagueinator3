@@ -41,7 +41,7 @@ namespace Leagueinator.GUI.Controllers.Modules.Motley {
             this.Label = eventData.EventName;
 
             foreach (TeamData teamData in eventData.AllTeams()) {
-                if (!teamData.Names.Contains(name)) continue;
+                if (!teamData.Players.Contains(name)) continue;
 
                 switch (teamData.Result) {
                     case Model.Enums.GameResult.Vacant:

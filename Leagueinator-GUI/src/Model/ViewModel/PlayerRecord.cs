@@ -29,7 +29,7 @@ namespace Leagueinator.GUI.Model.ViewModel {
             this.Lane = teamData.Parent.Lane;
             this.Team = teamData.Index;
             this.PlayerPos = playerPos;
-            this.Name = teamData.Names[playerPos];
+            this.Name = teamData.Players[playerPos];
         }
 
         // Alternate constructor for deserialization

@@ -60,7 +60,7 @@ namespace Leagueinator.GUI.Model {
 
             foreach (MatchData match in this._matches) {
                 foreach (TeamData team in match.Teams) {
-                    if (team.Names.Contains(name)) {
+                    if (team.Players.Contains(name)) {
                         return true;
                     }
                 }
