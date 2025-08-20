@@ -159,7 +159,7 @@ namespace Leagueinator.GUI.Model {
         }
 
         internal void WriteOut(StreamWriter writer) {
-            string[] s = [this.Parent.Score[this.Index].ToString(), ..this.Players];
+            string[] s = [this.Parent.Score[this.Index].ToString(), ..this._names];
             writer.WriteLine(string.Join("|", s));
         }
 
