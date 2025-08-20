@@ -1,6 +1,5 @@
 ﻿using Leagueinator.GUI.Model;
 using System.Diagnostics;
-using Utility;
 using Utility.Extensions;
 
 namespace Leagueinator.GUI.Controllers.Modules.RankedLadder {
@@ -45,12 +44,17 @@ namespace Leagueinator.GUI.Controllers.Modules.RankedLadder {
         /// <param name="scores"></param>
         /// <returns></returns>
         private int GetOpponents(TeamData target, List<(TeamData Team, List<RoundResult> List, RoundResult Sum)> scores) {
-            var blackList = target.GetOpposition().SelectMany(t => t.AllNames()).ToHashSet();
+            //this.EventData.AllTeams().Select(t => t.
+            
+            //var blackList = this.EventData.PreviousOpponents(target.AllNames());
 
-            for (int i = 0; i < scores.Count; i++) {
-                TeamData oppTeam = scores[i].Team;
-                if (!oppTeam.AllNames().Intersect(blackList).Any()) return i;
-            }
+            //Debug.WriteLine($"target {target.AllNames().JoinString()}");
+            //Debug.WriteLine($"blacklist {blackList.JoinString()}");
+
+            //for (int i = 0; i < scores.Count; i++) {
+            //    bool hasPlayed = scores[i].Team.GetOpposition().AllNames().Intersect(blackList).Any();
+            //    if (!hasPlayed) return i;
+            //}
 
             throw new UnpairableTeamsException(target.AllNames());
         }

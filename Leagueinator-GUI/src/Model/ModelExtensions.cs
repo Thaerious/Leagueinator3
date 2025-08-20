@@ -6,5 +6,13 @@ namespace Leagueinator.GUI.Model {
             return teams.SelectMany(t => t.AllNames());
         }
 
+        public static IEnumerable<TeamData> GetOpposition(this TeamData teamData) {
+            MatchData match = teamData.Parent;
+            return match.Teams.Where(that => that != teamData);
+        }
+
+        public static IEnumerable<TeamData> Opponents(this IEnumerable<TeamData> teams) {
+            return teams.SelectMany(t => t.GetOpposition());
+        }
     }
 }

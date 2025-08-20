@@ -27,10 +27,5 @@ namespace Leagueinator.GUI.Model {
             }
             return -1;
         }
-
-        public static List<TeamData> GetOpposition(this TeamData teamData) {
-            MatchData match = teamData.Parent;
-            return [.. match.Teams.Where(that => that != teamData)];
-        }
     }
 }

@@ -9,7 +9,7 @@ namespace Leagueinator.GUI.Controllers.Modules.RankedLadder {
             foreach (RoundResult result in results) {
                 sum.Ends += result.Ends;
                 sum.Score += result.Score;
-                sum.BowlsFor += result.ShotsFor;
+                sum.BowlsFor += result.BowlsFor;
                 sum.BowlsAgainst += result.BowlsAgainst;
                 sum.PlusFor += result.PlusFor;
                 sum.PlusAgainst += result.PlusAgainst;
