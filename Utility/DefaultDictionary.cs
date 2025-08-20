@@ -8,6 +8,10 @@
             this.Generator = (_) => Activator.CreateInstance<V>();
         }
 
+        public DefaultDictionary(V value) {
+            this.Generator = (_) => value;
+        }
+
         public DefaultDictionary(Func<K, V> generator) {
             this.Generator = generator;
         }

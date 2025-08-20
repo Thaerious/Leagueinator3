@@ -64,8 +64,8 @@ namespace Leagueinator.GUI.Controllers.Modules.ELO {
             foreach (var forPlayer in sourceNames) {
                 List<string> previousPartners = this.EventData.AllTeams()
                                                     .Where(t => t.Parent.Parent != this.SRCRoundData)
-                                                    .Where(t => t.Names.Contains(forPlayer))
-                                                    .SelectMany(t => t.Names)
+                                                    .Where(t => t.Players.Contains(forPlayer))
+                                                    .SelectMany(t => t.Players)
                                                     .Where(n => n != forPlayer)
                                                     .Where(n => sourceNames.Contains(n))
                                                     .ToList();
@@ -115,7 +115,7 @@ namespace Leagueinator.GUI.Controllers.Modules.ELO {
                 roundData.Matches
                 .SelectMany(match => match.Teams)
                 .Where(t => !t.IsEmpty())
-                .OrderBy(t => this.ELO.GetELO(t.Names))
+                .OrderBy(t => this.ELO.GetELO(t.Players))
                 .ToList();
 
             RoundData newRound = new(this.EventData);
@@ -134,7 +134,7 @@ namespace Leagueinator.GUI.Controllers.Modules.ELO {
         }
 
         /// <summary>
-        /// Set aside 3 players to play 4-3-2-1
+        /// SetPlayer aside 3 players to play 4-3-2-1
         /// </summary>
         /// TODO MAKE THIS NOT RANDOM
         private static List<string> SetAside(int count, List<string> names) {

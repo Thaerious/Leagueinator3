@@ -106,7 +106,7 @@ namespace Leagueinator.GUI.Forms.Print {
 
         private TableRow AddResult(SingleResult result) {
             throw new NotImplementedException();
-            //List<string> names = [.. result.MatchData.AllTeams.SelectMany(t => t.Names).Select(name  => !string.IsNullOrEmpty(name))];
+            //List<string> names = [.. result.MatchData.AllTeams.SelectMany(t => t.Players).Select(name  => !string.IsNullOrEmpty(name))];
 
 
             //names = [.. names.Except(result.AllNames)];
@@ -130,7 +130,7 @@ namespace Leagueinator.GUI.Forms.Print {
             PrintDialog printDialog = new PrintDialog();
 
             if (printDialog.ShowDialog() == true) {
-                // Set the document to match printer page size
+                // SetPlayer the document to match printer page size
                 DocViewer.PageHeight = printDialog.PrintableAreaHeight;
                 DocViewer.PageWidth = printDialog.PrintableAreaWidth;
                 DocViewer.ColumnWidth = printDialog.PrintableAreaWidth; // prevent column wrapping

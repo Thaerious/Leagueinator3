@@ -54,7 +54,7 @@ namespace Leagueinator.GUI.Controllers.Modules.AssignLanes {
 
             foreach (TeamData teamData in this.RoundData.Matches.SelectMany(m => m.Teams)){
                 if (teamData.CountPlayers() == 0) continue;
-                foreach (string name in teamData.Names) {
+                foreach (string name in teamData.Players) {
                     var forMatch = teamData.Parent;
                     var newList = permittedLanes[forMatch].Except(previousLanes[name]).ToList();
                     permittedLanes[forMatch] = newList;

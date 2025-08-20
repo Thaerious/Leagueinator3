@@ -3,7 +3,7 @@ namespace Leagueinator.GUI.Model {
     public static class ModelExtensions {
 
         public static IEnumerable<string> AllNames(this IEnumerable<TeamData> teams) {
-            return teams.SelectMany(t => t.AllNames());
+            return teams.SelectMany(t => t.Players);
         }
 
         public static IEnumerable<TeamData> GetOpposition(this TeamData teamData) {

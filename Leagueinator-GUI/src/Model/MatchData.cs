@@ -111,12 +111,12 @@ namespace Leagueinator.GUI.Model {
         /// <param name="name">The name of the player to remove.</param>
         public void RemoveName(string name) {
             foreach (TeamData team in this.Teams) {
-                team.Remove(name);
+                team.RemovePlayer(name);
             }
         }
 
         internal List<string> AllNames() {
-            return [.. this.Teams.SelectMany(t => t.AllNames())];
+            return [.. this.Teams.SelectMany(t => t.Players)];
         }
 
         public IEnumerable<PlayerRecord> Records() {

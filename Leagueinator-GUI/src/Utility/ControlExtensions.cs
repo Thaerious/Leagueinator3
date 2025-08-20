@@ -52,7 +52,7 @@ namespace Leagueinator.Utility.Extensions {
             if (menuItem is null) return false;
 
             if (headers.Length == 1) {
-                // Top-level item (e.g., menu.Keys.Remove("Help"))
+                // Top-level item (e.g., menu.Keys.RemovePlayer("Help"))
                 menu.Items.Remove(menuItem);
             }
             else {

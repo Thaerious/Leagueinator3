@@ -1,4 +1,5 @@
 ﻿using Leagueinator.GUI.Model;
+using Utility.Extensions;
 
 namespace Leagueinator.GUI.Controllers.Modules {
     [Serializable]
@@ -8,7 +9,7 @@ namespace Leagueinator.GUI.Controllers.Modules {
         public UnpairableTeamsException() {
         }
 
-        public UnpairableTeamsException(IEnumerable<string> team) {
+        public UnpairableTeamsException(IEnumerable<string> team) : base($"Could not pair the team [{team.JoinString()}]") {
             this.Players = [.. team];
         }
 

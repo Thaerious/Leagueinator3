@@ -10,7 +10,7 @@ namespace Leagueinator.GUI.Model {
 
         private readonly string[] _names = [.. Enumerable.Repeat(string.Empty, size)];
 
-        public IReadOnlyList<string> Names => _names;
+        public Players Players => [.. this._names.Select(n => n.Trim()).Where(n => !string.IsNullOrEmpty(n))];
 
         public int Index => this.Parent.Teams.ToList().IndexOf(this);
 
@@ -43,24 +43,35 @@ namespace Leagueinator.GUI.Model {
             }
         }
 
+        public bool HasPlayer(string name) {
+            return this._names.Contains(name);
+        }
+
         public void AddPlayer(string name) {
             if (this.IsFull()) throw new InvalidOperationException("TeamData is full");
 
             for (int i = 0; i < this._names.Length; i++) {
-                if (string.IsNullOrEmpty(this.Names[i])) {
+                if (string.IsNullOrEmpty(this.Players[i])) {
                     this._names[i] = name;
                     return;
                 }
             }
         }
 
-        internal void Set(int position, string name) {
+        internal void SetPlayer(int position, string name) {
             this._names[position] = name;
         }
 
-        public void Clear() {
+        public void ClearPlayers() {
             for (int i = 0; i < this._names.Length; i++) {
                 this._names[i] = string.Empty;
+            }
+        }
+        public void RemovePlayer(string name) {
+            for (int i = 0; i < this._names.Length; i++) {
+                if (this._names[i] == name) {
+                    this._names[i] = string.Empty;
+                }
             }
         }
 
@@ -70,14 +81,6 @@ namespace Leagueinator.GUI.Model {
                 teamData._names[i] = this._names[i];
             }
             return teamData;
-        }
-
-        public void Remove(string name) {
-            for (int i = 0; i < this._names.Length; i++) {
-                if (this._names[i] == name) {
-                    this._names[i] = string.Empty;
-                }
-            }
         }
 
         /// <summary>
@@ -100,12 +103,12 @@ namespace Leagueinator.GUI.Model {
 
         public bool Equals(TeamData? other) {
             if (other is null) return false;
-            return this.Equals(other.Names);
+            return this.Equals(other.Players);
         }
 
         public override int GetHashCode() {
             int hash = 17;
-            foreach (var s in this.Names)
+            foreach (var s in this.Players)
                 hash = hash * 31 + (s?.GetHashCode() ?? 0);
             return hash;
         }
@@ -114,13 +117,9 @@ namespace Leagueinator.GUI.Model {
             return $"[{this._names.JoinString()}]:{this.Result}";
         }
 
-        public List<string> AllNames() {
-            return [.. this._names.Select(n => n.Trim()).Where(n => !string.IsNullOrEmpty(n))];
-        }
-
         public int CountPlayers() {
             int count = 0;
-            foreach (string name in this.Names) {
+            foreach (string name in this.Players) {
                 if (!string.IsNullOrEmpty(name)) {
                     count++;
                 }
@@ -129,7 +128,7 @@ namespace Leagueinator.GUI.Model {
         }
 
         public IEnumerator<string> GetEnumerator() {
-            foreach (string name in this.Names) {
+            foreach (string name in this.Players) {
                 if (name == string.Empty) continue;
                 yield return name;
             }
@@ -160,7 +159,7 @@ namespace Leagueinator.GUI.Model {
         }
 
         internal void WriteOut(StreamWriter writer) {
-            string[] s = [this.Parent.Score[this.Index].ToString(), ..this.Names];
+            string[] s = [this.Parent.Score[this.Index].ToString(), ..this.Players];
             writer.WriteLine(string.Join("|", s));
         }
 
@@ -172,7 +171,7 @@ namespace Leagueinator.GUI.Model {
             TeamData teamData = new(matchData, matchData.MatchFormat.TeamSize());
 
             for (int i = 1; i < parts.Length; i++) {
-                teamData.Set(i - 1, parts[i]);
+                teamData.SetPlayer(i - 1, parts[i]);
             }
 
             matchData.Score[index] = int.Parse(parts[0]);

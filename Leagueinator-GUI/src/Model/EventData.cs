@@ -63,7 +63,7 @@ namespace Leagueinator.GUI.Model {
         /// Returns all distinct player names that participated in this event.
         /// </summary>
         public IEnumerable<string> AllNames() => this.AllTeams()
-                                                  .SelectMany(t => t.Names)
+                                                  .SelectMany(t => t.Players)
                                                   .Where(n => !string.IsNullOrEmpty(n))
                                                   .Distinct(StringComparer.Ordinal)
                                                   .ToList();
@@ -106,7 +106,7 @@ namespace Leagueinator.GUI.Model {
         /// <summary>
         /// Returns a list of all matches that a team (specified by players) has played in.
         /// </summary>
-        /// <param name="players">Names of the players forming the team.</param>
+        /// <param name="players">Players of the players forming the team.</param>
         public List<MatchData> GetMatchesForTeam(IEnumerable<string> players) {
             List<MatchData> matches = [.. this.Rounds.SelectMany(r => r.Matches)];
 
@@ -156,7 +156,7 @@ namespace Leagueinator.GUI.Model {
         /// </summary>
         public bool HasPlayed(Players team, Players opponent) {
             foreach (TeamData prevOpponent in this.PreviousOpponents(team)) {
-                if (opponent.Intersect(prevOpponent.Names).Any()) {
+                if (opponent.Intersect(prevOpponent.Players).Any()) {
                     return true;
                 }
             }

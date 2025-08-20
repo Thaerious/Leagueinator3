@@ -118,7 +118,7 @@ namespace Leagueinator.GUI.Forms.Print {
             PrintDialog printDialog = new PrintDialog();
 
             if (printDialog.ShowDialog() == true) {
-                // Set the document to match printer page size
+                // SetPlayer the document to match printer page size
                 DocViewer.PageHeight = printDialog.PrintableAreaHeight;
                 DocViewer.PageWidth = printDialog.PrintableAreaWidth;
                 DocViewer.ColumnWidth = printDialog.PrintableAreaWidth; // prevent column wrapping

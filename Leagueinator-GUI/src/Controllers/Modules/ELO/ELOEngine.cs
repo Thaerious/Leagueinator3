@@ -99,8 +99,8 @@ namespace Leagueinator.GUI.Controllers.Modules.ELO {
                     }
 
                     // Update ELOEngine for every player-vs-player combination.
-                    foreach (string winningPlayer in winner.AllNames()) {
-                        foreach (string losingPlayer in loser.AllNames()) {
+                    foreach (string winningPlayer in winner.Players) {
+                        foreach (string losingPlayer in loser.Players) {
                             int deltaELO = this.DeltaElo(winningPlayer, losingPlayer) / teamData2.CountPlayers();
                             delta[winningPlayer] += deltaELO ;
                             delta[losingPlayer] -= deltaELO;

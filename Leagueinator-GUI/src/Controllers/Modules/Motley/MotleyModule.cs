@@ -49,7 +49,7 @@ namespace Leagueinator.GUI.Controllers.Modules.Motley {
             DefaultDictionary<string, List<RoundResult>> dictionary = new((_) => []);
 
             foreach (TeamData teamData in eventData.AllTeams()) {
-                foreach (string name in teamData.AllNames()) {
+                foreach (string name in teamData.Players) {
                     dictionary[name].Add(new(teamData));
                 }
             }
@@ -66,7 +66,7 @@ namespace Leagueinator.GUI.Controllers.Modules.Motley {
             DefaultDictionary<string, int> sa = new(0);
 
             foreach (string name in eventData.AllNames()) {
-                var teams = eventData.AllTeams().Where(t => t.Names.Contains(name));
+                var teams = eventData.AllTeams().Where(t => t.Players.Contains(name));
                 foreach (TeamData team in teams) {
                     dictionary[name] += ResultValue[team.Result];
                     sf[name] += team.ShotsFor;

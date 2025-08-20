@@ -31,7 +31,6 @@ namespace Leagueinator.GUI.Controllers.Modules.RankedLadder {
                 matchData.Teams[0].CopyFrom(bestTeam);
                 matchData.Teams[1].CopyFrom(opponent);
                 newRound.AddMatch(matchData);
-
             }
 
             newRound.Fill();
@@ -44,19 +43,23 @@ namespace Leagueinator.GUI.Controllers.Modules.RankedLadder {
         /// <param name="scores"></param>
         /// <returns></returns>
         private int GetOpponents(TeamData target, List<(TeamData Team, List<RoundResult> List, RoundResult Sum)> scores) {
-            //this.EventData.AllTeams().Select(t => t.
-            
-            //var blackList = this.EventData.PreviousOpponents(target.AllNames());
+            HashSet<string> blacklist = this.EventData
+                                            .AllTeams()
+                                            .Where(t => t.Players.Equals(target.Players))
+                                            .SelectMany(t => t.GetOpposition())
+                                            .SelectMany(t => t.Players)
+                                            .ToHashSet();
 
-            //Debug.WriteLine($"target {target.AllNames().JoinString()}");
-            //Debug.WriteLine($"blacklist {blackList.JoinString()}");
+            Debug.WriteLine($"target {target.Players.JoinString()}");
+            Debug.WriteLine($"blacklist {blacklist.JoinString()}");
 
-            //for (int i = 0; i < scores.Count; i++) {
-            //    bool hasPlayed = scores[i].Team.GetOpposition().AllNames().Intersect(blackList).Any();
-            //    if (!hasPlayed) return i;
-            //}
+            for (int i = 0; i < scores.Count; i++) {
+                if (scores[i].Team.Players.Any(p => blacklist.Contains(p))) continue;
+                Debug.WriteLine($"pairedwith {scores[i].Team.Players.JoinString()}");
+                return i;
+            }
 
-            throw new UnpairableTeamsException(target.AllNames());
+            throw new UnpairableTeamsException(target.Players);
         }
     }
 }

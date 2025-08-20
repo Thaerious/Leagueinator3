@@ -46,7 +46,7 @@ namespace Leagueinator.GUI.Controllers.Modules.RankedLadder {
             int pos = 1;
             foreach ((TeamData Team, List<RoundResult> List, RoundResult Sum) score in scores) {
                 resultsWindow.AddHeader(
-                    [$"#{pos++} {score.Team.AllNames().JoinString()} ({score.Sum.Score})", "R", "SF", "SA", "Ends", "VS"],
+                    [$"#{pos++} {score.Team.Players.JoinString()} ({score.Sum.Score})", "R", "SF", "SA", "Ends", "VS"],
                     [150, 40, 40, 40, 40, 150]
                 );
 
@@ -74,22 +74,25 @@ namespace Leagueinator.GUI.Controllers.Modules.RankedLadder {
 
         [NamedEventHandler(EventName.GenerateRound)]
         internal void DoGenerateRound() {
+            try {
                 this.MainWindow.ClearFocus();
                 RankedLadderRoundBuilder builder = new(this.MainController.EventData);
                 RoundData newRound = builder.GenerateRound();
-
-            try {
                 AssignLanes.AssignLanes assignLanes = new(this.MainController.EventData, newRound);
                 newRound = assignLanes.Run();
+                this.MainController.AddRound(newRound);
+            }
+            catch (UnpairableTeamsException ex) {
+                this.DispatchEvent(EventName.Notification, new() {
+                    ["alertLevel"] = AlertLevel.Inform,
+                    ["message"] = ex.Message
+                });
             }
             catch (UnsolvableException ex) {
                 this.DispatchEvent(EventName.Notification, new() {
                     ["alertLevel"] = AlertLevel.Inform,
                     ["message"] = ex.Message
                 });
-            }
-            finally {
-                this.MainController.AddRound(newRound);
             }
         }
     }

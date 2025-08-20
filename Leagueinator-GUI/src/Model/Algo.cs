@@ -18,9 +18,9 @@ namespace Leagueinator.GUI.Model {
 
                 TeamData? team = eventData.Rounds.SelectMany(round => round.Matches)
                                 .SelectMany(match => match.Teams)
-                                .Where(t => t.Names.Contains(name1))
+                                .Where(t => t.Players.Contains(name1))
                                 .SelectMany(t => t.GetOpposition())
-                                .Where(t => t.Names.Contains(name2))
+                                .Where(t => t.Players.Contains(name2))
                                 .FirstOrDefault();
 
                 if (team != null) return (count - 1 - i);

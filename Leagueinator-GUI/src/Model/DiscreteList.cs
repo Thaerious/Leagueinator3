@@ -96,7 +96,7 @@ namespace Leagueinator.GUI.Model {
         }
 
         /// <summary>
-        /// Set the next value in this that is empty (this.Default) to the value t.
+        /// SetPlayer the next value in this that is empty (this.Default) to the value t.
         /// </summary>
         /// <param name="t"></param>
         public void Add(T t) {
