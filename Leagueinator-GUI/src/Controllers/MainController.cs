@@ -12,7 +12,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Windows;
 using Utility;
-using Utility.Extensions;
 
 namespace Leagueinator.GUI.Controllers {
 
@@ -106,10 +105,11 @@ namespace Leagueinator.GUI.Controllers {
 
         private List<string> BuildNameAlerts() {
             // Collect all names that are not in the current round
-            HashSet<string> roster = [..this.LeagueData.Events
-                                            .SelectMany(e => e.Rounds)
-                                            .Where(r => r != this.RoundData)
-                                            .SelectMany(r => r.AllNames())];
+            HashSet<string> roster = this.LeagueData.Events
+                                         .SelectMany(e => e.Rounds)
+                                         .Where(r => r != this.RoundData)
+                                         .SelectMany(r => r.AllNames())
+                                         .ToHashSet();
 
             // Return the symmetric difference of the two sets
             return this.RoundData.AllNames().Except(roster).ToList();
