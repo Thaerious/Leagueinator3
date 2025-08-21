@@ -23,8 +23,8 @@ namespace Leagueinator.GUI.Controllers.Modules.ELO {
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void SeedPlayers(object sender, RoutedEventArgs e) {
-            SeedPlayers assignPlayers = new(this.MainController.LeagueData, this.MainController.EventData, this.MainController.RoundData);
-            RoundData playersAssigned = assignPlayers.Run();
+            SeedPlayers assignPlayers = new(this.MainController.RoundData);
+            RoundData playersAssigned = assignPlayers.NewRound();
             playersAssigned.Fill();
             this.MainController.EventData.ReplaceRound(this.MainController.RoundData, playersAssigned);
             this.MainController.DispatchModel();

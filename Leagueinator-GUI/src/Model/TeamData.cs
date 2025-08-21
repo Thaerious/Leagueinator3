@@ -120,7 +120,9 @@ namespace Leagueinator.GUI.Model {
         }
 
         internal void CopyFrom(TeamData teamData) {
-            teamData._players.CopyTo(this._players, 0);
+            var src = teamData._players;
+            var dest = this._players;
+            Array.Copy(src, dest, Math.Min(src.Length, dest.Length));
         }
 
         internal void CopyFrom(IEnumerable<string> players) {

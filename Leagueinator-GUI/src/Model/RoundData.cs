@@ -109,7 +109,7 @@ namespace Leagueinator.GUI.Model {
             (this._matches[lane2], this._matches[lane1]) = (this._matches[lane1], this._matches[lane2]);
         }
 
-        internal void InsertMatch(int index, MatchData match) {
+        internal void ReplaceMatch(int index, MatchData match) {
             if (match.Parent != this) throw new InvalidParentException();
             this._matches[index] = match;
         }

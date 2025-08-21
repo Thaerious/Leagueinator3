@@ -204,13 +204,9 @@ namespace Leagueinator.GUI.Controllers {
             };
 
             form.PauseEvents();
-            NamedEvent.RegisterHandler(form);
-
             EventData eventData = this.LeagueData.Events.Where(e => e.EventName == eventName).First();
 
             if (form.ShowDialog(eventData) ?? false) {
-                this.DispatchModel(EventName.SetModel);
-
                 eventData.EventName = form.TxtName.Text;
                 eventData.DefaultEnds = int.Parse(form.TxtEnds.Text);
                 eventData.LaneCount = int.Parse(form.TxtLanes.Text);
@@ -392,7 +388,13 @@ namespace Leagueinator.GUI.Controllers {
         #region Match, Team, Player Handlers  
         [NamedEventHandler(EventName.ChangePlayerName)]
         internal void DoChangePlayerName(string name, int lane, int teamIndex, int position) {
-            if (this.RoundData.Matches[lane].Teams[teamIndex].Players[position].Equals(name)) {
+            if (lane >= this.RoundData.Matches.Count || lane < 0) throw new ArgumentOutOfRangeException($"Lane value {lane} is out of range [0..{this.RoundData.Matches.Count - 1}]");
+            MatchData matchData = this.RoundData.Matches[lane];
+            if (teamIndex >= matchData.Teams.Count || teamIndex < 0) throw new ArgumentOutOfRangeException($"Team index {teamIndex} is out of range [0..{matchData.Teams.Count - 1}]");
+            TeamData teamData = matchData.Teams[teamIndex];
+            if (position >= teamData.Players.Count || position < 0) throw new ArgumentOutOfRangeException($"Player pos {position} is out of range [0..{teamData.Players.Count - 1}]");               
+
+            if (teamData.Players[position].Equals(name)) {
                 return;
             }
 
@@ -465,7 +467,22 @@ namespace Leagueinator.GUI.Controllers {
 
         [NamedEventHandler(EventName.ChangeMatchFormat)]
         internal void DoMatchFormat(int lane, MatchFormat format) {
-            this.RoundData.Matches[lane].MatchFormat = format;
+            MatchData oldMatch = this.RoundData.Matches[lane];
+
+            MatchData newMatch = new (this.RoundData) {
+                MatchFormat = format,
+                Ends = this.RoundData.Matches[lane].Ends
+            };
+
+            foreach (TeamData team in newMatch.Teams) {
+                if (oldMatch.Teams.Count > team.Index) {
+                    team.CopyFrom(oldMatch.Teams[team.Index]);
+                }
+            }
+
+            Debug.WriteLine(newMatch);
+
+            this.RoundData.ReplaceMatch(oldMatch.Lane, newMatch);
             this.DispatchModel(EventName.RoundChanged);
             this.DispatchSetTitle(this.Title, false);
         }

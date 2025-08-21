@@ -41,6 +41,10 @@ namespace Leagueinator.GUI.Controllers.Modules.ELO {
         /// Iterates through matches in chronological order and updates ratings.
         /// </summary>
         public ELOEngine(LeagueData leagueData) {
+            foreach (string name in leagueData.AllNames()) {
+                this._elo[name] = 2000;
+            }
+
             // Sort events chronologically by date.
             List<EventData> events = [.. leagueData.Events];
             events.Sort((ed1, ed2) => ed1.Date.CompareTo(ed2.Date));

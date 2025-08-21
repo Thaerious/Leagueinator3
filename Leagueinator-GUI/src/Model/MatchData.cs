@@ -34,6 +34,7 @@ namespace Leagueinator.GUI.Model {
                 this.Score = new int[teamCount];
 
                 this._teams.Clear();
+
                 while (this._teams.Count < teamCount) {
                     this._teams.Add(new TeamData(this, teamSize));
                 }

@@ -34,7 +34,7 @@ namespace Leagueinator.GUI.Controllers.Modules.AssignLanes {
             foreach (MatchData matchData in laneMap.Keys) {
                 var newMatch = matchData.Copy(newRound);
                 int newLane = laneMap[matchData];
-                newRound.InsertMatch(newLane, newMatch);
+                newRound.ReplaceMatch(newLane, newMatch);
             }
 
             return newRound;

@@ -49,36 +49,16 @@ namespace Leagueinator.GUI.Controllers.Modules.Motley {
             DefaultDictionary<string, List<RoundResult>> dictionary = new((_) => []);
 
             foreach (TeamData teamData in eventData.AllTeams()) {
+                if (teamData.IsEmpty()) continue;
                 foreach (string name in teamData.Players) {
-                    dictionary[name].Add(new(teamData));
+                    if (!string.IsNullOrEmpty(name)) {
+                        dictionary[name].Add(new(teamData));
+                    }
                 }
             }
 
             return dictionary.Select(kvp => (Name: kvp.Key, List: kvp.Value, Sum: kvp.Value.Sum()))
                              .OrderBy(tuple => tuple.Sum)
-                             .ToList();
-        }
-
-
-        private List<(string Name, int Score, int SF, int SA)> CalculateScores(EventData eventData) {
-            DefaultDictionary<string, int> dictionary = new(0);
-            DefaultDictionary<string, int> sf = new(0);
-            DefaultDictionary<string, int> sa = new(0);
-
-            foreach (string name in eventData.AllNames()) {
-                var teams = eventData.AllTeams().Where(t => t.Players.Contains(name));
-                foreach (TeamData team in teams) {
-                    dictionary[name] += ResultValue[team.Result];
-                    sf[name] += team.ShotsFor;
-                    sa[name] += team.ShotsAgainst;
-                }
-            }
-
-            return dictionary.Select(kvp => (Name: kvp.Key, Score: kvp.Value, SF: sf[kvp.Key], SA: sa[kvp.Key]))
-                             .OrderBy(tuple => tuple.Score)
-                             .ThenBy(tuple => sf[tuple.Name] - sa[tuple.Name])
-                             .ThenBy(tuple => (double)sf[tuple.Name] / ((double)sf[tuple.Name] + (double)sa[tuple.Name]))
-                             .Reverse()
                              .ToList();
         }
 
@@ -115,7 +95,6 @@ namespace Leagueinator.GUI.Controllers.Modules.Motley {
         private void ShowLeagueResults(object sender, RoutedEventArgs e) {
             var scores = this.LeagueScores(this.MainController.LeagueData);
             var resultsWindow = new ResultsWindow("League Results");
-            var eventResults = this.LeagueScores(this.MainController.LeagueData);
 
             int pos = 1;
             foreach ((string Name, List<EventResult> List, EventResult Sum) score in scores) {
@@ -145,11 +124,11 @@ namespace Leagueinator.GUI.Controllers.Modules.Motley {
 
 
         private void GenerateRound(object sender, RoutedEventArgs e) {
-            //SRCRoundData matchesAssigned = AssignPlayers.Assign(this.MainController.LeagueData, this.MainController.EventData, this.MainController.SRCRoundData);
+            //RoundData matchesAssigned = AssignPlayers.Assign(this.MainController.LeagueData, this.MainController.EventData, this.MainController.RoundData);
             //matchesAssigned.Fill(this.MainController.EventData);
 
             //try {
-            //    var lanesAssigned = new LaneAssigner(this.MainController.EventData, matchesAssigned).Run();
+            //    var lanesAssigned = new LaneAssigner(this.MainController.EventData, matchesAssigned).NewRound();
             //    this.MainController.AddRound(lanesAssigned);
             //}
             //catch (AlgoLogicException ex) {

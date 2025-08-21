@@ -54,7 +54,7 @@ namespace Leagueinator.GUI.Controllers.Modules.AssignLanes {
                     MatchData matchData = roundData.Matches[lane];
 
                     if (matchData.MatchFormat != format) {
-                        roundData.InsertMatch(lane, new(roundData) {
+                        roundData.ReplaceMatch(lane, new(roundData) {
                             MatchFormat = format,
                             Ends = ends
                         });
