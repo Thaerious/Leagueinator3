@@ -80,15 +80,14 @@ namespace Leagueinator.GUI.Controllers.Modules.RankedLadder {
 
             try {
                 this.MainWindow.ClearFocus();
-                RankedLadderRoundBuilder builder = new(this.MainController.EventData);
-                newRound = builder.GenerateRound();
+                newRound = RoundFactory.Generate(this.MainController.EventData);
                 newRound = LaneAssigner.NewRound(newRound);
                 this.MainController.AddRound(newRound);
             }
             catch (UnsolvedException ex) {
                 this.DispatchEvent(EventName.Notification, new() {
                     ["alertLevel"] = AlertLevel.Inform,
-                    ["message"] = ex.Message
+                    ["message"] = "Could not assign unique lanes to all teams."
                 });
             }
             finally {

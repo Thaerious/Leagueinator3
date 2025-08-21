@@ -3,8 +3,8 @@
 
 namespace Algorithms {
     [Serializable]
-    public class UnsolvedException : Exception {
-        public UnsolvedException() {
+    public class UnsolvedException : AlgorithmException {
+        public UnsolvedException() : base() {
         }
 
         public UnsolvedException(string? message) : base(message) {

@@ -1,28 +1,12 @@
-﻿using System.Diagnostics;
-using Utility;
+﻿using Utility;
 
 namespace Algorithms.Mapper {
-
-    class Node<K, V> where K : notnull {
-        public K Key { get; }
-        public V? Value { get; }
-
-        public Node<K, V>? Parent = default;
-
-        public List<(K, V)> Visited = [];
-
-        public Node(K key, V value, Node<K, V>? parent) {
-            this.Key = key;
-            this.Value = value;
-            this.Parent = parent;
-        }
-    }
 
     /// <summary>
     /// Given two lists, a Key-List and a Value-List find a mapping of all items from the Key-List
     /// to a unique item from the Value-List while adhering to contraints.
     /// </summary>
-    public class ConstrainedDFSMapper<K, V> where K : notnull {
+    public class DFSListToListMapper<K, V> where K : notnull {
 
         private Dictionary<K, V> _map = [];
         public Dictionary<K, V> Map => new(_map);
@@ -45,7 +29,7 @@ namespace Algorithms.Mapper {
             this.IsValid = isValid;
             this._remainingKeys = [.. keys];
             this._remainingValues = [.. values];
-            if (this._remainingKeys.Count > this._remainingValues.Count) throw new ArgumentException("Not enough values to map all keys.");
+            if (this._remainingKeys.Count > this._remainingValues.Count) throw new PreconditionException("Not enough values to map all keys.");
 
             if (!TryBuild(null)) {
                 throw new UnsolvedException("No valid mapping found.");
@@ -54,7 +38,7 @@ namespace Algorithms.Mapper {
             return new(_map);
         }
 
-        private bool TryBuild(Node<K, V>? current) {
+        private bool TryBuild(KVNode<K, V>? current) {
             if (_remainingKeys.Count == 0) {
                 BuildMapFrom(current);
                 return true;
@@ -67,7 +51,7 @@ namespace Algorithms.Mapper {
                     _remainingKeys.Remove(key);
                     _remainingValues.Remove(val);
 
-                    var node = new Node<K, V>(key, val, current);
+                    var node = new KVNode<K, V>(key, val, current);
                     if (TryBuild(node)) return true;
 
                     // backtrack
@@ -79,7 +63,7 @@ namespace Algorithms.Mapper {
             return false;
         }
 
-        private void BuildMapFrom(Node<K, V>? node) {
+        private void BuildMapFrom(KVNode<K, V>? node) {
             _map.Clear();
             while (node is not null) {
                 _map[node.Key] = node.Value!;

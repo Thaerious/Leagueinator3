@@ -101,7 +101,7 @@ namespace Leagueinator.GUI.Model {
         /// This returns an object for each team in each match.
         /// </summary>
         public IEnumerable<TeamData> AllTeams() {
-            return this.Rounds.SelectMany(r => r.AllTeams());   
+            return this.Rounds.SelectMany(r => r.AllTeams());
         }
 
         /// <summary>
@@ -134,22 +134,6 @@ namespace Leagueinator.GUI.Model {
         /// Removes the round at the specified index.
         /// </summary>
         internal void RemoveRound(int index) => this._rounds.RemoveAt(index);
-
-        /// <summary>
-        /// Returns all previous opponents for the specified players.
-        /// </summary>
-        public List<TeamData> PreviousOpponents(IEnumerable<string> players) {
-            List<TeamData> opponents = [];
-
-            foreach (MatchData match in this.GetMatchesForTeam(players)) {
-                foreach (TeamData opposingTeam in match.Teams) {
-                    if (opposingTeam.Equals(players)) continue; // Skip our own players
-                    opponents.Add(opposingTeam);
-                }
-            }
-
-            return opponents;
-        }
 
         /// <summary>
         /// Determines whether <paramref name="team"/> has played against <paramref name="opponent"/>.
@@ -219,6 +203,38 @@ namespace Leagueinator.GUI.Model {
             }
 
             return eventData;
+        }
+
+        /// <summary>
+        /// Returns all previous opponents for the specified players.
+        /// </summary>
+        public List<TeamData> PreviousOpponents(IEnumerable<string> players) {
+            List<TeamData> opponents = [];
+
+            foreach (MatchData match in this.GetMatchesForTeam(players)) {
+                foreach (TeamData opposingTeam in match.Teams) {
+                    if (opposingTeam.Equals(players)) continue; // Skip our own players
+                    opponents.Add(opposingTeam);
+                }
+            }
+
+            return opponents;
+        }
+
+        /// <summary>
+        /// Returns all previous opponents for the specified players.
+        /// </summary>
+        public MultiMap<Players, Players> PreviousOpponents() {
+            MultiMap<Players, Players> previousOpponents = [];
+
+            foreach (TeamData teamData in this.AllTeams()) {
+                if (teamData.IsEmpty()) continue;
+                foreach (TeamData opponent in teamData.GetOpposition()) {
+                    previousOpponents[teamData.Players].Add(opponent.Players);
+                }
+            }
+
+            return previousOpponents;
         }
 
         public MultiMap<Players, int> PreviousLanes(RoundData? except = null) {

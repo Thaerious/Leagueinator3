@@ -31,7 +31,7 @@ namespace Leagueinator.GUI.Controllers.Modules.AssignLanes {
             catch (UnsolvedException ex) {
                 this.DispatchEvent(EventName.Notification, new() {
                     ["alertLevel"] = AlertLevel.Inform,
-                    ["message"] = ex.Message
+                    ["message"] = "Could not assign unique lanes to all teams."
                 });
             }
         }

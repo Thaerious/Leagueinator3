@@ -25,7 +25,7 @@ namespace Leagueinator.GUI.Controllers.Modules.AssignLanes {
                 var values = blacklist[matchData];
             }
 
-            ConstrainedDFSMapper<MatchData, int> mapGenerator = new();
+            DFSListToListMapper<MatchData, int> mapGenerator = new();
             var lanesAvailable = Enumerable.Range(0, eventData.LaneCount);
             var laneMap = mapGenerator.GenerateMap(roundData.Matches, lanesAvailable, blacklist);
 
