@@ -2,6 +2,7 @@
 using Leagueinator.GUI.Model.ViewModel;
 using System.Collections;
 using System.IO;
+using Utility;
 
 namespace Leagueinator.GUI.Model {
 
@@ -218,6 +219,17 @@ namespace Leagueinator.GUI.Model {
             }
 
             return eventData;
+        }
+
+        public MultiMap<Players, int> PreviousLanes(RoundData? except = null) {
+            MultiMap<Players, int> previousLanes = [];
+
+            foreach (TeamData team in this.AllTeams()) {
+                if (except != null && except == team.Parent.Parent) continue;
+                previousLanes.Add(team.Players, team.Parent.Lane);
+            }
+
+            return previousLanes;
         }
 
         /// <summary>

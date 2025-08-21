@@ -6,6 +6,7 @@ namespace Leagueinator.GUI.Model {
     /// <summary>
     /// A set of player names that when compared for equality checks only
     /// membership, not order.
+    /// Behaves like an ordered set.
     /// </summary>
     public class Players : List<string>, IEquatable<Players> {
         

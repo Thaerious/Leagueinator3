@@ -15,10 +15,10 @@ namespace Leagueinator.GUI.Model {
 
         public MatchData Parent { get; } = matchData;
 
-        public HashSet<string> ToHashSet() => this._players
-                                                  .Select(p => p.Trim())
-                                                  .Where(p => !string.IsNullOrEmpty(p))
-                                                  .ToHashSet();
+        public Players ToPlayers() => this._players
+                                          .Select(p => p.Trim())
+                                          .Where(p => !string.IsNullOrEmpty(p))
+                                          .ToPlayers();
 
         public int ShotsFor {
             get => this.Parent.Score[this.Index];
@@ -113,7 +113,7 @@ namespace Leagueinator.GUI.Model {
             return $"[{this._players.JoinString()}]:{this.Result}";
         }
 
-        public int CountPlayers() => this.ToHashSet().Count;
+        public int CountPlayers() => this.ToPlayers().Count;
 
         internal bool IsEmpty() {
             return this.CountPlayers() == 0;

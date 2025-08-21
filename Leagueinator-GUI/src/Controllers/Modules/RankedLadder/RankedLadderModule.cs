@@ -1,4 +1,6 @@
-﻿using Leagueinator.GUI.Controllers.NamedEvents;
+﻿using Algorithms;
+using Leagueinator.GUI.Controllers.Modules.AssignLanes;
+using Leagueinator.GUI.Controllers.NamedEvents;
 using Leagueinator.GUI.Forms.Print;
 using Leagueinator.GUI.Model;
 using Leagueinator.Utility.Extensions;
@@ -74,25 +76,23 @@ namespace Leagueinator.GUI.Controllers.Modules.RankedLadder {
 
         [NamedEventHandler(EventName.GenerateRound)]
         internal void DoGenerateRound() {
+            RoundData? newRound = default;
+
             try {
                 this.MainWindow.ClearFocus();
                 RankedLadderRoundBuilder builder = new(this.MainController.EventData);
-                RoundData newRound = builder.GenerateRound();
-                AssignLanes.AssignLanes assignLanes = new(this.MainController.EventData, newRound);
-                newRound = assignLanes.Run();
+                newRound = builder.GenerateRound();
+                newRound = LaneAssigner.NewRound(newRound);
                 this.MainController.AddRound(newRound);
             }
-            catch (UnpairableTeamsException ex) {
+            catch (UnsolvedException ex) {
                 this.DispatchEvent(EventName.Notification, new() {
                     ["alertLevel"] = AlertLevel.Inform,
                     ["message"] = ex.Message
                 });
             }
-            catch (UnsolvableException ex) {
-                this.DispatchEvent(EventName.Notification, new() {
-                    ["alertLevel"] = AlertLevel.Inform,
-                    ["message"] = ex.Message
-                });
+            finally {
+                if (newRound != default) this.MainController.AddRound(newRound);
             }
         }
     }

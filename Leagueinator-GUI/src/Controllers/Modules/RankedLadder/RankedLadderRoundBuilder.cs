@@ -1,4 +1,5 @@
-﻿using Leagueinator.GUI.Model;
+﻿using Algorithms;
+using Leagueinator.GUI.Model;
 using System.Diagnostics;
 using Utility.Extensions;
 
@@ -59,7 +60,7 @@ namespace Leagueinator.GUI.Controllers.Modules.RankedLadder {
                 return i;
             }
 
-            throw new UnpairableTeamsException(target.Players);
+            throw new UnsolvedException($"Can not match team [{target.ToPlayers().JoinString()}] with unplayed opponent.");
         }
     }
 }

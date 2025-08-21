@@ -3,7 +3,7 @@
 
 namespace Algorithms {
     [Serializable]
-    internal class UnsolvedException : Exception {
+    public class UnsolvedException : Exception {
         public UnsolvedException() {
         }
 

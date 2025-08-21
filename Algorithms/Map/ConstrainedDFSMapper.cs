@@ -1,13 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Utility.Extensions;
+﻿using System.Diagnostics;
+using Utility;
 
 namespace Algorithms.Mapper {
-
 
     class Node<K, V> where K : notnull {
         public K Key { get; }
@@ -28,7 +22,7 @@ namespace Algorithms.Mapper {
     /// Given two lists, a Key-List and a Value-List find a mapping of all items from the Key-List
     /// to a unique item from the Value-List while adhering to contraints.
     /// </summary>
-    public class MapGenerator<K, V> where K : notnull {
+    public class ConstrainedDFSMapper<K, V> where K : notnull {
 
         private Dictionary<K, V> _map = [];
         public Dictionary<K, V> Map => new(_map);
@@ -41,13 +35,17 @@ namespace Algorithms.Mapper {
 
         private Func<K, V, bool> IsValid = (k, v) => true;
 
-        public Dictionary<K, V> GenerateMap(List<K> keys, List<V> values) => this.GenerateMap(keys, values, null);
+        public Dictionary<K, V> GenerateMap(IEnumerable<K> keys, IEnumerable<V> values) => this.GenerateMap(keys, values, (k, v) => true);
 
-        public Dictionary<K, V> GenerateMap(List<K> keys, List<V> values, Func<K, V, bool>? isValid = default) {
-            if (keys.Count > values.Count) throw new ArgumentException("Not enough values to map all keys.");
-            this.IsValid = isValid ?? this.IsValid;
+        public Dictionary<K, V> GenerateMap(IEnumerable<K> keys, IEnumerable<V> values, MultiMap<K, V> blackList) {
+            return this.GenerateMap(keys, values, (k, v) => !blackList.Has(k, v));
+        }
+
+        public Dictionary<K, V> GenerateMap(IEnumerable<K> keys, IEnumerable<V> values, Func<K, V, bool> isValid) {
+            this.IsValid = isValid;
             this._remainingKeys = [.. keys];
             this._remainingValues = [.. values];
+            if (this._remainingKeys.Count > this._remainingValues.Count) throw new ArgumentException("Not enough values to map all keys.");
 
             if (!TryBuild(null)) {
                 throw new UnsolvedException("No valid mapping found.");

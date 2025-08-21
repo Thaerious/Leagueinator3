@@ -149,7 +149,7 @@ namespace Leagueinator.GUI.Controllers.Modules.Motley {
             //matchesAssigned.Fill(this.MainController.EventData);
 
             //try {
-            //    var lanesAssigned = new AssignLanes(this.MainController.EventData, matchesAssigned).Run();
+            //    var lanesAssigned = new LaneAssigner(this.MainController.EventData, matchesAssigned).Run();
             //    this.MainController.AddRound(lanesAssigned);
             //}
             //catch (AlgoLogicException ex) {

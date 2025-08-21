@@ -14,5 +14,9 @@ namespace Leagueinator.GUI.Model {
         public static IEnumerable<TeamData> Opponents(this IEnumerable<TeamData> teams) {
             return teams.SelectMany(t => t.GetOpposition());
         }
+
+        public static Players ToPlayers(this IEnumerable<string> names) {
+            return [.. names];
+        }
     }
 }

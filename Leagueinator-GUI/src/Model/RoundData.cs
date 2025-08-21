@@ -15,7 +15,7 @@ namespace Leagueinator.GUI.Model {
 
         public EventData Parent { get; } = EventData;
 
-        public void Fill(int? toIndex = null) {
+        public RoundData Fill(int? toIndex = null) {
             toIndex = toIndex ?? this.Parent.LaneCount;
 
             while (this._matches.Count < toIndex) {
@@ -26,6 +26,8 @@ namespace Leagueinator.GUI.Model {
                     }
                 );
             }
+
+            return this;
         }
 
         public void Trim() {

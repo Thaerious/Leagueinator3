@@ -116,7 +116,7 @@ namespace Leagueinator.GUI.Model {
         }
 
         internal List<string> AllNames() {
-            return [.. this.Teams.SelectMany(t => t.ToHashSet())];
+            return [.. this.Teams.SelectMany(t => t.ToPlayers())];
         }
 
         public IEnumerable<PlayerRecord> Records() {
