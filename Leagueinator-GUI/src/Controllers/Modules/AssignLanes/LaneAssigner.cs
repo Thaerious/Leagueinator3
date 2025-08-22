@@ -17,7 +17,7 @@ namespace Leagueinator.GUI.Controllers.Modules.AssignLanes {
 
             foreach (MatchData matchData in roundData.Matches) {
                 foreach (TeamData teamData in matchData.Teams) {
-                    blacklist[matchData].AddRange(previousLanes[teamData.Players]);
+                    blacklist[matchData].AddRange(previousLanes[teamData.ToPlayers()]);
                 }
             };
 

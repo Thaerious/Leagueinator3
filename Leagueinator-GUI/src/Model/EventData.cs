@@ -64,7 +64,7 @@ namespace Leagueinator.GUI.Model {
         /// Returns all distinct player names that participated in this event.
         /// </summary>
         public IEnumerable<string> AllNames() => this.AllTeams()
-                                                  .SelectMany(t => t.Players)
+                                                  .SelectMany(t => t.Names)
                                                   .Where(n => !string.IsNullOrEmpty(n))
                                                   .Distinct(StringComparer.Ordinal)
                                                   .ToList();
@@ -107,7 +107,7 @@ namespace Leagueinator.GUI.Model {
         /// <summary>
         /// Returns a list of all matches that a team (specified by players) has played in.
         /// </summary>
-        /// <param name="players">Players of the players forming the team.</param>
+        /// <param name="players">Names of the players forming the team.</param>
         public List<MatchData> GetMatchesForTeam(IEnumerable<string> players) {
             List<MatchData> matches = [.. this.Rounds.SelectMany(r => r.Matches)];
 
@@ -141,7 +141,7 @@ namespace Leagueinator.GUI.Model {
         /// </summary>
         public bool HasPlayed(Players team, Players opponent) {
             foreach (TeamData prevOpponent in this.PreviousOpponents(team)) {
-                if (opponent.Intersect(prevOpponent.Players).Any()) {
+                if (opponent.Intersect(prevOpponent.Names).Any()) {
                     return true;
                 }
             }
@@ -230,7 +230,7 @@ namespace Leagueinator.GUI.Model {
             foreach (TeamData teamData in this.AllTeams()) {
                 if (teamData.IsEmpty()) continue;
                 foreach (TeamData opponent in teamData.GetOpposition()) {
-                    previousOpponents[teamData.Players].Add(opponent.Players);
+                    previousOpponents[teamData.ToPlayers()].Add(opponent.ToPlayers());
                 }
             }
 
@@ -242,7 +242,7 @@ namespace Leagueinator.GUI.Model {
 
             foreach (TeamData team in this.AllTeams()) {
                 if (except != null && except == team.Parent.Parent) continue;
-                previousLanes.Add(team.Players, team.Parent.Lane);
+                previousLanes.Add(team.ToPlayers(), team.Parent.Lane);
             }
 
             return previousLanes;

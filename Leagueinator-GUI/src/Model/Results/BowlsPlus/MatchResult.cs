@@ -15,7 +15,7 @@ namespace Leagueinator.GUI.Model.Results.BowlsPlus {
             //foreach (SingleResult singleResult in this) {
             //    Debug.WriteLine(singleResult);
             //}
-            //throw new ModuleException("Match must have a winner to calculate ELOEngine");
+            //throw new ModuleException("Match must have a winner to calculate ELODictionary");
         }
 
         public Players GetLosers() {
@@ -25,7 +25,7 @@ namespace Leagueinator.GUI.Model.Results.BowlsPlus {
             //        return singleResult.AllNames;
             //    }
             //}
-            //throw new ModuleException("Match must have a loser to calculate ELOEngine");
+            //throw new ModuleException("Match must have a loser to calculate ELODictionary");
         }
     }
 }

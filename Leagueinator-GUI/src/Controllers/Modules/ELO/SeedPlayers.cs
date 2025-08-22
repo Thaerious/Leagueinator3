@@ -11,7 +11,7 @@ namespace Leagueinator.GUI.Controllers.Modules.ELO {
         public LeagueData LeagueData { get; }
         public RoundData RoundData { get; }
 
-        private ELOEngine ELO;
+        private ELODictionary ELO;
 
         public SeedPlayers(RoundData roundData) {
             this.RoundData = roundData;
@@ -28,7 +28,7 @@ namespace Leagueinator.GUI.Controllers.Modules.ELO {
             // Extra players
             List<string> setAside = [];
 
-            // Make the ELOEngine list even
+            // Make the ELODictionary list even
             if (names.Count % 2 != 0) {
                 setAside = SetAside(1, names);
             }
@@ -51,8 +51,8 @@ namespace Leagueinator.GUI.Controllers.Modules.ELO {
             foreach (var forPlayer in names) {
                 List<string> previousPartners = this.EventData.AllTeams()
                                                     .Where(t => t.Parent.Parent != this.RoundData)
-                                                    .Where(t => t.Players.Contains(forPlayer))
-                                                    .SelectMany(t => t.Players)
+                                                    .Where(t => t.Names.Contains(forPlayer))
+                                                    .SelectMany(t => t.Names)
                                                     .Where(n => n != forPlayer)
                                                     .Where(n => names.Contains(n))
                                                     .ToList();
@@ -98,12 +98,12 @@ namespace Leagueinator.GUI.Controllers.Modules.ELO {
 
         private RoundData AssignMatches(RoundData roundData, List<string> setAside) {
 
-            // Order teams by their collected ELOEngine
+            // Order teams by their collected ELODictionary
             List<TeamData> orderedTeams = 
                 roundData.Matches
                 .SelectMany(match => match.Teams)
                 .Where(t => !t.IsEmpty())
-                .OrderBy(t => this.ELO.GetELO(t.Players))
+                .OrderBy(t => this.ELO.GetELO(t.Names))
                 .ToList();
 
             RoundData newRound = new(this.EventData);
@@ -150,13 +150,13 @@ namespace Leagueinator.GUI.Controllers.Modules.ELO {
         private void ReplaceSetAside(RoundData roundData, string name) {
             int targetELO = this.ELO[name];
             TeamData bestTeam = roundData.AllTeams().First();
-            int bestELO = (int)bestTeam.Players.Select(p => this.ELO[p]).Average();
+            int bestELO = (int)bestTeam.Names.Select(p => this.ELO[p]).Average();
 
             foreach (TeamData team in roundData.AllTeams()) {
-                int teamELO = (int)team.Players.Select(p => this.ELO[p]).Average();
+                int teamELO = (int)team.Names.Select(p => this.ELO[p]).Average();
                 if (Math.Abs(teamELO - targetELO) < Math.Abs(teamELO - bestELO)) {
                     bestTeam = team;
-                    bestELO = (int)bestTeam.Players.Select(p => this.ELO[p]).Average();
+                    bestELO = (int)bestTeam.Names.Select(p => this.ELO[p]).Average();
                 }
             }
 

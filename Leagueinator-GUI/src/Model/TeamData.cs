@@ -7,15 +7,15 @@ using Utility.Extensions;
 namespace Leagueinator.GUI.Model {
     public class TeamData(MatchData matchData, int size) : IEquatable<TeamData>, IHasParent<MatchData> {
 
-        private readonly string[] _players = [.. Enumerable.Repeat(string.Empty, size)];
+        private readonly string[] _names = [.. Enumerable.Repeat(string.Empty, size)];
 
-        public Players Players => [.. this._players];
+        public List<string> Names => [.. this._names];
 
         public int Index => this.Parent.Teams.ToList().IndexOf(this);
 
         public MatchData Parent { get; } = matchData;
 
-        public Players ToPlayers() => this._players
+        public Players ToPlayers() => this._names
                                           .Select(p => p.Trim())
                                           .Where(p => !string.IsNullOrEmpty(p))
                                           .ToPlayers();
@@ -48,33 +48,33 @@ namespace Leagueinator.GUI.Model {
         }
 
         public bool HasPlayer(string name) {
-            return this._players.Contains(name);
+            return this._names.Contains(name);
         }
 
         public void AddPlayer(string name) {
             if (this.IsFull()) throw new InvalidOperationException("TeamData is full");
 
-            for (int i = 0; i < this._players.Length; i++) {
-                if (string.IsNullOrEmpty(this.Players[i])) {
-                    this._players[i] = name;
+            for (int i = 0; i < this._names.Length; i++) {
+                if (string.IsNullOrEmpty(this.Names[i])) {
+                    this._names[i] = name;
                     return;
                 }
             }
         }
 
         internal void SetPlayer(int position, string name) {
-            this._players[position] = name;
+            this._names[position] = name;
         }
 
         public void ClearPlayers() {
-            for (int i = 0; i < this._players.Length; i++) {
-                this._players[i] = string.Empty;
+            for (int i = 0; i < this._names.Length; i++) {
+                this._names[i] = string.Empty;
             }
         }
         public void RemovePlayer(string name) {
-            for (int i = 0; i < this._players.Length; i++) {
-                if (this._players[i] == name) {
-                    this._players[i] = string.Empty;
+            for (int i = 0; i < this._names.Length; i++) {
+                if (this._names[i] == name) {
+                    this._names[i] = string.Empty;
                 }
             }
         }
@@ -88,10 +88,10 @@ namespace Leagueinator.GUI.Model {
         public bool Equals(IEnumerable<string> names) {
             if (names is null) return false;
 
-            if (this._players.Length != names.Count()) return false;
+            if (this._names.Length != names.Count()) return false;
 
             foreach (string name in names) {
-                if (!this._players.Contains(name)) return false;
+                if (!this._names.Contains(name)) return false;
             }
 
             return true;
@@ -99,18 +99,18 @@ namespace Leagueinator.GUI.Model {
 
         public bool Equals(TeamData? other) {
             if (other is null) return false;
-            return this.Equals(other.Players);
+            return this.Equals(other.Names);
         }
 
         public override int GetHashCode() {
             int hash = 17;
-            foreach (var s in this.Players)
+            foreach (var s in this.Names)
                 hash = hash * 31 + (s?.GetHashCode() ?? 0);
             return hash;
         }
 
         public override string ToString() {
-            return $"[{this._players.JoinString()}]:{this.Result}";
+            return $"[{this._names.JoinString()}]:{this.Result}";
         }
 
         public int CountPlayers() => this.ToPlayers().Count;
@@ -120,29 +120,29 @@ namespace Leagueinator.GUI.Model {
         }
 
         internal void CopyFrom(TeamData teamData) {
-            var src = teamData._players;
-            var dest = this._players;
+            var src = teamData._names;
+            var dest = this._names;
             Array.Copy(src, dest, Math.Min(src.Length, dest.Length));
         }
 
         internal void CopyFrom(IEnumerable<string> players) {
-            players.ToArray().CopyTo(this._players, 0);
+            players.ToArray().CopyTo(this._names, 0);
         }
 
         internal bool IsFull() {
-            return this.CountPlayers() == this._players.Length;
+            return this.CountPlayers() == this._names.Length;
         }
 
         public IEnumerable<PlayerRecord> Records() {
-            for (int i = 0; i < this._players.Length; i++) {
-                string name = this._players[i];
+            for (int i = 0; i < this._names.Length; i++) {
+                string name = this._names[i];
                 if (string.IsNullOrEmpty(name)) continue;
                 yield return new PlayerRecord(this, i);
             }
         }
 
         internal void WriteOut(StreamWriter writer) {
-            string[] s = [this.Parent.Score[this.Index].ToString(), ..this._players];
+            string[] s = [this.Parent.Score[this.Index].ToString(), ..this._names];
             writer.WriteLine(string.Join("|", s));
         }
 
@@ -159,10 +159,6 @@ namespace Leagueinator.GUI.Model {
 
             matchData.Score[index] = int.Parse(parts[0]);
             return teamData;
-        }
-
-        public bool HasPlayers() {
-            return this.CountPlayers() > 0;
         }
     }
 }

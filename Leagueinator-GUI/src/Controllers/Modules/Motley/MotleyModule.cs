@@ -19,7 +19,7 @@ namespace Leagueinator.GUI.Controllers.Modules.Motley {
 
         public override void LoadModule(Window window, MainController mainController) {
             base.LoadModule(window, mainController);
-            this.MainWindow.MainMenu.AddMenuItem(["Action", "Generate Next Round"], this.GenerateRound);
+            this.MainWindow.MainMenu.AddMenuItem(["Action", "Generate Next Round"], this.NewRound);
             this.MainWindow.MainMenu.AddMenuItem(["View", "Event Results"], this.ShowEventResults);
             this.MainWindow.MainMenu.AddMenuItem(["View", "League Results"], this.ShowLeagueResults);
         }
@@ -50,7 +50,7 @@ namespace Leagueinator.GUI.Controllers.Modules.Motley {
 
             foreach (TeamData teamData in eventData.AllTeams()) {
                 if (teamData.IsEmpty()) continue;
-                foreach (string name in teamData.Players) {
+                foreach (string name in teamData.Names) {
                     if (!string.IsNullOrEmpty(name)) {
                         dictionary[name].Add(new(teamData));
                     }
@@ -123,7 +123,12 @@ namespace Leagueinator.GUI.Controllers.Modules.Motley {
 
 
 
-        private void GenerateRound(object sender, RoutedEventArgs e) {
+        private void NewRound(object sender, RoutedEventArgs e) {
+            RoundData current = this.MainController.RoundData;
+
+            RoundData roundData = new(this.MainController.EventData);
+
+
             //RoundData matchesAssigned = AssignPlayers.Assign(this.MainController.LeagueData, this.MainController.EventData, this.MainController.RoundData);
             //matchesAssigned.Fill(this.MainController.EventData);
 

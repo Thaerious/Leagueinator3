@@ -10,7 +10,7 @@ namespace Leagueinator.GUI.Model.Results.BowlsPlus {
             this.TeamIndex = teamIndex;
             this.Ends = matchData.Ends;
             this.Rank = -1; // Default rank, this is set by the DisplayRoundResults class
-            this.Players = [.. matchData.Teams[teamIndex].Players.Where(p => !string.IsNullOrEmpty(p))];
+            this.Players = [.. matchData.Teams[teamIndex].Names.Where(p => !string.IsNullOrEmpty(p))];
             this.MatchScore = [.. matchData.Score];
         }
 

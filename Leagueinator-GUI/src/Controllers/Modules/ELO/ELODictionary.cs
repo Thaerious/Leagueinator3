@@ -7,42 +7,17 @@ using Utility;
 namespace Leagueinator.GUI.Controllers.Modules.ELO {
 
     /// <summary>
-    /// ELOEngine rating calculator for players in the league.
-    /// Stores and updates ELOEngine ratings for players based on match outcomes.
+    /// ELODictionary rating calculator for players in the league.
+    /// Stores and updates ELODictionary ratings for players based on match outcomes.
     /// </summary>
-    public class ELOEngine : IEnumerable<KeyValuePair<string, int>>, IEnumerable {
-
-        // Backing store for player ELOEngine ratings.
-        // DefaultDictionary ensures players not seen yet start at 2000 rating.
-        private readonly DefaultDictionary<string, int> _elo = new(2000);
-
+    public class ELODictionary : Dictionary<string, int> {        
         /// <summary>
-        /// Indexer: get the ELOEngine rating of a player by name.
-        /// </summary>
-        public int this[string name] => this._elo[name];
-
-        /// <summary>
-        /// Checks if a given player has an ELOEngine entry.
-        /// </summary>
-        public bool ContainsKey(string name) => this._elo.ContainsKey(name);
-
-        /// <summary>
-        /// Returns all player names currently tracked.
-        /// </summary>
-        public IEnumerable<string> Keys => this._elo.Keys;
-
-        /// <summary>
-        /// Number of players with ratings stored.
-        /// </summary>
-        public int Count => this._elo.Count;
-
-        /// <summary>
-        /// Constructs an ELOEngine rating system from league data.
+        /// Constructs an ELODictionary rating system from league data.
         /// Iterates through matches in chronological order and updates ratings.
         /// </summary>
-        public ELOEngine(LeagueData leagueData) {
+        public ELODictionary(LeagueData leagueData) {
             foreach (string name in leagueData.AllNames()) {
-                this._elo[name] = 2000;
+                this[name] = 2000;
             }
 
             // Sort events chronologically by date.
@@ -56,12 +31,12 @@ namespace Leagueinator.GUI.Controllers.Modules.ELO {
         }
 
         /// <summary>
-        /// Returns the combined ELOEngine rating of a group of players.
+        /// Returns the combined ELODictionary rating of a group of players.
         /// </summary>
         /// <param name="names">Collection of player names.</param>
-        /// <returns>Total ELOEngine rating for all players in the group.</returns>
+        /// <returns>Total ELODictionary rating for all players in the group.</returns>
         /// <exception cref="KeyNotFoundException">
-        /// Thrown if any player in <paramref name="names"/> does not have an ELOEngine entry.
+        /// Thrown if any player in <paramref name="names"/> does not have an ELODictionary entry.
         /// </exception>
         public int GetELO(IEnumerable<string> names) {
             int sum = 0;
@@ -75,14 +50,14 @@ namespace Leagueinator.GUI.Controllers.Modules.ELO {
 
 
         /// <summary>
-        /// Updates ELOEngine ratings for all players in a given match.
+        /// Updates ELODictionary ratings for all players in a given match.
         /// Compares each winning team against each losing team.
         /// Each player on the winning team gets points, each on the losing team loses points.
         /// </summary>
         private void UpdateElo(MatchData matchData) {
             DefaultDictionary<string, int> delta = new(0);
 
-            var teams = matchData.Teams.Where(t => t.HasPlayers()).ToList();
+            var teams = matchData.Teams.Where(t => !t.IsEmpty()).ToList();
 
             for (int i = 0; i < teams.Count; i++) {
                 for (int j = i + 1; j < teams.Count; j++) {
@@ -102,10 +77,11 @@ namespace Leagueinator.GUI.Controllers.Modules.ELO {
                         continue;
                     }
 
-                    // Update ELOEngine for every player-vs-player combination.
-                    foreach (string winningPlayer in winner.Players) {
-                        foreach (string losingPlayer in loser.Players) {
-                            int deltaELO = this.DeltaElo(winningPlayer, losingPlayer) / teamData2.CountPlayers();
+                    // Update ELODictionary for every player-vs-player combination.
+                    foreach (string winningPlayer in winner.ToPlayers()) {
+                        foreach (string losingPlayer in loser.ToPlayers()) {
+                            Debug.WriteLine($"'{winningPlayer}' '{losingPlayer}'");
+                            int deltaELO = this.DeltaElo(winningPlayer, losingPlayer) / teamData2.Names.Count;
                             delta[winningPlayer] += deltaELO ;
                             delta[losingPlayer] -= deltaELO;
                         }
@@ -114,16 +90,16 @@ namespace Leagueinator.GUI.Controllers.Modules.ELO {
             }
 
             foreach (string name in delta.Keys) {
-                this._elo[name] += delta[name];
+                this[name] += delta[name];
             }
         }
 
         /// <summary>
-        /// Computes the ELOEngine rating change when one player beats another.
+        /// Computes the ELODictionary rating change when one player beats another.
         /// </summary>
         private int DeltaElo(string winner, string loser) {
-            int winnerELO = this._elo[winner];
-            int loserELO = this._elo[loser];
+            int winnerELO = this[winner];
+            int loserELO = this[loser];
 
             // Constant factor determining sensitivity of rating changes.
             const int K = 32;
@@ -134,9 +110,5 @@ namespace Leagueinator.GUI.Controllers.Modules.ELO {
             // Rating gain = K * (1 - expected score)
             return (int)(K * (1 - expectedWin));
         }
-
-        public IEnumerator<KeyValuePair<string, int>> GetEnumerator() => _elo.GetEnumerator();  // generic
-
-        IEnumerator IEnumerable.GetEnumerator() => ((IEnumerable)_elo).GetEnumerator();  // non-generic
     }
 }

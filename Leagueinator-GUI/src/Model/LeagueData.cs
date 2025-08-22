@@ -63,7 +63,7 @@ namespace Leagueinator.GUI.Model {
         /// Returns all distinct player names that participated in this league.
         /// </summary>
         public IEnumerable<string> AllNames() => this.AllTeams()
-                                                  .SelectMany(t => t.Players)
+                                                  .SelectMany(t => t.Names)
                                                   .Where(n => !string.IsNullOrEmpty(n))
                                                   .Distinct(StringComparer.Ordinal)
                                                   .ToList();

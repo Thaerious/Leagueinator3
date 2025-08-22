@@ -13,12 +13,19 @@ namespace Leagueinator.GUI.Model {
         public Players(): base() { }
         
         public Players(IEnumerable<string> source) : base() {
-            IEnumerable<string> range = 
-                source.Select(s => s?.Trim())
-                      .Where(s => !string.IsNullOrEmpty(s))
-                      .Distinct(StringComparer.Ordinal)!; // force not null?  TODO fix?
+            foreach (string s in source) {
+                var trim = s.Trim();
+                if (string.IsNullOrEmpty(trim)) continue;
+                if (this.Contains(trim)) continue;
+                this.Add(trim);
+            }
 
-            this.AddRange(range);
+            //IEnumerable<string> range = 
+            //    source.Select(s => s?.Trim())
+            //          .Where(s => !string.IsNullOrEmpty(s))
+            //          .Distinct(StringComparer.Ordinal)!; // force not null?  TODO fix?
+
+            //this.AddRange(range);
         }
 
         public override string ToString() {

@@ -392,9 +392,9 @@ namespace Leagueinator.GUI.Controllers {
             MatchData matchData = this.RoundData.Matches[lane];
             if (teamIndex >= matchData.Teams.Count || teamIndex < 0) throw new ArgumentOutOfRangeException($"Team index {teamIndex} is out of range [0..{matchData.Teams.Count - 1}]");
             TeamData teamData = matchData.Teams[teamIndex];
-            if (position >= teamData.Players.Count || position < 0) throw new ArgumentOutOfRangeException($"Player pos {position} is out of range [0..{teamData.Players.Count - 1}]");               
+            if (position >= teamData.Names.Count || position < 0) throw new ArgumentOutOfRangeException($"Player pos {position} is out of range [0..{teamData.Names.Count - 1}]");               
 
-            if (teamData.Players[position].Equals(name)) {
+            if (teamData.Names[position].Equals(name)) {
                 return;
             }
 
@@ -489,8 +489,8 @@ namespace Leagueinator.GUI.Controllers {
 
         [NamedEventHandler(EventName.SwapTeams)]
         internal void DoSwap(int fromLane, int toLane, int fromIndex, int toIndex) {
-            List<string> namesFrom = [.. this.RoundData.Matches[fromLane].Teams[fromIndex].Players];
-            List<string> namesTo = [.. this.RoundData.Matches[toLane].Teams[toIndex].Players];
+            List<string> namesFrom = [.. this.RoundData.Matches[fromLane].Teams[fromIndex].Names];
+            List<string> namesTo = [.. this.RoundData.Matches[toLane].Teams[toIndex].Names];
 
             this.RoundData.Matches[fromLane].Teams[fromIndex].CopyFrom(namesTo);
             this.RoundData.Matches[toLane].Teams[toIndex].CopyFrom(namesFrom);

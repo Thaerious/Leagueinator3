@@ -15,12 +15,12 @@ namespace Leagueinator.GUI.Forms.Print {
         public void AddPlayers(string[] players) {
             foreach (string playerName in players) {
                 if (string.IsNullOrEmpty(playerName)) {
-                    continue; // Skip empty player Players
+                    continue; // Skip empty player Names
                 }
                 var playerTextBlock = new TextBlock {
                     Text = playerName,
                     FontSize = 16,
-                    Margin = new Thickness(0, 0, 0, 5) // Add some spacing between Players
+                    Margin = new Thickness(0, 0, 0, 5) // Add some spacing between Names
                 };
                 this.PlayerNames.Children.Add(playerTextBlock);
             }

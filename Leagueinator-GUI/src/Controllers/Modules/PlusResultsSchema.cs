@@ -17,7 +17,7 @@ namespace Leagueinator.GUI.Controllers.Modules {
 
             this.Opponents = teamData.Parent.Teams
                                      .Where(t => t != teamData)
-                                     .SelectMany(t => t.Players)
+                                     .SelectMany(t => t.Names)
                                      .ToList();
 
             this.Result = teamData.Result;

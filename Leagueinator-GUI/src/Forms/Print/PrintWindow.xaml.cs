@@ -106,7 +106,7 @@ namespace Leagueinator.GUI.Forms.Print {
 
         private TableRow AddResult(SingleResult result) {
             throw new NotImplementedException();
-            //List<string> names = [.. result.MatchData.AllTeams.SelectMany(t => t.Players).Select(name  => !string.IsNullOrEmpty(name))];
+            //List<string> names = [.. result.MatchData.AllTeams.SelectMany(t => t.Names).Select(name  => !string.IsNullOrEmpty(name))];
 
 
             //names = [.. names.Except(result.AllNames)];
