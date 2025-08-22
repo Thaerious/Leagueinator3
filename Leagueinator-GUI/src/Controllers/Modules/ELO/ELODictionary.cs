@@ -1,7 +1,5 @@
 ﻿using Leagueinator.GUI.Model;
 using Leagueinator.GUI.Model.Enums;
-using System.Collections;
-using System.Diagnostics;
 using Utility;
 
 namespace Leagueinator.GUI.Controllers.Modules.ELO {
@@ -27,6 +25,22 @@ namespace Leagueinator.GUI.Controllers.Modules.ELO {
             // Process every match in the league to update ratings.
             foreach (MatchData matchData in leagueData.Matches()) {
                 UpdateElo(matchData);
+            }
+        }
+
+        public ELODictionary(EventData eventData) : this(eventData.Parent) {
+            var eventNames = eventData.AllNames();
+
+            foreach (string name in this.Keys) {
+                if (!eventNames.Contains(name)) this.Remove(name);
+            }
+        }
+
+        public ELODictionary(RoundData roundData) : this(roundData.Parent) {
+            var eventNames = roundData.AllNames();
+
+            foreach (string name in this.Keys) {
+                if (!eventNames.Contains(name)) this.Remove(name);
             }
         }
 
@@ -80,7 +94,6 @@ namespace Leagueinator.GUI.Controllers.Modules.ELO {
                     // Update ELODictionary for every player-vs-player combination.
                     foreach (string winningPlayer in winner.ToPlayers()) {
                         foreach (string losingPlayer in loser.ToPlayers()) {
-                            Debug.WriteLine($"'{winningPlayer}' '{losingPlayer}'");
                             int deltaELO = this.DeltaElo(winningPlayer, losingPlayer) / teamData2.Names.Count;
                             delta[winningPlayer] += deltaELO ;
                             delta[losingPlayer] -= deltaELO;

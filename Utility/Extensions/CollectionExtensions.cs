@@ -41,8 +41,10 @@ namespace Utility.Extensions {
             return t;
         }
 
-        public static void Shuffle<T>(this List<T> list, int seed = 0) {
-            Random random = new Random(seed);
+        public static void Shuffle<T>(this List<T> list, int? seed = null) {
+            Random random;
+            if (seed is null) random = new ();
+            else random = new ((int)seed);
 
             int n = list.Count;
             while (n > 1) {

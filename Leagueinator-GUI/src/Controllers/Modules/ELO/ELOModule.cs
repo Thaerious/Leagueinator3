@@ -1,6 +1,7 @@
 ﻿using Leagueinator.GUI.Controllers.NamedEvents;
 using Leagueinator.GUI.Model;
 using Leagueinator.Utility.Extensions;
+using System.Diagnostics;
 using System.Windows;
 
 namespace Leagueinator.GUI.Controllers.Modules.ELO {
@@ -30,6 +31,8 @@ namespace Leagueinator.GUI.Controllers.Modules.ELO {
             playersAssigned.Fill();
             this.MainController.EventData.ReplaceRound(this.MainController.RoundData, playersAssigned);
             this.MainController.DispatchModel();
+
+            Debug.WriteLine($"Round Fitness {playersAssigned.Fitness()}");
         }
 
         // Display ELODictionary to user,
