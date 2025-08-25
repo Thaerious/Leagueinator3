@@ -24,25 +24,8 @@ namespace Leagueinator.GUI.Controllers.Modules.RankedLadder {
             NamedEvent.RemoveHandler(this);
         }
 
-        public static List<(TeamData Team, List<RoundResult> List, RoundResult Sum)> EventScores(EventData eventData) {
-            DefaultDictionary<TeamData, List<RoundResult>> dictionary = new((_) => []);
-
-            foreach (TeamData teamData in eventData.AllTeams()) {
-                if (teamData.IsEmpty()) continue;
-                RoundResult rr = new(teamData) {
-                    Opponents = [.. teamData.GetOpposition().AllNames()]
-                };
-
-                dictionary[teamData].Add(rr);
-            }
-
-            return dictionary.Select(kvp => (Team: kvp.Key, List: kvp.Value, Sum: kvp.Value.Sum()))
-                             .OrderBy(tuple => tuple.Sum)
-                             .ToList();
-        }
-
         private void ShowEventResults(object sender, RoutedEventArgs e) {
-            var scores = EventScores(this.MainController.EventData);
+            var scores = RoundResult.EventScores(this.MainController.EventData);
             var resultsWindow = new ResultsWindow("Event Results");
 
             int pos = 1;

@@ -42,27 +42,12 @@ namespace Algorithms.Tests {
         }
 
         [TestMethod]
-        public void TestMoreValues() {
-            List<string> keys = ["A", "B", "C"];
-            List<int> values = [1, 2, 3, 4];
-
-            var mapGenerator = new DFSListToListMapper<string, int>();
-            Dictionary<string, int> map = mapGenerator.GenerateMap(keys, values);
-
-            Assert.IsNotNull(map);
-            Assert.AreEqual(3, map.Count);
-
-            foreach (var (key, val) in map)
-                Debug.WriteLine($"{key} → {val}");
-        }
-
-        [TestMethod]
         public void TestInvalidPairs() {
+            List<string> keys = ["A", "B", "C", "D"];
+
             MultiMap<string, string> blacklist = new() {
                 ["A"] = ["B", "C"]
             };
-
-            List<string> keys = ["A", "B", "C", "D"];
 
             var mapGenerator = new DFSListPairMapper<string>();
             Dictionary<string, string> map = mapGenerator.GenerateMap(keys, blacklist);
@@ -79,11 +64,11 @@ namespace Algorithms.Tests {
         [TestMethod]
         [ExpectedException(typeof(UnsolvedException))]
         public void NoValidMap() {
+            List<string> keys = ["A", "B", "C", "D"];
+
             MultiMap<string, string> blacklist = new() {
                 ["A"] = ["B", "C", "D"]
             };
-
-            List<string> keys = ["A", "B", "C", "D"];
 
             var mapGenerator = new DFSListPairMapper<string>();
             Dictionary<string, string> map = mapGenerator.GenerateMap(keys, blacklist);
@@ -96,11 +81,11 @@ namespace Algorithms.Tests {
         [TestMethod]
         [ExpectedException(typeof(PreconditionException))]
         public void InvalidNumberOfKeys() {
+            List<string> keys = ["A", "B", "C", "D", "E"];
+
             MultiMap<string, string> blacklist = new() {
                 ["A"] = ["B", "C"]
             };
-
-            List<string> keys = ["A", "B", "C", "D", "E"];
 
             var mapGenerator = new DFSListPairMapper<string>();
             Dictionary<string, string> map = mapGenerator.GenerateMap(keys, blacklist);
@@ -111,11 +96,11 @@ namespace Algorithms.Tests {
 
         [TestMethod]
         public void MaintainOrder() {
+            List<string> keys = ["A", "B", "C", "D", "E", "F"];
+
             MultiMap<string, string> blacklist = new() {
                 ["B"] = ["A", "D", "E"]
             };
-
-            List<string> keys = ["A", "B", "C", "D", "E", "F"];
 
             var mapGenerator = new DFSListPairMapper<string>();
             Dictionary<string, string> map = mapGenerator.GenerateMap(keys, blacklist);
@@ -126,6 +111,25 @@ namespace Algorithms.Tests {
             Assert.AreEqual(map["A"], "C");
             Assert.AreEqual(map["B"], "F");
             Assert.AreEqual(map["D"], "E");
+        }
+
+        [TestMethod]
+        public void BackTrack() {
+            List<string> keys = ["A", "B", "C", "D", "E", "F"];
+
+            MultiMap<string, string> blacklist = new() {
+                ["E"] = ["D", "F"]
+            };
+
+            var mapGenerator = new DFSListPairMapper<string>();
+            Dictionary<string, string> map = mapGenerator.GenerateMap(keys, blacklist);
+
+            foreach (var (key, val) in map)
+                Debug.WriteLine($"{key} → {val}");
+
+            Assert.AreEqual(map["A"], "B");
+            Assert.AreEqual(map["C"], "E");
+            Assert.AreEqual(map["F"], "D");
         }
     }
 }

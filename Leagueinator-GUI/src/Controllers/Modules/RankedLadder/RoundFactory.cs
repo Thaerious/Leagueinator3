@@ -4,16 +4,19 @@ using System.Diagnostics;
 using Utility;
 using Utility.Extensions;
 
-namespace Leagueinator.GUI.Controllers.Modules.AssignLanes {
+namespace Leagueinator.GUI.Controllers.Modules.RankedLadder {
     /// <summary>
     /// Provides logic to assign lanes to matches in a round, ensuring that teams are not repeatedly assigned to the same lanes across _rounds.
     /// </summary>
     /// 
     public static class RoundFactory {
         public static RoundData Generate(EventData eventData) {
+            var scores = RoundResult.EventScores(eventData);
+            List<Players> keys = [.. scores.Select(rr => rr.Team.ToPlayers())];
+            Debug.WriteLine($"Generate map with keys: {keys.JoinString(prefix:"[", suffix:"]")}");
             MultiMap<Players, Players> blacklist = eventData.PreviousOpponents();
             DFSListPairMapper<Players> mapGenerator = new();
-            var matchMap = mapGenerator.GenerateMap(blacklist.Keys, blacklist);
+            var matchMap = mapGenerator.GenerateMap(keys, blacklist);
             var newRound = new RoundData(eventData);
 
             foreach (var (key, value) in matchMap) {

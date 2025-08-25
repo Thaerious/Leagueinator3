@@ -13,17 +13,20 @@ namespace Utility.Extensions {
             }
         }
 
-        public static string JoinString<K, V>(this IEnumerable<KeyValuePair<K, V>> collection, string delim = ",") {
+        /// <summary>
+        /// Join items with delimiter and per-item prefix/suffix.
+        /// </summary>
+        public static string JoinString<T>(this IEnumerable<T> source, string delimiter = ",", string prefix = "", string suffix = "") {
+            if (!source.Any()) return "";
+            string[] array = source.Select(item => $"{prefix}{item}{suffix}").ToArray();
+            return string.Join(delimiter, array);
+        }
+
+        public static string MapString<K, V>(this IEnumerable<KeyValuePair<K, V>> collection, string delim = ",") {
             if (!collection.Any()) return "";
             string[] array = collection.Select(item => $"({item.Key}:{item.Value})").ToArray();
             return string.Join(delim, array);
-        }
-
-        public static string JoinString<T>(this IEnumerable<T> collection, string delim = ",", string wrapper = "") {
-            if (!collection.Any()) return "";
-            string[] array = collection.Select(item => item.ToString()).Select(s => $"{wrapper}{s}{wrapper}").ToArray();
-            return string.Join(delim, array);
-        }
+        }               
 
         public static T Dequeue<T>(this List<T> list) {
             T t = list.First();

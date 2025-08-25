@@ -18,7 +18,6 @@ namespace Algorithms.Mapper {
 
         public Dictionary<K, K> GenerateMap(IEnumerable<K> keys, MultiMap<K, K> blackList) {
             Debug.WriteLine($"Keys: {keys.JoinString()}");
-            Debug.WriteLine($"BlackList: {blackList.Select(kvp => $"[{kvp.Key},{kvp.Value}]").JoinString()}");
             return this.GenerateMap(keys, (k1, k2) => !blackList.Has(k1, k2));
         }
 
@@ -49,32 +48,16 @@ namespace Algorithms.Mapper {
                     _remainingKeys.Remove(key1);
                     _remainingKeys.Remove(key2);
 
-                    var node = new KVNode<K, K>(key1, key2, current);
-                    this.PrintPath(current);
-                    if (TryBuild(node)) return true;
+                    var next = new KVNode<K, K>(key1, key2, current);
+                    if (TryBuild(next)) return true;
 
                     // backtrack
                     _remainingKeys.Add(key2);
                     _remainingKeys.Add(key1);
-
-                    Debug.WriteLine("Backtrack:");
-                    this.PrintPath(current);
                 }
             }
 
             return false;
-        }
-
-        private void PrintPath(KVNode<K, K>? node) {
-            List<K> keys = [];
-
-            while (node is not null) {
-                keys.Add(node.Key);
-                node = node.Parent;
-            }
-
-            keys.Reverse();
-            Debug.WriteLine($"{keys.JoinString("→")}");
         }
 
         private void BuildMapFrom(KVNode<K, K>? node) {
