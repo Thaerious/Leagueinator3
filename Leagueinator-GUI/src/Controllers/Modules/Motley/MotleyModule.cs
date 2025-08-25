@@ -1,10 +1,14 @@
-﻿using Leagueinator.GUI.Controllers.NamedEvents;
+﻿using Leagueinator.GUI.Controllers.Modules.AssignLanes;
+using Leagueinator.GUI.Controllers.Modules.ELO;
+using Leagueinator.GUI.Controllers.NamedEvents;
 using Leagueinator.GUI.Forms.Print;
 using Leagueinator.GUI.Model;
 using Leagueinator.GUI.Model.Enums;
 using Leagueinator.Utility.Extensions;
+using System.Diagnostics;
 using System.Windows;
 using Utility;
+using Utility.Extensions;
 
 namespace Leagueinator.GUI.Controllers.Modules.Motley {
 
@@ -52,7 +56,7 @@ namespace Leagueinator.GUI.Controllers.Modules.Motley {
                 if (teamData.IsEmpty()) continue;
                 foreach (string name in teamData.Names) {
                     if (!string.IsNullOrEmpty(name)) {
-                        dictionary[name].Add(new(teamData));
+                        dictionary[name].Add(new(name, teamData));
                     }
                 }
             }
@@ -69,18 +73,18 @@ namespace Leagueinator.GUI.Controllers.Modules.Motley {
             int pos = 1;
             foreach ((string Name, List<RoundResult> List, RoundResult Sum) score in scores) {
                 resultsWindow.AddHeader(
-                    [$"#{pos++} {score.Name} ({score.Sum.Score})", "PTS", "SF", "SA", "TB", "Ends"],
-                    [150, 40, 40, 40, 40, 40]
+                    [$"#{pos++} {score.Name} ({score.Sum.Score})", "Partners", "PTS", "SF", "SA", "TB", "Ends", "Opponents"],
+                    [100, 100, 40, 40, 40, 40, 40, 100]
                 );
 
                 foreach (RoundResult rr in score.List) {
                     resultsWindow.AddRow(
-                        [$"Lane {rr.Lane + 1}", $"{rr.Score}", $"{rr.ShotsFor}", $"{rr.ShotsAgainst}", $"{rr.TieBreaker.ToString()[0]}", $"{rr.Ends}"]
+                        [$"Lane {rr.Lane + 1}", $"{rr.Partners}",  $"{rr.Score}", $"{rr.ShotsFor}", $"{rr.ShotsAgainst}", $"{rr.TieBreaker.ToString()[0]}", $"{rr.Ends}", $"{rr.Opponents}"]
                     );
                 }
 
                 resultsWindow.AddSummaryRow(
-                    [$"", $"{score.Sum.Score}", $"{score.Sum.ShotsFor}", $"{score.Sum.ShotsAgainst}", "", $"{score.Sum.Ends}"]
+                    [$"", "", $"{score.Sum.Score}", $"{score.Sum.ShotsFor}", $"{score.Sum.ShotsAgainst}", "", $"{score.Sum.Ends}", ""]
                 );
 
                 resultsWindow.FinishTable(
@@ -125,23 +129,12 @@ namespace Leagueinator.GUI.Controllers.Modules.Motley {
 
         private void NewRound(object sender, RoutedEventArgs e) {
             RoundData current = this.MainController.RoundData;
-
-            RoundData roundData = new(this.MainController.EventData);
-
-
-            //RoundData matchesAssigned = AssignPlayers.Assign(this.MainController.LeagueData, this.MainController.EventData, this.MainController.RoundData);
-            //matchesAssigned.Fill(this.MainController.EventData);
-
-            //try {
-            //    var lanesAssigned = new LaneAssigner(this.MainController.EventData, matchesAssigned).NewRound();
-            //    this.MainController.AddRound(lanesAssigned);
-            //}
-            //catch (AlgoLogicException ex) {
-            //    this.DispatchEvent(EventName.Notification, new() {
-            //        ["message"] = ex.Message
-            //    });
-            //    this.MainController.AddRound(matchesAssigned);
-            //}            
+            BinSeedPlayers assignPlayers = new(current);
+            RoundData playersAssigned = assignPlayers.NewRound();
+            playersAssigned.Fill();
+            RoundData lanesAssigned = LaneAssigner.NewRound(playersAssigned);
+            this.MainController.EventData.AddRound(lanesAssigned);
+            this.MainController.DispatchModel();
         }
     }
 }

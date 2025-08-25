@@ -1,5 +1,6 @@
 ﻿using Leagueinator.GUI.Model;
 using Leagueinator.GUI.Model.Enums;
+using Utility.Extensions;
 
 namespace Leagueinator.GUI.Controllers.Modules.Motley {
 
@@ -29,10 +30,16 @@ namespace Leagueinator.GUI.Controllers.Modules.Motley {
 
         public double PCT => (double)this.ShotsFor / ((double)this.ShotsFor + this.ShotsAgainst);
 
-        public RoundResult() { }
+        public string Opponents { get; init; }
+
+        public string Partners { get; init; }
+
+        public RoundResult() {
+            this.Opponents = "";
+        }
 
 
-        public RoundResult(TeamData teamData) {
+        public RoundResult(string forPlayer, TeamData teamData) {
             this.Lane = teamData.Parent.Lane;
 
             switch (teamData.Result) {
@@ -54,6 +61,8 @@ namespace Leagueinator.GUI.Controllers.Modules.Motley {
             this.ShotsFor += teamData.ShotsFor;
             this.ShotsAgainst += teamData.ShotsAgainst;
             this.Ends = teamData.Parent.Ends;
+            this.Opponents = teamData.GetOpposition().SelectMany(t => t.ToPlayers()).JoinString();
+            this.Partners = teamData.ToPlayers().Where(name => name != forPlayer).JoinString();
         }
 
         public int CompareTo(RoundResult? other) {
