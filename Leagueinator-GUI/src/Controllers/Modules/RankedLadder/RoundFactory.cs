@@ -12,10 +12,6 @@ namespace Leagueinator.GUI.Controllers.Modules.AssignLanes {
     public static class RoundFactory {
         public static RoundData Generate(EventData eventData) {
             MultiMap<Players, Players> blacklist = eventData.PreviousOpponents();
-
-            foreach (var (key, val) in blacklist)
-                Debug.WriteLine($"{key} → {val.JoinString()}");
-
             DFSListPairMapper<Players> mapGenerator = new();
             var matchMap = mapGenerator.GenerateMap(blacklist.Keys, blacklist);
             var newRound = new RoundData(eventData);

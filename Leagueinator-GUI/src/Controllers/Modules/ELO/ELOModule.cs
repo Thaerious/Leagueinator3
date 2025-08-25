@@ -28,11 +28,10 @@ namespace Leagueinator.GUI.Controllers.Modules.ELO {
         private void SeedPlayers(object sender, RoutedEventArgs e) {
             BinSeedPlayers assignPlayers = new(this.MainController.RoundData);
             RoundData playersAssigned = assignPlayers.NewRound();
+            Debug.WriteLine($"Final Round Fitness {playersAssigned.Fitness()}");
             playersAssigned.Fill();
             this.MainController.EventData.ReplaceRound(this.MainController.RoundData, playersAssigned);
             this.MainController.DispatchModel();
-
-            Debug.WriteLine($"Round Fitness {playersAssigned.Fitness()}");
         }
 
         // Display ELODictionary to user,
