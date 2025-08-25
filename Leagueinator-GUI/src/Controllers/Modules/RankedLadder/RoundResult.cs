@@ -71,6 +71,9 @@ namespace Leagueinator.GUI.Controllers.Modules.RankedLadder {
         /// <summary>Total shots-against (BowlsAgainst + PlusAgainst).</summary>
         public int ShotsAgainst => this.BowlsAgainst + this.PlusAgainst;
 
+        /// <summary>True if this team won by tiebreaker.</summary>
+        public bool TieBreaker { get; set; } = false;
+
         /// <summary>Ends played in this round.</summary>
         public int Ends { get; set; } = 0;
 
@@ -116,6 +119,7 @@ namespace Leagueinator.GUI.Controllers.Modules.RankedLadder {
                     break;
             }
 
+            this.TieBreaker = teamData.TieBreaker;
             this.Ends = teamData.Parent.Ends;
             this.Result = teamData.Result;
 

@@ -47,6 +47,10 @@ namespace Leagueinator.GUI.Model {
             }
         }
 
+        public bool TieBreaker {
+            get => this.Parent.TieBreaker == this.Index;
+        }
+
         public bool HasPlayer(string name) {
             return this._names.Contains(name);
         }
@@ -142,7 +146,7 @@ namespace Leagueinator.GUI.Model {
         }
 
         internal void WriteOut(StreamWriter writer) {
-            string[] s = [this.Parent.Score[this.Index].ToString(), ..this._names];
+            string[] s = [this.Parent.Score[this.Index].ToString(), .. this._names];
             writer.WriteLine(string.Join("|", s));
         }
 

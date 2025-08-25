@@ -5,7 +5,6 @@ using Leagueinator.GUI.Forms.Print;
 using Leagueinator.GUI.Model;
 using Leagueinator.Utility.Extensions;
 using System.Windows;
-using Utility;
 using Utility.Extensions;
 
 namespace Leagueinator.GUI.Controllers.Modules.RankedLadder {
@@ -31,18 +30,18 @@ namespace Leagueinator.GUI.Controllers.Modules.RankedLadder {
             int pos = 1;
             foreach ((TeamData Team, List<RoundResult> List, RoundResult Sum) score in scores) {
                 resultsWindow.AddHeader(
-                    [$"#{pos++} {score.Team.Names.JoinString()} ({score.Sum.Score})", "R", "SF", "SA", "Ends", "VS"],
-                    [150, 40, 40, 40, 40, 150]
+                    [$"#{pos++} {score.Team.Names.JoinString()} ({score.Sum.Score})", "R", "SF", "SA", "TB", "Ends", "VS"],
+                    [150, 40, 40, 40, 40, 40, 150]
                 );
 
                 foreach (RoundResult rr in score.List) {
                     resultsWindow.AddRow(
-                        [$"Lane {rr.Lane + 1}", $"{rr.Result.ToString()[0]}", $"{rr.BowlsFor}+{rr.PlusFor}", $"{rr.BowlsAgainst}+{rr.PlusAgainst}", $"{rr.Ends}", $"{rr.Opponents.JoinString()}"]
+                        [$"Lane {rr.Lane + 1}", $"{rr.Result.ToString()[0]}", $"{rr.BowlsFor}+{rr.PlusFor}", $"{rr.BowlsAgainst}+{rr.PlusAgainst}", $"{rr.TieBreaker.ToString()[0]}", $"{rr.Ends}", $"{rr.Opponents.JoinString()}"]
                     );
                 }
 
                 resultsWindow.AddSummaryRow(
-                    [$"", $"{score.Sum.Score}", $"{score.Sum.BowlsFor}+{score.Sum.PlusFor}", $"{score.Sum.BowlsAgainst}+{score.Sum.PlusAgainst}", $"{score.Sum.Ends}", ""]
+                    [$"", $"{score.Sum.Score}", $"{score.Sum.BowlsFor}+{score.Sum.PlusFor}", $"{score.Sum.BowlsAgainst}+{score.Sum.PlusAgainst}", "", $"{score.Sum.Ends}", ""]
                 );
 
                 resultsWindow.FinishTable(

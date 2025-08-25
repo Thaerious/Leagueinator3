@@ -69,18 +69,18 @@ namespace Leagueinator.GUI.Controllers.Modules.Motley {
             int pos = 1;
             foreach ((string Name, List<RoundResult> List, RoundResult Sum) score in scores) {
                 resultsWindow.AddHeader(
-                    [$"#{pos++} {score.Name} ({score.Sum.Score})", "PTS", "SF", "SA", "Ends"],
-                    [150, 40, 40, 40, 40]
+                    [$"#{pos++} {score.Name} ({score.Sum.Score})", "PTS", "SF", "SA", "TB", "Ends"],
+                    [150, 40, 40, 40, 40, 40]
                 );
 
                 foreach (RoundResult rr in score.List) {
                     resultsWindow.AddRow(
-                        [$"Lane {rr.Lane + 1}", $"{rr.Score}", $"{rr.ShotsFor}", $"{rr.ShotsAgainst}", $"{rr.Ends}"]
+                        [$"Lane {rr.Lane + 1}", $"{rr.Score}", $"{rr.ShotsFor}", $"{rr.ShotsAgainst}", $"{rr.TieBreaker.ToString()[0]}", $"{rr.Ends}"]
                     );
                 }
 
                 resultsWindow.AddSummaryRow(
-                    [$"", $"{score.Sum.Score}", $"{score.Sum.ShotsFor}", $"{score.Sum.ShotsAgainst}", $"{score.Sum.Ends}"]
+                    [$"", $"{score.Sum.Score}", $"{score.Sum.ShotsFor}", $"{score.Sum.ShotsAgainst}", "", $"{score.Sum.Ends}"]
                 );
 
                 resultsWindow.FinishTable(

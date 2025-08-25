@@ -23,6 +23,7 @@ namespace Leagueinator.GUI.Controllers.Modules.Motley {
         public int ShotsFor { get; set; } = 0;
         public int ShotsAgainst { get; set; } = 0;
         public int Ends { get; set; } = 0;
+        public bool TieBreaker { get; }
 
         public int Diff => this.ShotsFor - this.ShotsAgainst;
 
@@ -48,6 +49,7 @@ namespace Leagueinator.GUI.Controllers.Modules.Motley {
                     break;
             }
 
+            this.TieBreaker = teamData.TieBreaker;
             this.Result = teamData.Result;
             this.ShotsFor += teamData.ShotsFor;
             this.ShotsAgainst += teamData.ShotsAgainst;
