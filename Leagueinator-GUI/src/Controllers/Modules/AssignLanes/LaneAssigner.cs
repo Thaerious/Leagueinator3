@@ -2,6 +2,7 @@
 using Leagueinator.GUI.Model;
 using System.Diagnostics;
 using Utility;
+using Utility.Collections;
 using Utility.Extensions;
 
 namespace Leagueinator.GUI.Controllers.Modules.AssignLanes {

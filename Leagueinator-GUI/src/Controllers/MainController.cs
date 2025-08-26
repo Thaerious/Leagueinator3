@@ -11,6 +11,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Windows;
 using Utility;
+using Utility.Collections;
 
 namespace Leagueinator.GUI.Controllers {
 

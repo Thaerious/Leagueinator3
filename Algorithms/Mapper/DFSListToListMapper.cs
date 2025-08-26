@@ -1,4 +1,5 @@
 ﻿using Utility;
+using Utility.Collections;
 
 namespace Algorithms.Mapper {
 

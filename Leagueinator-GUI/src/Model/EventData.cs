@@ -3,6 +3,7 @@ using Leagueinator.GUI.Model.ViewModel;
 using System.Collections;
 using System.IO;
 using Utility;
+using Utility.Collections;
 
 namespace Leagueinator.GUI.Model {
 

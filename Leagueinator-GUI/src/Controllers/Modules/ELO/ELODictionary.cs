@@ -2,6 +2,7 @@
 using Leagueinator.GUI.Model.Enums;
 using System.Diagnostics;
 using Utility;
+using Utility.Collections;
 
 namespace Leagueinator.GUI.Controllers.Modules.ELO {
 

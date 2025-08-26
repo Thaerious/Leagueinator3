@@ -1,4 +1,4 @@
-﻿namespace Utility {
+﻿namespace Utility.Collections {
     public class DefaultDictionary<K, V> : Dictionary<K, V> where K : notnull {
 
         public DefaultDictionary() {

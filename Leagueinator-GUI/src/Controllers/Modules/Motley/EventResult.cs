@@ -19,7 +19,7 @@ namespace Leagueinator.GUI.Controllers.Modules.Motley {
     }
 
     public record EventResult : IComparable<EventResult> {
-
+        public EventData EventData { get; }
         public string Label { get; set; } = "";
         
         public int Score { get; set; } = 0;
@@ -38,6 +38,7 @@ namespace Leagueinator.GUI.Controllers.Modules.Motley {
 
         // Constructor that accepts EventData
         public EventResult(EventData eventData, string name) {
+            this.EventData = eventData;
             this.Label = eventData.EventName;
 
             foreach (TeamData teamData in eventData.AllTeams()) {

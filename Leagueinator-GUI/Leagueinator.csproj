@@ -31,6 +31,9 @@
     <Compile Update="src\Forms\Print\ResultsWindow.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="src\Forms\Results\ResultsForm.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
 
   <ItemGroup>

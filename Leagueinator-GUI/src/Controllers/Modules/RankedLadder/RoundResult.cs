@@ -1,6 +1,7 @@
 ﻿using Leagueinator.GUI.Model;
 using Leagueinator.GUI.Model.Enums;
 using Utility;
+using Utility.Collections;
 
 namespace Leagueinator.GUI.Controllers.Modules.RankedLadder {
 

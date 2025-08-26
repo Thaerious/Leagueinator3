@@ -1,5 +1,6 @@
 ﻿
 using Utility;
+using Utility.Collections;
 
 namespace Leagueinator.GUI.Model.Results.BowlsPlus {
     /// <summary>

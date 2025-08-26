@@ -2,12 +2,14 @@
 using Leagueinator.GUI.Controllers.Modules.ELO;
 using Leagueinator.GUI.Controllers.NamedEvents;
 using Leagueinator.GUI.Forms.Print;
+using Leagueinator.GUI.Forms.Results;
 using Leagueinator.GUI.Model;
 using Leagueinator.GUI.Model.Enums;
 using Leagueinator.Utility.Extensions;
 using System.Diagnostics;
 using System.Windows;
 using Utility;
+using Utility.Collections;
 using Utility.Extensions;
 
 namespace Leagueinator.GUI.Controllers.Modules.Motley {
@@ -98,7 +100,7 @@ namespace Leagueinator.GUI.Controllers.Modules.Motley {
 
         private void ShowLeagueResults(object sender, RoutedEventArgs e) {
             var scores = this.LeagueScores(this.MainController.LeagueData);
-            var resultsWindow = new ResultsWindow("League Results");
+            var resultsWindow = new ResultsForm("League Results", this.MainController.LeagueData);
 
             int pos = 1;
             foreach ((string Name, List<EventResult> List, EventResult Sum) score in scores) {

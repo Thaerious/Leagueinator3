@@ -1,6 +1,6 @@
 ﻿using System.Collections;
 
-namespace Utility {
+namespace Utility.Collections {
 
     /// <summary>
     /// A dictionary where each key maps to a list of values.
