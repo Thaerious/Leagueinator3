@@ -1,6 +1,5 @@
 ﻿using Leagueinator.GUI.Controllers.Modules;
 using Leagueinator.GUI.Controllers.NamedEvents;
-using Leagueinator.GUI.Dialogs;
 using Leagueinator.GUI.Forms;
 using Leagueinator.GUI.Forms.Event;
 using Leagueinator.GUI.Forms.Main;

@@ -1,10 +1,8 @@
 ﻿using Microsoft.Win32;
 using System.IO;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Documents;
 
-namespace Leagueinator.GUI.Dialogs {
+namespace Leagueinator.GUI.Forms {
     /// <summary>
     /// Interaction logic for TextViewer.xaml
     /// </summary>
