@@ -22,12 +22,10 @@ namespace Leagueinator.GUI.Controllers.NamedEvents {
         }
 
         #region Properties
+
         public EventName EventName { get; }
-
         public bool Handled { get; set; } = false;
-
         public ArgTable Data { get; }
-
         public object Source { get; }
         public string Trace { get; private set; }   
 

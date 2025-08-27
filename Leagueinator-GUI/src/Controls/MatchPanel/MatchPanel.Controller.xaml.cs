@@ -7,6 +7,7 @@ namespace Leagueinator.GUI.Controls.MatchPanel {
     /// <summary>
     /// Control logic for MatchPanel.xaml
     /// </summary>
+    [NamedEventContext("UIContext")]
     public partial class MatchPanel : UserControl {
         [NamedEventHandler(EventName.MatchRemoved)]
         internal void DoMatchRemoved(int lane) {
@@ -46,10 +47,9 @@ namespace Leagueinator.GUI.Controls.MatchPanel {
         [NamedEventHandler(EventName.RoundAdded)]
         [NamedEventHandler(EventName.RoundChanged)]
         [NamedEventHandler(EventName.SetModel)]
-        internal void DoSetModel(List<MatchRecord> matchRecords, List<PlayerRecord> playerRecords,
-                                 List<string> nameAlerts, HashSet<int> laneAlerts) {            
+        async internal void DoSetModel(List<MatchRecord> matchRecords, List<PlayerRecord> playerRecords, List<string> nameAlerts, HashSet<int> laneAlerts) {            
             this.PauseEvents();
-            this.DoPopulateMatchCards(matchRecords, playerRecords, nameAlerts, laneAlerts);
+            await this.DoPopulateMatchCards(matchRecords, playerRecords, nameAlerts, laneAlerts);
             this.ResumeEvents();
         }
     }

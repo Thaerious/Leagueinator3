@@ -1,7 +1,10 @@
-﻿using Utility;
-using System.Reflection;
+﻿using System.Reflection;
+using Utility;
 
 namespace Leagueinator.GUI.Controllers.NamedEvents {
+
+    record Context(string name);
+
     public static class NamedEvent {
 
         private record MethodRecord(object Receiever, MethodInfo Method);
@@ -10,12 +13,7 @@ namespace Leagueinator.GUI.Controllers.NamedEvents {
 
         private static readonly HashSet<object> Paused = [];
 
-        public static HashSet<object> Receivers = [];
-
         public static void RegisterHandler(object receiver, bool startPaused = false) {
-            if (Receivers.Contains(receiver.GetType())) throw new Exception("Receiver Exception");
-            Receivers.Add(receiver.GetType()); // TODO remove this, it's just to check for sanity errors
-
             Logger.Log($"Register handler: '{receiver.GetType().Name}'");
             if (startPaused) Paused.Add(receiver);
 
@@ -40,7 +38,6 @@ namespace Leagueinator.GUI.Controllers.NamedEvents {
             Logger.Log($"Remove handler: '{receiver.GetType().Name}'");
 
             var methods = receiver.GetType().GetMethods(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.DeclaredOnly);
-            Receivers.Remove(receiver.GetType()); // TODO remove this, it's just to check for sanity errors
 
             foreach (MethodInfo method in methods) {
                 var attr = method.GetCustomAttribute<NamedEventHandler>();
@@ -72,8 +69,7 @@ namespace Leagueinator.GUI.Controllers.NamedEvents {
             }
 
             try {
-                string argstring = string.Join(", ", args.Data.Select(kv => $"{kv.Key}={kv.Value}"));
-                Logger.Log($"         '{args.EventName}'({argstring}) from '{args.Source.GetType().Name}' handled by '{receiver.GetType().Name}'.");
+                Logger.Log($"         '{args.EventName}' from '{args.Source.ContextName()}' handled by '{receiver.GetType().Name}'.");
                 method.Invoke(receiver, [.. orderedArgs]);
                 args.Handled = true;
             }
@@ -95,25 +91,65 @@ namespace Leagueinator.GUI.Controllers.NamedEvents {
         /// Logs a warning if no handler marks it as handled.
         /// </summary>
         public static void DispatchEvent(this object source, EventName eventName, ArgTable? data = null) {
-            if (Paused.Contains(source)) return;
+            if (source.IsPaused()) {
+                Logger.Log($"         '{eventName}' paused for '{source.ContextName()}'.");
+                return;
+            }
 
-            Logger.Log($"Event -> '{eventName}' dispatched by '{source.GetType().Name}'.");
+            Logger.Log($"Event -> '{eventName}' dispatched by '{source.ContextName()}'.");
             data ??= [];
 
             NamedEventArgs args = new(eventName, source, data);
             InvokeHandlers(args);
 
             if (args.Handled == false) {
-                Logger.Log($"         '{eventName}' dispatched by '{source.GetType().Name} not handled.");
+                Logger.Log($"         '{eventName}' dispatched by '{source.ContextName()} not handled.");
             }
         }
 
+        public static bool IsPaused(this object source) {
+            var contextAttribute = source.GetType().GetCustomAttribute<NamedEventContext>();
+
+            if (contextAttribute != null) {
+                Context context = new(contextAttribute.ContextName);
+                if (Paused.Contains(context)) return true;
+            }
+
+            if (Paused.Contains(source)) return true;
+            return false;
+        }
+
         public static void PauseEvents(this object source) {
-            Paused.Add(source); 
+            Logger.Log($"Pause handler : {source.ContextName()}");
+            var contextAttribute = source.GetType().GetCustomAttribute<NamedEventContext>();
+            if (contextAttribute != null) {
+                Context context = new(contextAttribute.ContextName);
+                Paused.Add(context);
+            }
+            else {
+                Paused.Add(source);
+            }
         }
 
         public static void ResumeEvents(this object source) {
-            Paused.Remove(source);
+            Logger.Log($"Resume handler : {source.ContextName()}");
+            var contextAttribute = source.GetType().GetCustomAttribute<NamedEventContext>();
+            if (contextAttribute != null) {
+                Context context = new(contextAttribute.ContextName);
+                Paused.Remove(context);
+            }
+            else {
+                Paused.Remove(source);
+            }
+        }
+
+        private static string ContextName(this object source) {
+            var contextAttribute = source.GetType().GetCustomAttribute<NamedEventContext>();
+            if (contextAttribute != null) {
+                return $"{source.GetType().Name}#{contextAttribute.ContextName}";
+            }
+
+            return source.GetType().Name;
         }
     }
 }

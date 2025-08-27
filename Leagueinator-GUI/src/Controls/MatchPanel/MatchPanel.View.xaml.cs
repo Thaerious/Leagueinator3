@@ -28,8 +28,8 @@ namespace Leagueinator.GUI.Controls.MatchPanel {
         /// Clears all matchRow cards that does not have a value in "roundRow".
         /// </summary>
         /// <param name="roundRow"></param>
-        private void DoPopulateMatchCards(List<MatchRecord> matchRecords, List<PlayerRecord> playerRecords,
-                                          List<string> nameAlerts, HashSet<int> laneAlerts) {
+        private Task DoPopulateMatchCards(List<MatchRecord> matchRecords, List<PlayerRecord> playerRecords, List<string> nameAlerts, HashSet<int> laneAlerts) {
+            var tcs = new TaskCompletionSource<object?>();
             int cardsToLoad = 0;
             int cardsLoaded = 0;
 
@@ -55,9 +55,14 @@ namespace Leagueinator.GUI.Controls.MatchPanel {
                         this.SetPlayerNames(playerRecords);
                         this.HighlightNames(nameAlerts);
                         this.HighlightLanes(laneAlerts);
+                        tcs.TrySetResult(null);
                     }
                 };
             }
+
+            // In case there were no matchRecords at all:
+            if (cardsToLoad == 0) tcs.TrySetResult(null);
+            return tcs.Task;
         }
 
         private void AssignTabOrder() {
