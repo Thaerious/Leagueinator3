@@ -7,11 +7,9 @@ using Leagueinator.GUI.Model;
 using Leagueinator.GUI.Model.Enums;
 using Leagueinator.GUI.Model.ViewModel;
 using Microsoft.Win32;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Windows;
-using Utility;
 using Utility.Collections;
 
 namespace Leagueinator.GUI.Controllers {
@@ -297,7 +295,8 @@ namespace Leagueinator.GUI.Controllers {
 
             if (dialog.ShowDialog() == true) {
                 StreamReader reader = new StreamReader(dialog.FileName);
-                this.LeagueData = LeagueData.ReadIn(reader);
+                string source = reader.ReadToEnd();
+                this.LeagueData = new Loader().Load(source);
                 this.EventData = this.LeagueData.Events[^1];
                 this.CurrentRoundIndex = this.EventData.Rounds.Count - 1;
                 this.DispatchSetTitle(dialog.FileName, true);
@@ -396,7 +395,7 @@ namespace Leagueinator.GUI.Controllers {
         [NamedEventHandler(EventName.ShowData)]
         internal void DoShow() {
             TextViewer tv = new TextViewer();
-            tv.Append(this.GetShow());
+            tv.Append(this.ToString());
             tv.Show();
         }
         #endregion
@@ -548,7 +547,8 @@ namespace Leagueinator.GUI.Controllers {
 
         private void Save(string filename) {
             StreamWriter writer = new(filename);
-            this.LeagueData.WriteOut(writer);
+            string content = this.LeagueData.ToString();
+            writer.Write(content);
             writer.Close();
             this.DispatchSetTitle(filename, true);
         }
@@ -564,27 +564,14 @@ namespace Leagueinator.GUI.Controllers {
             }
         }
 
-        private string GetShow() {
+        public override string ToString() {
             string sb = string.Empty;
             sb += "Controller Data\n";
             sb += $"File Name: {this.Title}\n";
             sb += $"Is Saved: {this.IsSaved}\n";
-            sb += $"Current Round Index: {this.CurrentRoundIndex}/{this.EventData.Count()}\n";
-            sb += $"No. of Events: {this.LeagueData.Events.Count}\n";
-            sb += "\nEvent Data\n";
-            sb += $"Event Name: {this.EventData.EventName}\n";
-            sb += $"Number of Lanes: {this.EventData.LaneCount}\n";
-            sb += $"Default Ends: {this.EventData.DefaultEnds}\n";
-            sb += $"Match Format: {this.EventData.DefaultMatchFormat}\n";
-            sb += $"Event Type: {this.EventData.EventType}\n";
-            sb += "";
-            sb += $"Current Round: {this.CurrentRoundIndex}\n";
+            sb += $"Current Round Index: {this.CurrentRoundIndex + 1}/{this.EventData.Count()}\n\n";
+            sb += this.LeagueData.ToString();
 
-            foreach (RoundData round in this.EventData) {
-                sb += $"Round {this.EventData.IndexOf(round) + 1}:\n";
-                sb += round;
-                sb += "\n";
-            }
             return sb;
         }
 

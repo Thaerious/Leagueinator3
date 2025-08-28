@@ -10,7 +10,7 @@
         WindowStartupLocation="CenterOwner"
         ResizeMode="NoResize"
         Title="Event Manager" 
-        Height="260" Width="250"
+        Height="303" Width="250"
         MinHeight="260" MinWidth="250"
         >
 

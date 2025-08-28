@@ -1,4 +1,5 @@
-﻿using Leagueinator.GUI.Model.ViewModel;
+﻿using Leagueinator.GUI.Model;
+using Leagueinator.GUI.Model.ViewModel;
 using System.IO;
 
 namespace Leagueinator.GUI.Model {
@@ -48,7 +49,7 @@ namespace Leagueinator.GUI.Model {
                 @event.WriteOut(writer);
             }
         }
-        
+
         public static LeagueData ReadIn(StreamReader reader) {
             LeagueData leagueData = new();
             int eventCount = int.Parse(reader?.ReadLine() ?? throw new FormatException("Invalid save format"));
@@ -70,6 +71,35 @@ namespace Leagueinator.GUI.Model {
 
         public IEnumerable<TeamData> AllTeams() {
             return this.Events.SelectMany(e => e.AllTeams());
+        }
+
+
+        public override string ToString() {
+            string sb = $"No. of Events: {this.Events.Count}\n\n";
+
+            foreach (EventData eventData in this.Events) {
+                sb += PartString(eventData);
+            }
+
+            return sb;
+        }
+
+        private string PartString(EventData eventData) {
+            string sb = string.Empty;
+            sb += $"Event Name: {eventData.EventName}\n";
+            sb += $"Number of Lanes: {eventData.LaneCount}\n";
+            sb += $"Default Ends: {eventData.DefaultEnds}\n";
+            sb += $"Match Format: {eventData.DefaultMatchFormat}\n";
+            sb += $"Event Type: {eventData.EventType}\n";
+            sb += $"Match Scoring: {eventData.MatchScoring}\n";
+            sb += $"No. of Rounds: {eventData.Rounds.Count}\n\n";
+
+            foreach (RoundData round in eventData) {
+                sb += $"Round {eventData.IndexOf(round)}:\n";
+                sb += round;
+                sb += "\n";
+            }
+            return sb;
         }
     }
 }

@@ -57,7 +57,7 @@ namespace Leagueinator.GUI.Forms.Event {
             this.TxtEnds.Text = eventData.DefaultEnds.ToString();
             this.ListMatchFormat.SelectedValue = eventData.DefaultMatchFormat;
             this.ListEventType.SelectedValue = eventData.EventType;
-            this.ListEventType.SelectedValue = eventData.MatchScoring;
+            this.ListMatchScoring.SelectedValue = eventData.MatchScoring;
 
             this.ResumeEvents();
             return this.ShowDialog();

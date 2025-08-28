@@ -114,7 +114,7 @@ namespace Leagueinator.GUI.Model {
         }
 
         public override string ToString() {
-            return $"[{this._names.JoinString()}]:{this.Result}";
+            return $"{this._names.JoinString()}";
         }
 
         public int CountPlayers() => this.ToPlayers().Count;

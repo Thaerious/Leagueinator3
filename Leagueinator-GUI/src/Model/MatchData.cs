@@ -96,13 +96,13 @@ namespace Leagueinator.GUI.Model {
         /// <returns>A string describing the match.</returns>
         public override string ToString() {
             StringBuilder sb = new();
-            sb.Append($"Match {this.Lane}: {this.MatchFormat} | Players: ");
+            sb.Append($"Match {this.Lane}: MatchFormat: {this.MatchFormat} | Players: ");
 
             foreach (TeamData team in this.Teams) {
                 sb.Append($"[{team}]");
             }
 
-            sb.Append($" | Score: {string.Join(", ", this.Score)} | TB: {this.TieBreaker} | Ends: {this.Ends}");
+            sb.Append($" | Score: [{string.Join(", ", this.Score)}] | TB: {this.TieBreaker} | Ends: {this.Ends}");
             return sb.ToString();
         }
 
