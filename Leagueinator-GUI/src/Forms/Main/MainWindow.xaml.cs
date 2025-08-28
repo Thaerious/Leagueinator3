@@ -1,4 +1,5 @@
 ﻿using Leagueinator.GUI.Controllers.NamedEvents;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Windows;
 using System.Windows.Input;
@@ -8,6 +9,8 @@ namespace Leagueinator.GUI.Forms.Main {
     /// Interaction logic for MainWindow.xaml
     /// </summary>
     public partial class MainWindow : Window {
+
+        private bool AllowClose = false;
 
         public MainWindow() {
             NamedEvent.RegisterHandler(this, true);
@@ -24,6 +27,23 @@ namespace Leagueinator.GUI.Forms.Main {
                 Keyboard.ClearFocus();
             };
             this.ResumeEvents();
+        }
+
+        protected override void OnClosing(CancelEventArgs args) {
+            Debug.WriteLine($"OnClosing({this.AllowClose})");
+            if (this.AllowClose) { 
+                base.OnClosing(args); 
+                return; 
+            }
+
+            args.Cancel = true;
+            Dispatcher.BeginInvoke(new Action(() => this.DispatchEvent(EventName.Terminate)));
+        }
+
+        public void ApproveClose() {
+            Debug.WriteLine("ApproveClose");
+            this.AllowClose = true;
+            Close();
         }
 
         public void ClearFocus() {
@@ -62,6 +82,45 @@ namespace Leagueinator.GUI.Forms.Main {
 
 
             MessageBox.Show(message, title, MessageBoxButton.OK, image);
+        }
+
+        [NamedEventHandler(EventName.ConfirmExit)]
+        internal void DoConfirmExit() {
+            var result = MessageBox.Show(
+                "League not saved, confirm exit?",
+                "Confirm Exit",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Question);
+
+            if (result == MessageBoxResult.Yes) {
+                this.ApproveClose();
+            }
+        }
+
+        [NamedEventHandler(EventName.ConfirmLoad)]
+        internal void DoConfirmSave() {
+            var result = MessageBox.Show(
+                "League not saved, confirm load league?",
+                "Confirm Load",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Question);
+
+            if (result == MessageBoxResult.Yes) {
+                this.DispatchEvent(EventName.LoadConfirmed);
+            }
+        }
+
+        [NamedEventHandler(EventName.ConfirmNew)]
+        internal void DoConfirmNew() {
+            var result = MessageBox.Show(
+                "League not saved, confirm new league?",
+                "Confirm New",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Question);
+
+            if (result == MessageBoxResult.Yes) {
+                this.DispatchEvent(EventName.NewConfirmed);
+            }
         }
     }
 }

@@ -52,6 +52,12 @@ namespace Leagueinator.GUI.Model {
         public EventType EventType { get; set; } = EventType.RankedLadder;
 
         /// <summary>
+        /// Type of scoring, Bowls or Plus.
+        /// Defaults to Plus.
+        /// </summary>
+        public MatchScoring MatchScoring { get; set; } = MatchScoring.Plus;
+
+        /// <summary>
         /// Backing list for rounds in this event.
         /// </summary>
         private readonly List<RoundData> _rounds = [];

@@ -42,6 +42,12 @@
             </StackPanel>
 
             <StackPanel Margin="5" Orientation="Horizontal">
+                <Label Grid.Column="0" Grid.Row="1" Content="Match Scoring" VerticalAlignment="Center" Margin="0" Width="100"/>
+                <ComboBox x:Name="ListMatchScoring" SelectedIndex="0" Width="125">
+                </ComboBox>
+            </StackPanel>
+
+            <StackPanel Margin="5" Orientation="Horizontal">
                 <Label Grid.Column="0" Grid.Row="1" Content="Match Format" VerticalAlignment="Center" Margin="0" Width="100"/>
                 <ComboBox x:Name="ListMatchFormat" SelectedIndex="1" Width="125">
                 </ComboBox>

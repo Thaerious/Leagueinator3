@@ -6,23 +6,7 @@ using System.Windows;
 
 namespace Leagueinator.GUI.Forms.Event {
 
-    public record MatchFormatRecord {
-        public MatchFormatRecord(MatchFormat MatchFormat, string DisplayName) {
-            this.MatchFormat = MatchFormat;
-            this.DisplayName = DisplayName;
-        }
-
-        public MatchFormat MatchFormat { get; }
-        public string DisplayName { get; }
-    }
-    public record EventTypeRecord {
-        public EventTypeRecord(EventType EventType, string DisplayName) {
-            this.EventType = EventType;
-            this.DisplayName = DisplayName;
-        }
-        public EventType EventType { get; }
-        public string DisplayName { get; }
-    }
+    public record FormatRecord<T>(T Format, string DisplayName);
 
     /// <summary>
     /// Interaction logic for EventSettingsForm.xaml
@@ -34,25 +18,33 @@ namespace Leagueinator.GUI.Forms.Event {
             this.TxtEnds.PreviewTextInput += InputHandlers.OnlyNumbers;
             this.TxtLanes.PreviewTextInput += InputHandlers.OnlyNumbers;
 
-            this.ListMatchFormat.ItemsSource = new List<MatchFormatRecord> {
-                    new(MatchFormat.VS1, MatchFormat.VS1.ToString()),
-                    new(MatchFormat.VS2, MatchFormat.VS2.ToString()),
-                    new(MatchFormat.VS3, MatchFormat.VS3.ToString()),
-                    new(MatchFormat.VS4, MatchFormat.VS4.ToString()),
-                    new(MatchFormat.A4321, MatchFormat.A4321.ToString()),
-                };
+            this.ListMatchFormat.ItemsSource = new List<FormatRecord<MatchFormat>> {
+                new(MatchFormat.VS1, MatchFormat.VS1.ToString()),
+                new(MatchFormat.VS2, MatchFormat.VS2.ToString()),
+                new(MatchFormat.VS3, MatchFormat.VS3.ToString()),
+                new(MatchFormat.VS4, MatchFormat.VS4.ToString()),
+                new(MatchFormat.A4321, MatchFormat.A4321.ToString()),
+            };
 
-            this.ListEventType.ItemsSource = new List<EventTypeRecord> {
-                    new(EventType.RankedLadder, "Ranked Ladder"),
-                    new(EventType.Motley, "Motley"),
-                    //new(EventType.RoundRobin, "Round Robin"), TODO ENABLE
-                };
+            this.ListEventType.ItemsSource = new List<FormatRecord<EventType>> {
+                new(EventType.RankedLadder, "Ranked Ladder"),
+                new(EventType.Jitney, "Jitney"),
+            };
 
-            this.ListMatchFormat.SelectedValuePath = "MatchFormat";
+
+            this.ListMatchScoring.ItemsSource = new List<FormatRecord<MatchScoring>> {
+                new(MatchScoring.Bowls, "Bowls"),
+                new(MatchScoring.Plus, "Plus"),
+            };
+
+            this.ListMatchFormat.SelectedValuePath = "Format";
             this.ListMatchFormat.DisplayMemberPath = "DisplayName";
 
-            this.ListEventType.SelectedValuePath = "EventType";
+            this.ListEventType.SelectedValuePath = "Format";
             this.ListEventType.DisplayMemberPath = "DisplayName";
+
+            this.ListMatchScoring.SelectedValuePath = "Format";
+            this.ListMatchScoring.DisplayMemberPath = "DisplayName";
         }
 
         public MatchFormat MatchFormat => (MatchFormat)this.ListMatchFormat.SelectedValue;
@@ -65,17 +57,18 @@ namespace Leagueinator.GUI.Forms.Event {
             this.TxtEnds.Text = eventData.DefaultEnds.ToString();
             this.ListMatchFormat.SelectedValue = eventData.DefaultMatchFormat;
             this.ListEventType.SelectedValue = eventData.EventType;
+            this.ListEventType.SelectedValue = eventData.MatchScoring;
 
             this.ResumeEvents();
             return this.ShowDialog();
         }
 
         private void HndOk(object sender, RoutedEventArgs e) {
-            this.DialogResult = true;   
+            this.DialogResult = true;
             this.Close();
         }
         private void HndCancel(object sender, RoutedEventArgs e) {
-            this.DialogResult = false;  
+            this.DialogResult = false;
             this.Close();
         }
     }

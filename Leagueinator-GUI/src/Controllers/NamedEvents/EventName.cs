@@ -62,5 +62,12 @@
         UpdateRoundCount,
         SetSelectedEvent,
         SwapMatches,
+        ExitConfirmed,
+        ConfirmExit,
+        Terminate,
+        ConfirmLoad,
+        ConfirmNew,
+        LoadConfirmed,
+        NewConfirmed,
     }
 }

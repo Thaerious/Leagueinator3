@@ -55,7 +55,7 @@
 
             <!-- Result (Report) Menu -->
             <MenuItem Header="View">
-                <MenuItem Header="Show Data" Click="HndShowDataClick"/>
+                <!--MenuItem Header="Show Data" Click="HndShowDataClick"/-->
             </MenuItem>
 
             <!-- Help Menu -->

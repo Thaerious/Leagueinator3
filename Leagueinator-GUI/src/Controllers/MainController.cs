@@ -7,6 +7,7 @@ using Leagueinator.GUI.Model;
 using Leagueinator.GUI.Model.Enums;
 using Leagueinator.GUI.Model.ViewModel;
 using Microsoft.Win32;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Windows;
@@ -281,15 +282,15 @@ namespace Leagueinator.GUI.Controllers {
         [NamedEventHandler(EventName.LoadLeague)]
         internal void DoLoad() {
             if (!this.IsSaved) {
-                ConfirmationDialog confDialog = new() {
-                    Owner = this.Window,
-                    WindowStartupLocation = WindowStartupLocation.CenterOwner,
-                    Text = "League not saved. Do you still want to load?"
-                };
-
-                if (confDialog.ShowDialog() == false) return;
+                this.DispatchEvent(EventName.ConfirmLoad);
             }
+            else {
+                this.DoLoadConfirmed();
+            }
+        }
 
+        [NamedEventHandler(EventName.LoadConfirmed)]
+        internal void DoLoadConfirmed() {
             OpenFileDialog dialog = new OpenFileDialog {
                 Filter = "League Files (*.league)|*.league"
             };
@@ -303,6 +304,7 @@ namespace Leagueinator.GUI.Controllers {
                 this.DispatchModel(EventName.SetModel);
             }
         }
+
 
         [NamedEventHandler(EventName.SaveLeague)]
         internal void DoSave() {
@@ -322,7 +324,21 @@ namespace Leagueinator.GUI.Controllers {
 
         [NamedEventHandler(EventName.NewLeague)]
         internal void DoNew() {
-            this.NewLeague();
+            if (!this.IsSaved) {
+                this.DispatchEvent(EventName.ConfirmNew);
+            }
+            else {
+                this.DoNewConfirmed();
+            }
+        }
+
+        [NamedEventHandler(EventName.ConfirmNew)]
+        internal void DoNewConfirmed() {
+            this.LeagueData = new();
+            this.LeagueData.AddEvent();
+            this.EventData = this.LeagueData.Events[0];
+            this.EventData.AddRound();
+            this.CurrentRoundIndex = 0;
             this.DispatchModel(EventName.SetModel);
             this.DispatchSetTitle("Leagueinator", true);
             this.Title = "Leagueinator";
@@ -392,7 +408,7 @@ namespace Leagueinator.GUI.Controllers {
             MatchData matchData = this.RoundData.Matches[lane];
             if (teamIndex >= matchData.Teams.Count || teamIndex < 0) throw new ArgumentOutOfRangeException($"Team index {teamIndex} is out of range [0..{matchData.Teams.Count - 1}]");
             TeamData teamData = matchData.Teams[teamIndex];
-            if (position >= teamData.Names.Count || position < 0) throw new ArgumentOutOfRangeException($"Player pos {position} is out of range [0..{teamData.Names.Count - 1}]");               
+            if (position >= teamData.Names.Count || position < 0) throw new ArgumentOutOfRangeException($"Player pos {position} is out of range [0..{teamData.Names.Count - 1}]");
 
             if (teamData.Names[position].Equals(name)) {
                 return;
@@ -469,7 +485,7 @@ namespace Leagueinator.GUI.Controllers {
         internal void DoMatchFormat(int lane, MatchFormat format) {
             MatchData oldMatch = this.RoundData.Matches[lane];
 
-            MatchData newMatch = new (this.RoundData) {
+            MatchData newMatch = new(this.RoundData) {
                 MatchFormat = format,
                 Ends = this.RoundData.Matches[lane].Ends
             };
@@ -506,25 +522,20 @@ namespace Leagueinator.GUI.Controllers {
 
         #endregion
 
-        #region Private Methods
-        private void NewLeague() {
-            if (!this.IsSaved) {
-                ConfirmationDialog confDialog = new() {
-                    Owner = this.Window,
-                    WindowStartupLocation = WindowStartupLocation.CenterOwner,
-                    Text = "League not saved. Do you still want to create a new one?"
-                };
-
-                if (confDialog.ShowDialog() == false) return;
+        #region Window Handlers
+        [NamedEventHandler(EventName.Terminate)]
+        internal void DoTerminate() {
+            if (this.IsSaved) {
+                this.Window.ApproveClose();
             }
-
-            this.LeagueData = new();
-            this.LeagueData.AddEvent();
-            this.EventData = this.LeagueData.Events[0];
-            RoundData newRound = this.EventData.AddRound();
-            this.CurrentRoundIndex = 0;
+            else {
+                this.DispatchEvent(EventName.ConfirmExit);
+            }
         }
 
+        #endregion
+
+        #region Private Methods
         private void SaveAs() {
             SaveFileDialog dialog = new() {
                 Filter = "League Files (*.league)|*.league"
