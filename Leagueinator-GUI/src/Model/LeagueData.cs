@@ -1,9 +1,8 @@
-﻿using Leagueinator.GUI.Model;
-using Leagueinator.GUI.Model.ViewModel;
+﻿using Leagueinator.GUI.Model.ViewModel;
 using System.IO;
 
 namespace Leagueinator.GUI.Model {
-    public class LeagueData {
+    public class LeagueData : IHasTeams {
 
         private readonly List<EventData> _events = [];
         public IReadOnlyList<EventData> Events => _events;
@@ -59,15 +58,6 @@ namespace Leagueinator.GUI.Model {
             }
             return leagueData;
         }
-
-        /// <summary>
-        /// Returns all distinct player names that participated in this league.
-        /// </summary>
-        public IEnumerable<string> AllNames() => this.AllTeams()
-                                                  .SelectMany(t => t.Names)
-                                                  .Where(n => !string.IsNullOrEmpty(n))
-                                                  .Distinct(StringComparer.Ordinal)
-                                                  .ToList();
 
         public IEnumerable<TeamData> AllTeams() {
             return this.Events.SelectMany(e => e.AllTeams());

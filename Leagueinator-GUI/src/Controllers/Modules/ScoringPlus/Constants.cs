@@ -1,5 +1,5 @@
 ﻿
-namespace Leagueinator.GUI.Controllers.Modules.RankedLadder {
+namespace Leagueinator.GUI.Controllers.Modules.ScoringPlus {
     public static class Constants {
         public enum ScoringPolicy {
             LosePoints = 0,

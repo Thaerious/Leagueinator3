@@ -2,7 +2,7 @@
     public enum GameResult {
         Vacant = 0,
         Loss = 1,
-        Draw = 2,
+        Tie = 2,
         Win = 3,
     }
 }

@@ -10,13 +10,15 @@ namespace Leagueinator.GUI.Model {
     /// <summary>
     /// Represents a match, including its format, teams, scores, and related metadata.
     /// </summary>
-    public class MatchData(RoundData RoundData) : IHasParent<RoundData> {
+    public class MatchData(RoundData RoundData) : IHasTeams, IHasParent<RoundData> {
         private MatchFormat _matchFormat = MatchFormat.VS2;
 
         public RoundData Parent { get; } = RoundData;
 
         private readonly List<TeamData> _teams = [];
         public IReadOnlyList<TeamData> Teams => _teams;
+
+        public IEnumerable<TeamData> AllTeams() => _teams;
 
         public int Lane => this.Parent.Matches.ToList().IndexOf(this);
 

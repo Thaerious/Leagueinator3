@@ -21,7 +21,7 @@ namespace Leagueinator.GUI.Controllers.Modules.ELO {
         }
 
         public RoundData NewRound() {
-            // Create a list of names & generate ELO for this round
+            // CreateResult a list of names & generate ELO for this round
             List<string> names = [.. this.EventData.AllNames()];
             this.ELO = new(this.LeagueData);
 

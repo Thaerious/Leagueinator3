@@ -1,12 +1,9 @@
 ﻿using Leagueinator.GUI.Model.ViewModel;
-using System.Diagnostics;
 using System.IO;
 using System.Text;
-using Utility.Extensions;
 
 namespace Leagueinator.GUI.Model {
-
-    public class RoundData(EventData EventData) : object(), IHasParent<EventData> {
+    public class RoundData(EventData EventData) : object(), IHasTeams, IHasParent<EventData> {
 
         public int Index => this.Parent.Rounds.ToList().IndexOf(this);
 
@@ -128,11 +125,7 @@ namespace Leagueinator.GUI.Model {
             this._matches.Add(match);
         }
 
-        internal IEnumerable<string> AllNames() {
-            return this.Matches.SelectMany(m => m.AllNames());
-        }
-
-        internal IEnumerable<TeamData> AllTeams() {
+        public IEnumerable<TeamData> AllTeams() {
             return this.Matches.SelectMany(m => m.Teams);
         }
     }

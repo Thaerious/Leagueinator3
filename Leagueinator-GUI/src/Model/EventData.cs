@@ -15,7 +15,7 @@ namespace Leagueinator.GUI.Model {
     /// Implements <see cref="IEnumerable{RoundData}"/> for iteration over rounds.
     /// Supports serialization to and from text streams for persistence.
     /// </remarks>
-    public class EventData(LeagueData LeagueData) : IEnumerable<RoundData>, IHasParent<LeagueData> {
+    public class EventData(LeagueData LeagueData) : IHasTeams, IEnumerable<RoundData>, IHasParent<LeagueData> {
         /// <summary>
         /// Parent league this event belongs to.
         /// </summary>
@@ -66,15 +66,6 @@ namespace Leagueinator.GUI.Model {
         /// Read-only access to rounds.
         /// </summary>
         public IReadOnlyList<RoundData> Rounds => _rounds;
-
-        /// <summary>
-        /// Returns all distinct player names that participated in this event.
-        /// </summary>
-        public IEnumerable<string> AllNames() => this.AllTeams()
-                                                  .SelectMany(t => t.Names)
-                                                  .Where(n => !string.IsNullOrEmpty(n))
-                                                  .Distinct(StringComparer.Ordinal)
-                                                  .ToList();
 
         /// <summary>
         /// Creates and adds a new round to the event.

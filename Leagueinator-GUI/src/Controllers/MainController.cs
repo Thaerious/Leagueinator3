@@ -24,7 +24,17 @@ namespace Leagueinator.GUI.Controllers {
 
         private EventData? _eventData = default;
 
-        private IModule? EventTypeModule = null;
+        private IModule? _eventTypeModule; // TODO auto load/unload modules when set
+        public IModule? EventTypeModule {
+            get => this._eventTypeModule;
+            set => this._eventTypeModule = value;
+        }
+
+        private IModule? _matchScoreModule; // TODO auto load/unload modules when set
+        public IModule? MatchScoreModule {
+            get => this._matchScoreModule;
+            set => this._matchScoreModule = value;
+        }
 
         internal EventData EventData {
             get {
@@ -33,17 +43,20 @@ namespace Leagueinator.GUI.Controllers {
             }
             set {
                 this._eventData = value;
-                if (value != null) this.UpdateModules(value.EventType);
+                if (value != null) this.UpdateModules();
             }
         }
 
-        private void UpdateModules(EventType eventType) {
-            if (this.EventTypeModule != null) {
-                this.EventTypeModule!.UnloadModule();
-            }
+        private void UpdateModules() {
+            if (this.EventTypeModule != null) this.EventTypeModule!.UnloadModule();
+            if (this.MatchScoreModule != null) this.MatchScoreModule!.UnloadModule();
 
-            this.EventTypeModule = eventType.GetModule();
+
+            this.EventTypeModule = this.EventData.EventType.GetModule();
             this.EventTypeModule.LoadModule(this.Window, this);
+
+            this.MatchScoreModule = this.EventData.MatchScoring.GetModule();
+            this.MatchScoreModule.LoadModule(this.Window, this);
         }
 
         private int CurrentRoundIndex { get; set; } = 0;
@@ -216,8 +229,7 @@ namespace Leagueinator.GUI.Controllers {
                 this.FixLanes(eventData.LaneCount);
                 this.FixFormat(eventData.DefaultMatchFormat);
                 this.DispatchModel(EventName.SetModel);
-
-                this.UpdateModules(eventData.EventType);
+                this.UpdateModules();
             }
 
             NamedEvent.RemoveHandler(form);

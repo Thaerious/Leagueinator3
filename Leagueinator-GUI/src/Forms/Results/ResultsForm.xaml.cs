@@ -1,13 +1,8 @@
-﻿using Leagueinator.GUI.Controllers.Modules.Motley;
-using Leagueinator.GUI.Model;
-using Leagueinator.GUI.Model.Results.BowlsPlus;
-using System.Diagnostics;
-using System.IO;
+﻿using Leagueinator.GUI.Model;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Media;
-using Utility;
 using Utility.Collections;
 
 namespace Leagueinator.GUI.Forms.Results {
@@ -15,6 +10,8 @@ namespace Leagueinator.GUI.Forms.Results {
     /// Interaction logic for ResultsForm.xaml
     /// </summary>
     public partial class ResultsForm : Window {
+
+        public event EventHandler<HashSet<EventData>> CollectionChanged = delegate { };
 
         private Table? CurrentTable = default;
 
@@ -40,19 +37,19 @@ namespace Leagueinator.GUI.Forms.Results {
                 this.AddEvent(eventData);
             }
 
-            this.ShowLeagueResults();
+            this.CollectionChanged.Invoke(this, this.WhiteList);
         }
 
         private void AddEvent(EventData eventData) {
-             var checkBox = new CheckBox {
+            var checkBox = new CheckBox {
                 Content = eventData.EventName,
                 Margin = new Thickness(5, 2, 5, 2),
                 IsChecked = true,
                 Tag = eventData
-             };
+            };
 
             checkBox.Checked += HndEventToggledOn;
-            checkBox.Unchecked += HndEventToggledOff; 
+            checkBox.Unchecked += HndEventToggledOff;
             this.EventSelector.Children.Add(checkBox);
             this.WhiteList.Add(eventData);
         }
@@ -61,58 +58,15 @@ namespace Leagueinator.GUI.Forms.Results {
             if (sender is not CheckBox checkBox) return;
             if (checkBox.Tag is not EventData eventData) return;
             this.WhiteList.Add(eventData);
-            this.ShowLeagueResults();
+            this.CollectionChanged.Invoke(this, this.WhiteList);
         }
 
         private void HndEventToggledOff(object sender, RoutedEventArgs e) {
             if (sender is not CheckBox checkBox) return;
             if (checkBox.Tag is not EventData eventData) return;
             this.WhiteList.Remove(eventData);
-            this.ShowLeagueResults();
-        }
-
-        private void ShowLeagueResults() {
-            this.TeamSection.Blocks.Clear();
-            var scores = this.LeagueScores(this.WhiteList);
-
-            int pos = 1;
-            foreach ((string Name, List<EventResult> List, EventResult Sum) score in scores) {
-                this.AddHeader(
-                    [$"#{pos++} {score.Name} ({score.Sum.Score})", "GP", "PTS", "W", "T", "L", "SF", "SA"],
-                    [150, 40, 40, 40, 40, 40, 40, 40]
-                );
-
-                foreach (EventResult er in score.List) {
-                    if (!this.WhiteList.Contains(er.EventData)) continue;
-
-                    var row = this.AddRow(
-                        [$"{er.Label}", $"{er.GamesPlayed}", $"{er.Score}", $"{er.Wins}", $"{er.Draws}", $"{er.Losses}", $"{er.ShotsFor}", $"{er.ShotsAgainst}"]
-                    );
-                }
-
-                this.AddSummaryRow(
-                        [$"", $"{score.Sum.GamesPlayed}", $"{score.Sum.Score}", $"{score.Sum.Wins}", $"{score.Sum.Draws}", $"{score.Sum.Losses}", $"{score.Sum.ShotsFor}", $"{score.Sum.ShotsAgainst}"]
-                    );
-
-                this.FinishTable(
-                    $"diff:{score.Sum.Diff},  pct:{score.Sum.PCT * 100:0.00}"
-                );
-            }
-        }
-
-        private List<(string Name, List<EventResult> List, EventResult Sum)> LeagueScores(IEnumerable<EventData> eventCollection) {
-            DefaultDictionary<string, List<EventResult>> dictionary = new((_) => []);
-
-            foreach (EventData eventData in eventCollection) {
-                foreach (string name in eventData.AllNames()) {
-                    dictionary[name].Add(new(eventData, name));
-                }
-            }
-
-            return dictionary.Select(kvp => (Name: kvp.Key, List: kvp.Value, Sum: kvp.Value.Sum()))
-                             .OrderBy(tuple => tuple.Sum)
-                             .ToList();
-        }
+            this.CollectionChanged.Invoke(this, this.WhiteList);
+        }       
 
         public void AddHeader(string[] headers, int[] widths) {
             this.Widths = widths;
@@ -225,6 +179,10 @@ namespace Leagueinator.GUI.Forms.Results {
 
         public void Hnd_Exit(object sender, RoutedEventArgs e) {
             this.Close();
+        }
+
+        internal void Clear() {
+            this.TeamSection.Blocks.Clear();
         }
     }
 }

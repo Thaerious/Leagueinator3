@@ -48,7 +48,7 @@ namespace Leagueinator.GUI.Model.Results.BowlsPlus {
         public int Draws {
             get {
                 if (this.Count == 0) return 0;
-                return this.Count(r => r.Result == GameResult.Draw);
+                return this.Count(r => r.Result == GameResult.Tie);
             }
         }
 

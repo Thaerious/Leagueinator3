@@ -12,26 +12,27 @@ namespace Leagueinator.GUI.Controllers.Modules.RankedLadder {
     /// 
     public static class RoundFactory {
         public static RoundData Generate(EventData eventData) {
-            var scores = RoundResult.EventScores(eventData);
-            List<Players> keys = [.. scores.Select(rr => rr.Team.ToPlayers())];
-            Debug.WriteLine($"Generate map with keys: {keys.JoinString(prefix:"[", suffix:"]")}");
-            MultiMap<Players, Players> blacklist = eventData.PreviousOpponents();
-            DFSListPairMapper<Players> mapGenerator = new();
-            var matchMap = mapGenerator.GenerateMap(keys, blacklist);
-            var newRound = new RoundData(eventData);
+            throw new NotImplementedException();
+            //List<Players> keys = scoringModule.EventRankingByTeam(eventData);                     
+            
+            //Debug.WriteLine($"Generate map with keys: {keys.JoinString(prefix:"[", suffix:"]")}");
+            //MultiMap<Players, Players> blacklist = eventData.PreviousOpponents();
+            //DFSListPairMapper<Players> mapGenerator = new();
+            //var matchMap = mapGenerator.GenerateMap(keys, blacklist);
+            //var newRound = new RoundData(eventData);
 
-            foreach (var (key, value) in matchMap) {
-                MatchData matchData = new(newRound) {
-                    MatchFormat = eventData.DefaultMatchFormat,
-                    Ends = eventData.DefaultEnds
-                };
-                matchData.Teams[0].CopyFrom(key);
-                matchData.Teams[1].CopyFrom(value);
-                newRound.AddMatch(matchData);
-            }
+            //foreach (var (key, value) in matchMap) {
+            //    MatchData matchData = new(newRound) {
+            //        MatchFormat = eventData.DefaultMatchFormat,
+            //        Ends = eventData.DefaultEnds
+            //    };
+            //    matchData.Teams[0].CopyFrom(key);
+            //    matchData.Teams[1].CopyFrom(value);
+            //    newRound.AddMatch(matchData);
+            //}
 
-            newRound.Fill();
-            return newRound;
+            //newRound.Fill();
+            //return newRound;
         }
     }
 }

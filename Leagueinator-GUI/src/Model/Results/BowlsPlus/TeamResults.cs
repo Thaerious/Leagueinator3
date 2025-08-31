@@ -29,7 +29,7 @@ namespace Leagueinator.GUI.Model.Results.BowlsPlus {
             if (this.PlusFor < this.PlusAgainst) return GameResult.Loss;
             if (matchData.TieBreaker == this.TeamIndex) return GameResult.Win;
             if (matchData.TieBreaker != -1) return GameResult.Loss;
-            return GameResult.Draw;
+            return GameResult.Tie;
         }
 
         public override string ToString() {
@@ -64,7 +64,7 @@ namespace Leagueinator.GUI.Model.Results.BowlsPlus {
             if (other == null) return 1; // Null is less
 
             int cmp = this.Result.CompareTo(other.Result);
-            if (cmp != 0) return -cmp; // Higher GameResult wins (Win > Draw > Loss)
+            if (cmp != 0) return -cmp; // Higher GameResult wins (Win > Tie > Loss)
 
             cmp = this.BowlsFor.CompareTo(other.BowlsFor); // Higher is better
             if (cmp != 0) return cmp;

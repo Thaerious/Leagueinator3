@@ -43,7 +43,7 @@ namespace Leagueinator.GUI.Model {
                 if (!multipleAtMax) return GameResult.Win;
 
                 // Tie at max: resolve with tiebreaker
-                return (this.Parent.TieBreaker == this.Index) ? GameResult.Win : GameResult.Draw;
+                return (this.Parent.TieBreaker == this.Index) ? GameResult.Win : GameResult.Tie;
             }
         }
 
