@@ -1,5 +1,4 @@
 ﻿using Leagueinator.GUI.Forms.Main;
-using Leagueinator.GUI.Model;
 using System.Windows;
 
 namespace Leagueinator.GUI.Controllers.Modules {

@@ -15,5 +15,13 @@ namespace Leagueinator.GUI.Model.Enums {
                 _ => throw new NotImplementedException(),
             };
         }
+
+        public static Type GetResultType(this MatchScoring matchScoring) {
+            return matchScoring switch {
+                MatchScoring.Bowls => typeof(BowlsResult),
+                MatchScoring.Plus => typeof(PlusResult),
+                _ => throw new NotImplementedException(),
+            };
+        }
     }
 }

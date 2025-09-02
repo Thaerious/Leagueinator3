@@ -2,6 +2,8 @@
 using Utility.Collections;
 
 namespace Leagueinator.GUI.Controllers.Modules {
+
+
     public static class EventResultExtensions {
         public static T Sum<T>(this IEnumerable<T> results) where T : IResult<T> {
             T sum = T.CreateResult();
@@ -31,6 +33,19 @@ namespace Leagueinator.GUI.Controllers.Modules {
             return wlt;
         }
     }
+
+    public class ResultsCollection {
+        public static object Construct(Type type) {
+            if (!typeof(IResult<>).IsAssignableFrom(type)) {
+                throw new ArgumentException($"Type must implement IResult, got {type}");
+            }
+
+            Type generic = typeof(ResultsCollection<>);  // open generic type
+            Type closed = generic.MakeGenericType(type); // closed generic type
+            return Activator.CreateInstance(closed)!;    
+        }
+    }
+
 
     public class ResultsCollection<T> where T : IResult<T> {
         private readonly MultiMap<Players, T> TeamDict = [];

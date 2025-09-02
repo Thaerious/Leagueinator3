@@ -1,10 +1,8 @@
 ﻿using Algorithms.Mapper;
 using Leagueinator.GUI.Controllers.Modules.ScoringPlus;
 using Leagueinator.GUI.Model;
-using System.Diagnostics;
-using Utility;
+using Leagueinator.GUI.Model.Enums;
 using Utility.Collections;
-using Utility.Extensions;
 
 namespace Leagueinator.GUI.Controllers.Modules.RankedLadder {
     /// <summary>
@@ -13,12 +11,10 @@ namespace Leagueinator.GUI.Controllers.Modules.RankedLadder {
     /// 
     public static class RoundFactory {
         public static RoundData Generate(EventData eventData) {
-            var results = new ResultsCollection<PlusResult>(eventData);
+            Type resultType = eventData.MatchScoring.GetResultType();
+            ResultsCollection<PlusResult> results = (ResultsCollection <PlusResult>)ResultsCollection.Construct(typeof(PlusResult));
 
             List<Players> keys = [.. results.Teams];
-            Debug.WriteLine(keys.JoinString());
-
-            Debug.WriteLine($"Generate map with keys: {keys.JoinString(prefix: "[", suffix: "]")}");
             MultiMap<Players, Players> blacklist = eventData.PreviousOpponents();
             DFSListPairMapper<Players> mapGenerator = new();
             var matchMap = mapGenerator.GenerateMap(keys, blacklist);
