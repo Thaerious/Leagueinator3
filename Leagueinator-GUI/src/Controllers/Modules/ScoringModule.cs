@@ -96,7 +96,7 @@ namespace Leagueinator.GUI.Controllers.Modules {
                 var summaryCells = results[team].Sum().Cells();
                 summaryCells[0] = results[team].Sum().Score.ToString();
                 form.AddSummaryRow(["", "", ..summaryCells]);
-                form.FinishTable($"diff:{results[team].Sum().Diff} pct:{results[team].Sum().PCT:F3}");
+                form.FinishTable($"");
             }
 
             form.Show();
@@ -118,7 +118,7 @@ namespace Leagueinator.GUI.Controllers.Modules {
                 var summaryCells = results[player].Sum().Cells();
                 summaryCells[0] = results[player].Sum().Score.ToString();
                 form.AddSummaryRow(["", "", .. summaryCells]);
-                form.FinishTable($"diff:{results[player].Sum().Diff} pct:{results[player].Sum().PCT:F3}");
+                form.FinishTable($"");
             }
 
             form.Show();

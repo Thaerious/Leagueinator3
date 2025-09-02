@@ -42,11 +42,11 @@ namespace Leagueinator.GUI.Controllers.Modules.ScoringPlus {
             this.Opponents = teamData.GetOpposition().SelectMany(t => t.ToPlayers()).JoinString();
         }
 
-        public static string[] Labels => ["R", "SF+", "SA+", "TB", "E", "Opponents"];
-        
-        public virtual string[] Cells() => [$"{this.Result.ToString()[0]}", $"{this.ShotsFor}+{this.PlusFor}", $"{this.ShotsAgainst}+{this.PlusAgainst}", $"{this.TieBreaker.ToString()[0]}", $"{this.Ends}", $"{this.Opponents}"];
+        public static string[] Labels => ["R", "DIFF", "PCT", "SF+", "SA+", "TB", "E", "Opponents"];
 
-        public static int[] ColSizes => [40, 60, 60, 40, 40, 150];
+        public virtual string[] Cells() => [$"{this.Result.ToString()[0]}", $"{this.Diff}", $"{this.PCT:F1}", $"{this.ShotsFor}+{this.PlusFor}", $"{this.ShotsAgainst}+{this.PlusAgainst}", $"{this.TieBreaker.ToString()[0]}", $"{this.Ends}", $"{this.Opponents}"];
+
+        public static int[] ColSizes => [40, 60, 60, 40, 40, 20, 40, 150];
 
         public TeamData TeamData { get; }
         public int Lane { get; set; } = -1;
@@ -63,11 +63,16 @@ namespace Leagueinator.GUI.Controllers.Modules.ScoringPlus {
 
         public int Diff => this.RawFor - this.RawAgainst;
 
-        public double PCT => (double)this.RawFor / ((double)this.RawFor + this.RawAgainst);
+        public double PCT {
+            get {
+                if (this.RawFor + this.RawAgainst == 0) return 0;
+                return this.RawFor / ((double)this.RawFor + this.RawAgainst) * 100;
+            }
+        }
 
-        public string Opponents { get; init; } 
+        public string Opponents { get; init; }
 
-        public int CompareTo(PlusResult? other) {            
+        public int CompareTo(PlusResult? other) {
             if (other is null) return -1; // this > null
 
             int c = other.Score.CompareTo(Score);  // higher Score first

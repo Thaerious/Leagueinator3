@@ -39,10 +39,9 @@ namespace Leagueinator.GUI.Controllers.Modules.ScoringBowls {
             this.Opponents = teamData.GetOpposition().SelectMany(t => t.ToPlayers()).JoinString();
         }
 
-        public static string[] Labels => ["PTS", "SF", "SA", "TB", "Ends", "Opponents"];
-        public virtual string[] Cells() => [$"{this.Score}", $"{this.ShotsFor}", $"{this.ShotsAgainst}", $"{this.TieBreaker}", $"{this.Ends}", $"{this.Opponents.JoinString()}"];
-        public static int[] ColSizes => [10, 10, 10, 10, 10, 150];
-
+        public static string[] Labels => ["R", "DIFF", "PCT", "SF", "SA", "TB", "E", "Opponents"];
+        public virtual string[] Cells() => [$"{this.Result.ToString()[0]}", $"{this.Diff}", $"{this.PCT:F1}", $"{this.ShotsFor}", $"{this.ShotsAgainst}", $"{this.TieBreaker.ToString()[0]}", $"{this.Ends}", $"{this.Opponents}"];
+        public static int[] ColSizes => [20, 40, 40, 40, 40, 20, 40, 150];
         public int Lane { get; set; } = -1;
         public int Score { get; set; } = 0;
         public GameResult Result { get; set; } = GameResult.Vacant;
@@ -53,7 +52,13 @@ namespace Leagueinator.GUI.Controllers.Modules.ScoringBowls {
 
         public int Diff => this.ShotsFor - this.ShotsAgainst;
 
-        public double PCT => (double)this.ShotsFor / ((double)this.ShotsFor + this.ShotsAgainst);
+        public double PCT {
+            get {
+                if (this.ShotsFor + this.ShotsAgainst == 0) return 0;
+                return this.ShotsFor / ((double)this.ShotsFor + this.ShotsAgainst) * 100;
+            }
+        }
+            
 
         public string Opponents { get; init; } // TODO make this a list
 

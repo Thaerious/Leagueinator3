@@ -224,6 +224,7 @@ namespace Leagueinator.GUI.Controllers {
                 eventData.LaneCount = int.Parse(form.TxtLanes.Text);
                 eventData.DefaultMatchFormat = form.MatchFormat;
                 eventData.EventType = form.EventType;
+                eventData.MatchScoring = form.MatchScoring;
 
                 this.FixEnds(eventData.DefaultEnds);
                 this.FixLanes(eventData.LaneCount);
