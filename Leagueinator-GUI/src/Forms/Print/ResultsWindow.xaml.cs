@@ -59,7 +59,7 @@ namespace Leagueinator.GUI.Forms.Print {
         internal void AddRow(string[] cells) {
             if (this.CurrentTable is null) throw new NullReferenceException("Must add header before row.");
             if (this.RowGroup is null) throw new NullReferenceException("Must add header before row.");
-            if (cells.Length != this.Widths?.Length) throw new ArgumentOutOfRangeException("Cells length must match widths.");
+            if (cells.Length != this.Widths?.Length) throw new ArgumentOutOfRangeException($"Cells length must match widths: {cells.Length} != {this.Widths?.Length}");
 
             var headerRow = new TableRow();
             this.RowGroup.Rows.Add(headerRow);
@@ -132,6 +132,10 @@ namespace Leagueinator.GUI.Forms.Print {
 
         public void Hnd_Exit(object sender, RoutedEventArgs e) {
             this.Close();
+        }
+
+        internal void AddHeader(object value) {
+            throw new NotImplementedException();
         }
     }
 }

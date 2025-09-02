@@ -1,4 +1,5 @@
 ﻿using Leagueinator.GUI.Controllers.Modules;
+using Leagueinator.GUI.Controllers.Modules.ScoringBowls;
 using Leagueinator.GUI.Controllers.Modules.ScoringPlus;
 
 namespace Leagueinator.GUI.Model.Enums {
@@ -9,8 +10,8 @@ namespace Leagueinator.GUI.Model.Enums {
     public static class MatchScoringMeta {
         public static IModule GetModule(this MatchScoring matchScoring) {
             return matchScoring switch {
-                //MatchScoring.Bowls => new ScoringBowlsModule(),
-                MatchScoring.Plus => new ScoringPlusModule(),
+                MatchScoring.Bowls => new ScoringModule<BowlsResult>(),
+                MatchScoring.Plus => new ScoringModule<PlusResult>(),
                 _ => throw new NotImplementedException(),
             };
         }

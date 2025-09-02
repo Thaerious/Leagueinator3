@@ -33,7 +33,6 @@ namespace Leagueinator.GUI.Controllers.Modules {
     }
 
     public class ResultsCollection<T> where T : IResult<T> {
-
         private readonly MultiMap<Players, T> TeamDict = [];
         private readonly MultiMap<string, T> PlayerDict = [];
         private List<Players> TeamRanks = [];
@@ -44,17 +43,10 @@ namespace Leagueinator.GUI.Controllers.Modules {
         public ResultsCollection(IHasTeams hasTeams) {
             this.AddTeams(hasTeams);
         }
-        static bool IsIResultType(Type t) {
-            return t.IsClass && !t.IsAbstract &&
-                   t.GetInterfaces().Any(i =>
-                       i.IsGenericType &&
-                       i.GetGenericTypeDefinition() == typeof(IResult<>) &&
-                       i.GenericTypeArguments[0] == t
-                    );
-        }
 
         public void AddTeams(IHasTeams hasTeams) {
             foreach (TeamData teamData in hasTeams.AllTeams()) {
+                if (teamData.IsEmpty()) continue;
                 T t = T.CreateResult(teamData);
                 TeamDict[teamData.ToPlayers()].Add(t);
 
@@ -90,9 +82,9 @@ namespace Leagueinator.GUI.Controllers.Modules {
 
         public List<T> this[string name] => this.PlayerDict[name];
 
-        public int Rank(Players players) => this.TeamRanks.IndexOf(players);
+        public int Rank(Players players) => this.TeamRanks.IndexOf(players) + 1;
 
-        public int Rank(string name) => this.PlayerRanks.IndexOf(name);
+        public int Rank(string name) => this.PlayerRanks.IndexOf(name) + 1;
 
         public IEnumerable<Players> Teams => this.TeamRanks;
 

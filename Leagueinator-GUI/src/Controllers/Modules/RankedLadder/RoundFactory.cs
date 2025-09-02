@@ -1,4 +1,5 @@
 ﻿using Algorithms.Mapper;
+using Leagueinator.GUI.Controllers.Modules.ScoringPlus;
 using Leagueinator.GUI.Model;
 using System.Diagnostics;
 using Utility;
@@ -12,27 +13,29 @@ namespace Leagueinator.GUI.Controllers.Modules.RankedLadder {
     /// 
     public static class RoundFactory {
         public static RoundData Generate(EventData eventData) {
-            throw new NotImplementedException();
-            //List<Players> keys = scoringModule.EventRankingByTeam(eventData);                     
-            
-            //Debug.WriteLine($"Generate map with keys: {keys.JoinString(prefix:"[", suffix:"]")}");
-            //MultiMap<Players, Players> blacklist = eventData.PreviousOpponents();
-            //DFSListPairMapper<Players> mapGenerator = new();
-            //var matchMap = mapGenerator.GenerateMap(keys, blacklist);
-            //var newRound = new RoundData(eventData);
+            var results = new ResultsCollection<PlusResult>(eventData);
 
-            //foreach (var (key, value) in matchMap) {
-            //    MatchData matchData = new(newRound) {
-            //        MatchFormat = eventData.DefaultMatchFormat,
-            //        Ends = eventData.DefaultEnds
-            //    };
-            //    matchData.Teams[0].CopyFrom(key);
-            //    matchData.Teams[1].CopyFrom(value);
-            //    newRound.AddMatch(matchData);
-            //}
+            List<Players> keys = [.. results.Teams];
+            Debug.WriteLine(keys.JoinString());
 
-            //newRound.Fill();
-            //return newRound;
+            Debug.WriteLine($"Generate map with keys: {keys.JoinString(prefix: "[", suffix: "]")}");
+            MultiMap<Players, Players> blacklist = eventData.PreviousOpponents();
+            DFSListPairMapper<Players> mapGenerator = new();
+            var matchMap = mapGenerator.GenerateMap(keys, blacklist);
+            var newRound = new RoundData(eventData);
+
+            foreach (var (key, value) in matchMap) {
+                MatchData matchData = new(newRound) {
+                    MatchFormat = eventData.DefaultMatchFormat,
+                    Ends = eventData.DefaultEnds
+                };
+                matchData.Teams[0].CopyFrom(key);
+                matchData.Teams[1].CopyFrom(value);
+                newRound.AddMatch(matchData);
+            }
+
+            newRound.Fill();
+            return newRound;
         }
     }
 }

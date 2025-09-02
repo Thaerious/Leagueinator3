@@ -10,12 +10,21 @@ namespace Leagueinator.GUI.Controllers.Modules {
     }
 
     public interface IResult<T> : IAddable<T>, ICreateResult<T> where T : IResult<T> {
-        public static string[] Labels { get; } = [];
+        public virtual static string[] Labels { get; } = [];
+
         public string[] Cells();
 
-        public readonly static int[] ColSizes = [];
+        public virtual static int[] ColSizes { get; } = [];
 
         public GameResult Result { get; set; }
+
+        public int Lane { get; set; }
+
+        public int Diff { get; }
+
+        public double PCT { get; }
+
+        public int Score { get; }
     }
 
     public interface IAddable<T> where T : IAddable<T> {

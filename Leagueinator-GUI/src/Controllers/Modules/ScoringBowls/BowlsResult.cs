@@ -41,8 +41,7 @@ namespace Leagueinator.GUI.Controllers.Modules.ScoringBowls {
 
         public static string[] Labels => ["PTS", "SF", "SA", "TB", "Ends", "Opponents"];
         public virtual string[] Cells() => [$"{this.Score}", $"{this.ShotsFor}", $"{this.ShotsAgainst}", $"{this.TieBreaker}", $"{this.Ends}", $"{this.Opponents.JoinString()}"];
-
-        public static int[] ColSizes => [10, 10, 10, 10, 10, 100];
+        public static int[] ColSizes => [10, 10, 10, 10, 10, 150];
 
         public int Lane { get; set; } = -1;
         public int Score { get; set; } = 0;

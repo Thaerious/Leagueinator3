@@ -42,8 +42,13 @@ namespace Leagueinator.GUI.Model {
                 bool multipleAtMax = teams.Count(t => t.ShotsFor == max) > 1;
                 if (!multipleAtMax) return GameResult.Win;
 
+                if (this.Parent.TieBreaker == -1) return GameResult.Tie;
+
                 // Tie at max: resolve with tiebreaker
-                return (this.Parent.TieBreaker == this.Index) ? GameResult.Win : GameResult.Tie;
+                if (this.Parent.TieBreaker == this.Index) return GameResult.Win;
+                if (this.Parent.TieBreaker != this.Index) return GameResult.Loss;                        
+                    
+                return GameResult.Tie;
             }
         }
 

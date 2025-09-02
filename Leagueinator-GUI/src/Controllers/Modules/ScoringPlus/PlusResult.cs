@@ -1,5 +1,6 @@
 ﻿using Leagueinator.GUI.Model;
 using Leagueinator.GUI.Model.Enums;
+using System.Diagnostics;
 using Utility.Extensions;
 
 namespace Leagueinator.GUI.Controllers.Modules.ScoringPlus {
@@ -12,9 +13,8 @@ namespace Leagueinator.GUI.Controllers.Modules.ScoringPlus {
         /// <summary>
         /// A single result for a player from a single match.
         /// </summary>
-        /// <param name="forPlayer"></param>
-        /// <param name="teamData"></param>
         public PlusResult(TeamData teamData) {
+            this.TeamData = teamData;
             this.Lane = teamData.Parent.Lane;
 
             switch (teamData.Result) {
@@ -31,21 +31,24 @@ namespace Leagueinator.GUI.Controllers.Modules.ScoringPlus {
                     break;
             }
 
+            this.Lane = teamData.Parent.Lane;
             this.TieBreaker = teamData.TieBreaker;
             this.Result = teamData.Result;
-            this.ShotsFor += (int)Math.Min(teamData.ShotsFor, teamData.ShotsFor * Constants.BowlsCapPerEnd);
-            this.ShotsAgainst += (int)Math.Min(teamData.ShotsAgainst, teamData.ShotsAgainst * Constants.BowlsCapPerEnd);
+            this.ShotsFor += (int)Math.Min(teamData.ShotsFor, teamData.Parent.Ends * Constants.BowlsCapPerEnd);
+            this.ShotsAgainst += (int)Math.Min(teamData.ShotsAgainst, teamData.Parent.Ends * Constants.BowlsCapPerEnd);
             this.PlusFor += teamData.ShotsFor - this.ShotsFor;
             this.PlusAgainst = teamData.ShotsAgainst - this.ShotsAgainst;
             this.Ends = teamData.Parent.Ends;
             this.Opponents = teamData.GetOpposition().SelectMany(t => t.ToPlayers()).JoinString();
         }
 
-        public readonly static string[] Labels = ["PTS", "SF", "SA", "TB", "Ends", "Opponents"];
-        public virtual string[] Cells() => [$"{this.Score}", $"{this.ShotsFor}", $"{this.ShotsAgainst}", $"{this.TieBreaker}", $"{this.Ends}", $"{this.Opponents.JoinString()}"];
+        public static string[] Labels => ["R", "SF+", "SA+", "TB", "E", "Opponents"];
+        
+        public virtual string[] Cells() => [$"{this.Result.ToString()[0]}", $"{this.ShotsFor}+{this.PlusFor}", $"{this.ShotsAgainst}+{this.PlusAgainst}", $"{this.TieBreaker.ToString()[0]}", $"{this.Ends}", $"{this.Opponents}"];
 
-        public readonly static int[] ColSizes = [40, 40, 40, 40, 40, 40, 40];
+        public static int[] ColSizes => [40, 60, 60, 40, 40, 150];
 
+        public TeamData TeamData { get; }
         public int Lane { get; set; } = -1;
         public int Score { get; set; } = 0;
         public GameResult Result { get; set; } = GameResult.Vacant;
@@ -55,18 +58,36 @@ namespace Leagueinator.GUI.Controllers.Modules.ScoringPlus {
         public int PlusAgainst { get; set; } = 0;
         public int Ends { get; set; } = 0;
         public bool TieBreaker { get; }
+        public int RawFor => this.ShotsFor + this.PlusFor;
+        public int RawAgainst => this.ShotsAgainst + this.PlusAgainst;
 
-        public int Diff => this.ShotsFor - this.ShotsAgainst;
+        public int Diff => this.RawFor - this.RawAgainst;
 
-        public double PCT => (double)this.ShotsFor / ((double)this.ShotsFor + this.ShotsAgainst);
+        public double PCT => (double)this.RawFor / ((double)this.RawFor + this.RawAgainst);
 
-        public string Opponents { get; init; } // TODO make this a list
+        public string Opponents { get; init; } 
 
-        public int CompareTo(PlusResult? other) {
+        public int CompareTo(PlusResult? other) {            
             if (other is null) return -1; // this > null
 
             int c = other.Score.CompareTo(Score);  // higher Score first
             if (c != 0) return c;
+
+            if (other.ShotsFor != this.ShotsFor) {
+                return other.ShotsFor.CompareTo(this.ShotsFor);
+            }
+
+            if (other.PlusFor != this.PlusFor) {
+                return other.PlusFor.CompareTo(this.PlusFor);
+            }
+
+            if (other.ShotsAgainst != this.ShotsAgainst) {
+                return this.ShotsAgainst.CompareTo(this.ShotsAgainst);
+            }
+
+            if (other.PlusAgainst != this.PlusAgainst) {
+                return this.PlusAgainst.CompareTo(this.PlusAgainst);
+            }
 
             c = other.Diff.CompareTo(Diff);        // higher Differential first
             if (c != 0) return c;
