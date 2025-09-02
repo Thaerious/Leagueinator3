@@ -27,7 +27,7 @@ namespace Leagueinator.GUI.Forms.Event {
             };
 
             this.ListEventType.ItemsSource = new List<FormatRecord<EventType>> {
-                new(EventType.RankedLadder, "Ranked Ladder"),
+                new(EventType.Swiss, "Swiss"),
                 new(EventType.Jitney, "Jitney"),
             };
 

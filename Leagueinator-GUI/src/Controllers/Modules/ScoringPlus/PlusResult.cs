@@ -1,6 +1,5 @@
 ﻿using Leagueinator.GUI.Model;
 using Leagueinator.GUI.Model.Enums;
-using System.Diagnostics;
 using Utility.Extensions;
 
 namespace Leagueinator.GUI.Controllers.Modules.ScoringPlus {

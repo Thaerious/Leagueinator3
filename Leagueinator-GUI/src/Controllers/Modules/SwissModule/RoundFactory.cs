@@ -4,7 +4,7 @@ using Leagueinator.GUI.Model;
 using Leagueinator.GUI.Model.Enums;
 using Utility.Collections;
 
-namespace Leagueinator.GUI.Controllers.Modules.RankedLadder {
+namespace Leagueinator.GUI.Controllers.Modules.Swiss {
     /// <summary>
     /// Provides logic to assign lanes to matches in a round, ensuring that teams are not repeatedly assigned to the same lanes across _rounds.
     /// </summary>
@@ -13,6 +13,7 @@ namespace Leagueinator.GUI.Controllers.Modules.RankedLadder {
         public static RoundData Generate(EventData eventData) {
             Type resultType = eventData.MatchScoring.GetResultType();
             ResultsCollection<PlusResult> results = (ResultsCollection <PlusResult>)ResultsCollection.Construct(typeof(PlusResult));
+            results.AddTeams(eventData);
 
             List<Players> keys = [.. results.Teams];
             MultiMap<Players, Players> blacklist = eventData.PreviousOpponents();

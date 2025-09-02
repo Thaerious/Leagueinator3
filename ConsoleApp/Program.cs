@@ -12,7 +12,7 @@ Event Name: August 28 2025
 Number of Lanes: 8
 Default Ends: 10
 Match Format: VS2
-Event Type: RankedLadder
+Event Type: Swiss
 Match Scoring: Plus
 No. of Rounds: 1
 Round 0:

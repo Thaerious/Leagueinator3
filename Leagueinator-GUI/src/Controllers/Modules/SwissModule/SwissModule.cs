@@ -1,14 +1,12 @@
 ﻿using Algorithms;
 using Leagueinator.GUI.Controllers.Modules.AssignLanes;
 using Leagueinator.GUI.Controllers.NamedEvents;
-using Leagueinator.GUI.Forms.Print;
 using Leagueinator.GUI.Model;
 using Leagueinator.Utility.Extensions;
 using System.Windows;
-using Utility.Extensions;
 
-namespace Leagueinator.GUI.Controllers.Modules.RankedLadder {
-    public class RankedLadderModule : BaseModule {
+namespace Leagueinator.GUI.Controllers.Modules.Swiss {
+    public class SwissModule : BaseModule {
 
         public override void LoadModule(Window window, MainController mainController) {
             base.LoadModule(window, mainController);
@@ -20,8 +18,6 @@ namespace Leagueinator.GUI.Controllers.Modules.RankedLadder {
             this.MainWindow.MainMenu.RemoveMenuItem(["Action", "Generate Next Round"]);
             NamedEvent.RemoveHandler(this);
         }
-
-        
 
         private void GenerateRound(object sender, RoutedEventArgs args) {
             this.DispatchEvent(EventName.GenerateRound);

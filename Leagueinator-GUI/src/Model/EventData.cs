@@ -47,9 +47,9 @@ namespace Leagueinator.GUI.Model {
         public int DefaultEnds { get; set; } = 10;
 
         /// <summary>
-        /// Type of event (e.g. Ranked Ladder, Casual, etc.).
+        /// Type of event (e.g. Swiss, Jitney, etc.).
         /// </summary>
-        public EventType EventType { get; set; } = EventType.RankedLadder;
+        public EventType EventType { get; set; } = EventType.Swiss;
 
         /// <summary>
         /// Type of scoring, Bowls or Plus.

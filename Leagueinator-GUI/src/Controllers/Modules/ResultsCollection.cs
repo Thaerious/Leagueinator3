@@ -35,14 +35,22 @@ namespace Leagueinator.GUI.Controllers.Modules {
     }
 
     public class ResultsCollection {
-        public static object Construct(Type type) {
-            if (!typeof(IResult<>).IsAssignableFrom(type)) {
-                throw new ArgumentException($"Type must implement IResult, got {type}");
-            }
+        public static object Construct(Type resultType) {
+            ArgumentNullException.ThrowIfNull(resultType);
+
+            // Must implement IResult<resultType>
+            bool ok = resultType.GetInterfaces().Any(i =>
+                i.IsGenericType &&
+                i.GetGenericTypeDefinition() == typeof(IResult<>) &&
+                i.GenericTypeArguments.Length == 1 &&
+                i.GenericTypeArguments[0] == resultType
+            );
+
+            if (!ok) throw new ArgumentException($"Type must implement IResult<T> with T={resultType.Name}, got {resultType.FullName}");
 
             Type generic = typeof(ResultsCollection<>);  // open generic type
-            Type closed = generic.MakeGenericType(type); // closed generic type
-            return Activator.CreateInstance(closed)!;    
+            Type closed = generic.MakeGenericType(resultType); // closed generic type
+            return Activator.CreateInstance(closed)!;
         }
     }
 
