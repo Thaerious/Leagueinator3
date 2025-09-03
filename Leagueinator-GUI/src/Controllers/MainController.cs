@@ -231,6 +231,7 @@ namespace Leagueinator.GUI.Controllers {
                 this.FixFormat(eventData.DefaultMatchFormat);
                 this.DispatchModel(EventName.SetModel);
                 this.UpdateModules();
+                this.DispatchSetTitle(false);
             }
 
             NamedEvent.RemoveHandler(form);
