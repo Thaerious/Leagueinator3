@@ -16,14 +16,14 @@ Event Type: Swiss
 Match Scoring: Plus
 No. of Rounds: 1
 Round 0:
-Match 0: MatchFormat: VS2 | Players: [[adam, eve][cain, able]] | Score: [0, 0] | TB: -1 | Ends: 10
-Match 1: MatchFormat: VS2 | Players: [[,][,]] | Score: [0, 0] | TB: -1 | Ends: 10
-Match 2: MatchFormat: VS2 | Players: [[,][,]] | Score: [0, 0] | TB: -1 | Ends: 10
-Match 3: MatchFormat: VS2 | Players: [[,][,]] | Score: [0, 0] | TB: -1 | Ends: 10
-Match 4: MatchFormat: VS2 | Players: [[,][,]] | Score: [0, 0] | TB: -1 | Ends: 10
-Match 5: MatchFormat: VS2 | Players: [[,][,]] | Score: [0, 0] | TB: -1 | Ends: 10
-Match 6: MatchFormat: VS2 | Players: [[,][,]] | Score: [0, 0] | TB: -1 | Ends: 10
-Match 7: MatchFormat: VS2 | Players: [[,][,]] | Score: [0, 0] | TB: -1 | Ends: 10
+Match 0: | MatchFormat: VS2 | Players: [[adam, eve][cain, able]] | Score: [0, 0] | TB: -1 | Ends: 10
+Match 1: | MatchFormat: VS2 | Players: [[,][,]] | Score: [0, 0] | TB: -1 | Ends: 10
+Match 2: | MatchFormat: VS2 | Players: [[,][,]] | Score: [0, 0] | TB: -1 | Ends: 10
+Match 3: | MatchFormat: VS2 | Players: [[,][,]] | Score: [0, 0] | TB: -1 | Ends: 10
+Match 4: | MatchFormat: VS2 | Players: [[,][,]] | Score: [0, 0] | TB: -1 | Ends: 10
+Match 5: | MatchFormat: VS2 | Players: [[,][,]] | Score: [0, 0] | TB: -1 | Ends: 10
+Match 6: | MatchFormat: VS2 | Players: [[,][,]] | Score: [0, 0] | TB: -1 | Ends: 10
+Match 7: | MatchFormat: VS2 | Players: [[,][,]] | Score: [0, 0] | TB: -1 | Ends: 11
 ";
 
 LeagueData leagueData = new Loader().Load(mockFile);

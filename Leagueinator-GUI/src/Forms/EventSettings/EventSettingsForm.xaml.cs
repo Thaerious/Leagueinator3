@@ -53,6 +53,8 @@ namespace Leagueinator.GUI.Forms.Event {
 
         public MatchScoring MatchScoring => (MatchScoring)this.ListMatchScoring.SelectedValue;
 
+        public bool HeadToHead => this.CheckHeadToHead.IsChecked ?? false;
+
         public bool? ShowDialog(EventData eventData) {
             this.TxtName.Text = eventData.EventName;
             this.TxtLanes.Text = eventData.LaneCount.ToString();
@@ -60,6 +62,7 @@ namespace Leagueinator.GUI.Forms.Event {
             this.ListMatchFormat.SelectedValue = eventData.DefaultMatchFormat;
             this.ListEventType.SelectedValue = eventData.EventType;
             this.ListMatchScoring.SelectedValue = eventData.MatchScoring;
+            this.CheckHeadToHead.IsChecked = eventData.HeadToHeadScoring;
 
             this.ResumeEvents();
             return this.ShowDialog();

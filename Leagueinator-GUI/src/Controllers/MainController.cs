@@ -225,6 +225,7 @@ namespace Leagueinator.GUI.Controllers {
                 eventData.DefaultMatchFormat = form.MatchFormat;
                 eventData.EventType = form.EventType;
                 eventData.MatchScoring = form.MatchScoring;
+                eventData.HeadToHeadScoring = form.HeadToHead;
 
                 this.FixEnds(eventData.DefaultEnds);
                 this.FixLanes(eventData.LaneCount);

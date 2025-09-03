@@ -2,7 +2,6 @@
 using Leagueinator.GUI.Model.ViewModel;
 using System.Collections;
 using System.IO;
-using Utility;
 using Utility.Collections;
 
 namespace Leagueinator.GUI.Model {
@@ -56,6 +55,12 @@ namespace Leagueinator.GUI.Model {
         /// Defaults to Plus.
         /// </summary>
         public MatchScoring MatchScoring { get; set; } = MatchScoring.Plus;
+
+        /// <summary>
+        /// Whether the first tiebreaker is head to head.
+        /// Defaults to false.
+        /// </summary>
+        public bool HeadToHeadScoring { get; set; } = false;
 
         /// <summary>
         /// Backing list for rounds in this event.
@@ -152,56 +157,7 @@ namespace Leagueinator.GUI.Model {
         public IEnumerable<PlayerRecord> Records() {
             return this.SelectMany(roundData => roundData.Records());
         }
-
-        /// <summary>
-        /// Serializes this event and all rounds to a stream.
-        /// </summary>
-        internal void WriteOut(StreamWriter writer) {
-            writer.WriteLine(
-                string.Join("|",
-                    this.EventName,
-                    this.Date.ToString("o"),
-                    this.DefaultMatchFormat,
-                    this.DefaultEnds,
-                    this.LaneCount,
-                    this.EventType,
-                    this.Rounds.Count
-                )
-            );
-
-            foreach (RoundData roundData in this.Rounds) {
-                roundData.WriteOut(writer);
-            }
-        }
-
-        /// <summary>
-        /// Deserializes <see cref="EventData"/> from a stream.
-        /// Expects exactly 7 '|' delimited fields in the header line.
-        /// </summary>
-        /// <exception cref="EndOfStreamException">Thrown if stream ends unexpectedly.</exception>
-        /// <exception cref="FormatException">Thrown if data is malformed.</exception>
-        public static EventData ReadIn(LeagueData leagueData, StreamReader reader) {
-            string? line = reader.ReadLine() ?? throw new EndOfStreamException("Unexpected end of file while reading EventData");
-            string[] parts = line.Split('|');
-            if (parts.Length != 7) throw new FormatException($"Invalid EventData format: '{line}'");
-
-            EventData eventData = new(leagueData) {
-                EventName = parts[0],
-                Date = DateTime.Parse(parts[1], null, System.Globalization.DateTimeStyles.RoundtripKind),
-                DefaultMatchFormat = Enum.Parse<MatchFormat>(parts[2]),
-                DefaultEnds = int.Parse(parts[3]),
-                LaneCount = int.Parse(parts[4]),
-                EventType = Enum.Parse<EventType>(parts[5])
-            };
-
-            int roundCount = int.Parse(parts[6]);
-            for (int i = 0; i < roundCount; i++) {
-                RoundData roundData = RoundData.ReadIn(eventData, reader);
-                eventData._rounds.Add(roundData);
-            }
-
-            return eventData;
-        }
+               
 
         /// <summary>
         /// Returns all previous opponents for the specified players.

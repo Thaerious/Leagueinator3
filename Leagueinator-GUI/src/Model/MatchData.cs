@@ -98,7 +98,7 @@ namespace Leagueinator.GUI.Model {
         /// <returns>A string describing the match.</returns>
         public override string ToString() {
             StringBuilder sb = new();
-            sb.Append($"Match {this.Lane}: MatchFormat: {this.MatchFormat} | Players: ");
+            sb.Append($"Match {this.Lane}: | MatchFormat: {this.MatchFormat} | Players: ");
 
             foreach (TeamData team in this.Teams) {
                 sb.Append($"[{team}]");

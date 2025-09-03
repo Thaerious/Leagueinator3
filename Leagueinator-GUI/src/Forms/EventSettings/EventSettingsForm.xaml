@@ -10,7 +10,7 @@
         WindowStartupLocation="CenterOwner"
         ResizeMode="NoResize"
         Title="Event Manager" 
-        Height="303" Width="250"
+        SizeToContent="WidthAndHeight"
         MinHeight="260" MinWidth="250"
         >
 
@@ -51,6 +51,12 @@
                 <Label Grid.Column="0" Grid.Row="1" Content="Match Format" VerticalAlignment="Center" Margin="0" Width="100"/>
                 <ComboBox x:Name="ListMatchFormat" SelectedIndex="1" Width="125">
                 </ComboBox>
+            </StackPanel>
+
+            <StackPanel Margin="5" Orientation="Horizontal">
+                <Label Grid.Column="0" Grid.Row="1" Content="Head to Head" VerticalAlignment="Center" Margin="0" Width="100" />
+                <CheckBox x:Name="CheckHeadToHead" IsChecked="False" Width="125" VerticalAlignment="Center">
+                </CheckBox>
             </StackPanel>
 
             <StackPanel Margin="5" Orientation="Horizontal" HorizontalAlignment="Center">
